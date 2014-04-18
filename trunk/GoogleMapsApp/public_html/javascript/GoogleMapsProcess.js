@@ -9,7 +9,7 @@ function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
   var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
   var mapOptions = {
-    zoom: 12,
+    zoom: 15,
     center: BTSAri
   };
    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
