@@ -138,9 +138,12 @@ function placeMarker(position,map){
 
 function clearDirection() {
   directionsDisplay.setMap(null);
-  initialize();
   point = [];
   count = 1;
+  document.getElementById('address').value = '';
+  document.getElementById('address2').value = '';
+  initialize();
+  
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
