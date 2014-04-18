@@ -2,8 +2,7 @@ var map;
 var count="1";
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
-
-var bars = new Array();
+var points = new Array();
 
 function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
@@ -16,14 +15,14 @@ function initialize() {
    directionsDisplay.setMap(map);
   var input = document.getElementById('address');
   var input2 = document.getElementById('address2');
-  var searchBox = new google.maps.places.SearchBox((input));
-  var searchBox2 = new google.maps.places.SearchBox(input2);
+  var searchBox = new google.maps.points.SearchBox((input));
+  var searchBox2 = new google.maps.points.SearchBox(input2);
 
   google.maps.event.addListener(map, 'click', function showAlert(event) {
 	    placeMarker(event.latLng,map);
 	    window.alert("You have clicked on \nLatitude : "+event.latLng.lat().toString()
 	    +"\nLongitude : "+event.latLng.lng().toString());
-	    bars.push(event.latLng.lat()+", "+event.latLng.lng());
+	    points.push(event.latLng.lat()+", "+event.latLng.lng());
 	});
 }
 
@@ -32,8 +31,8 @@ function calcRoute() {
   var end = document.getElementById('address2').value;
   
   var wps = [];
-  for(var i=0;i<bars.length;i++){
-  	wps.push({location:bars[i],stopover:true});
+  for(var i=0;i<points.length;i++){
+  	wps.push({location:points[i],stopover:true});
   }
   var request = {
       origin:start,
