@@ -3,6 +3,7 @@ var count="1";
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var points = new Array();
+var waypointMarkers = [];
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -132,6 +133,20 @@ function placeMarker(position,map){
         marker.set("position",position);
         marker.set("id",count);
         marker.set("icon",image);
+        marker.set("draggable",true);
+        marker.set("animation",google.maps.Animation.DROP);
+        waypointMarkers[marker.id] = marker;
+        
+        var index;
+        google.maps.event.addListener(marker,'mousedown',function(event) {
+            index = points.indexOf(event.latLng.lat()+", "+event.latLng.lng());
+        });
+
+        google.maps.event.addListener(marker,'dragend',function(event) {
+            points[index] = event.latLng.lat()+", "+event.latLng.lng();
+            var list = document.getElementsByTagName("li");
+            list[index+1].innerHTML = "Waypoint "+(index+1)+": "+points[index];
+        });
 	count++;
 }
 
@@ -153,16 +168,16 @@ function addWaypointToList(){
     var li = document.createElement("li");
     var position = points[points.length-1];
     li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)+1)+": "+position));
-//    li.addEventListener("click",removeWaypointFromList(position));
+ //   li.addEventListener("click",removeWaypointFromList(position));
     ul.appendChild(li);
 }
 
-//function removeWaypointFromList(position){
-//    var index = points.indexOf(position);
-//    this.parentNode.parentNode.removeChild(this.parentNode);
-//    points.splice(index,1);
-//    count--;
-//    
-//}
+function removeWaypointFromList(position){
+    var index = points.indexOf(position);
+    this.parentNode.removeChild(this.parentNode);
+    points.splice(index,1);
+    count--;
+    waypointMarkers[index].setMap(null);
+}
 
 google.maps.event.addDomListener(window, 'load', initialize);
