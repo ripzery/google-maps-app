@@ -3,7 +3,6 @@ var count="1";
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var points = new Array();
-//var waypointMarkers = [];
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -127,23 +126,12 @@ function calcRoute() {
 }
 
 function placeMarker(position,map){
-	infoWindow = new google.maps.InfoWindow({
-            content:count.toString(),
-            position: position,
-            map: map
-	});
-//        var addMarker = google.maps.event.addListener(map,'click',function(e){
-//            var lat = e.latLng.lat();
-//            var lng = e.latLng.lng();
-//            var markerId = getMarkerUniqueId(lat,lng);
-//            var marker = new google.maps.Marker({
-//               position : position,
-//               map : map,
-//               id : 'marker_' + markerId
-//            });
-//            waypointMarkers[markerId] = marker;
-//            //bindMarkerEvents(marker); //bind right click to remove event to marker.
-//        });
+        var image = "../marker-icon-number/number_"+count+".png";
+        var marker = new google.maps.Marker();
+        marker.set("map",map);
+        marker.set("position",position);
+        marker.set("id",count);
+        marker.set("icon",image);
 	count++;
 }
 
