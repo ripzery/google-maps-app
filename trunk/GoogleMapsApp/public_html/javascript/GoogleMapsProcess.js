@@ -3,59 +3,59 @@ var count="1";
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var points = new Array();
+//var waypointMarkers = [];
 
 function initialize() {
-	directionsDisplay = new google.maps.DirectionsRenderer();
-  var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
-  var mapOptions = {
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
+    var mapOptions = {
     zoom: 12,
     center: BTSAri
   };
-   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-   directionsDisplay.setMap(map);
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    directionsDisplay.setMap(map);
    
-  markers = [];
+    markers = [];
   
-  var input = document.getElementById('address');
-  var input2 = document.getElementById('address2');
-  var searchBox = new google.maps.places.SearchBox(input);
-  var searchBox2 = new google.maps.places.SearchBox(input2);
+    var input = document.getElementById('address');
+    var input2 = document.getElementById('address2');
+    var searchBox = new google.maps.places.SearchBox(input);
+    var searchBox2 = new google.maps.places.SearchBox(input2);
 
-  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    google.maps.event.addListener(searchBox, 'places_changed', function() {
     var places = searchBox.getPlaces();
 
     for (var i = 0, marker; marker = markers[i]; i++) {
-      marker.setMap(null);
+        marker.setMap(null);
     }
 
-    // For each place, get the icon, place name, and location. 
+      // For each place, get the icon, place name, and location. 
     var bounds = new google.maps.LatLngBounds();
     for (var i = 0, place; place = places[i]; i++) {
-      var image = {
-        url: place.icon,
-        size: new google.maps.Size(71, 71),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(17, 34),
-        scaledSize: new google.maps.Size(25, 25)
-      };
+        var image = {
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(25, 25)
+          };
 
-      // Create a marker for each place.
-      var marker = new google.maps.Marker({
-        map: map,
-        icon: image,
-        title: place.name,
-        position: place.geometry.location
-      });
+          // Create a marker for each place.
+        var marker = new google.maps.Marker({
+            map: map,
+            icon: image,
+            title: place.name,
+            position: place.geometry.location
+          });
 
-      markers.push(marker);
+        markers.push(marker);
 
-      bounds.extend(place.geometry.location);
+        bounds.extend(place.geometry.location);
     }
-
     map.fitBounds(bounds);
   });
   
-  google.maps.event.addListener(searchBox2, 'places_changed', function() {
+    google.maps.event.addListener(searchBox2, 'places_changed', function() {
     var places = searchBox2.getPlaces();
 
     for (var i = 0, marker; marker = markers[i]; i++) {
@@ -96,8 +96,8 @@ function initialize() {
   
   google.maps.event.addListener(map, 'click', function showAlert(event) {
 	    placeMarker(event.latLng,map);
-	    window.alert("You have clicked on \nLatitude : "+event.latLng.lat().toString()
-	    +"\nLongitude : "+event.latLng.lng().toString());
+//	    window.alert("You have clicked on \nLatitude : "+event.latLng.lat().toString()
+//	    +"\nLongitude : "+event.latLng.lng().toString());
 	    points.push(event.latLng.lat()+", "+event.latLng.lng());
             addWaypointToList();
 	});
@@ -128,27 +128,53 @@ function calcRoute() {
 
 function placeMarker(position,map){
 	infoWindow = new google.maps.InfoWindow({
-	content:count.toString(),
-	position: position,
-	map: map
+            content:count.toString(),
+            position: position,
+            map: map
 	});
+//        var addMarker = google.maps.event.addListener(map,'click',function(e){
+//            var lat = e.latLng.lat();
+//            var lng = e.latLng.lng();
+//            var markerId = getMarkerUniqueId(lat,lng);
+//            var marker = new google.maps.Marker({
+//               position : position,
+//               map : map,
+//               id : 'marker_' + markerId
+//            });
+//            waypointMarkers[markerId] = marker;
+//            //bindMarkerEvents(marker); //bind right click to remove event to marker.
+//        });
 	count++;
 }
 
 function clearDirection() {
   directionsDisplay.setMap(null);
-  point = [];
+  points = [];
   count = 1;
   document.getElementById('address').value = '';
   document.getElementById('address2').value = '';
+  var list = document.getElementsByTagName('li');
+  for(var i=list.length-1,li;li=list[i],i>0;i--){
+      li.parentNode.removeChild(li);
+  }
   initialize();
 }
 
 function addWaypointToList(){
     var ul = document.getElementById("list");
     var li = document.createElement("li");
-    li.appendChild(document.createTextNode("Waypoint "+(count-1)+": "+points[points.length-1]));
+    var position = points[points.length-1];
+    li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)+1)+": "+position));
+//    li.addEventListener("click",removeWaypointFromList(position));
     ul.appendChild(li);
 }
+
+//function removeWaypointFromList(position){
+//    var index = points.indexOf(position);
+//    this.parentNode.parentNode.removeChild(this.parentNode);
+//    points.splice(index,1);
+//    count--;
+//    
+//}
 
 google.maps.event.addDomListener(window, 'load', initialize);
