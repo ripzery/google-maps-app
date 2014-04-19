@@ -22,6 +22,7 @@
 }
 .menu_div ul li:hover
 {
+    cursor : pointer;
     background:#d40203;
 }
 .menu_div ul li#active

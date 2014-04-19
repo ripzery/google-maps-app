@@ -186,6 +186,15 @@ function addWaypointToList(){
     var li = document.createElement("li");
     var position = points[points.length-1];
     li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)+1)+": "+position));
+    li.addEventListener('click',function(){
+       var pos = this.innerHTML.split(" ");
+       var nodes = document.getElementsByTagName("li");
+       for(var i=0,node;i<nodes.length,node=nodes[i];i++){
+           if(node===this){
+               map.setCenter(waypointMarkers[i-1].getPosition());
+           }
+       }
+    });
     ul.appendChild(li);
 }
 
