@@ -5,23 +5,33 @@
     <meta charset="utf-8">
     <title>Maps Direction</title>
     <link rel="stylesheet" type="text/css" href="../css/UI.css" />
+    <link rel="stylesheet" type="text/css" href="../css/ItemList.css" />
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="../javascript/GoogleMapsProcess.js"></script>
 </head>
  <body>
-    <div id="map-canvas" style="float:center;width:100%;height:100%;"></div>
+    <div id="map-canvas" style="border: 5px solid burlywood;"></div>
     <br>
     <br>
-    <form name="input">
-    	Start : 
-    	<input id="address" class="controls" type="text" placeholder="Enter Start Location">
-    	<br>
-    	End : 
-    	<input id="address2" class="controls" type="text" placeholder="Enter End Location">
-    	<br>
-    	<br>
-    	<input type="button" value="Search" onclick="calcRoute()">
-    	<input type="button" value="Reset" onclick="clearDirection()">
-    </form>
+    <div id="form-main">
+        <div id="form-div">
+            <form class="form" id="form1">
+                <input id="address" class="Text" type="text" placeholder="Enter Start Location">
+                <input id="address2" class="Text" type="text" placeholder="Enter End Location">
+                <br>
+                <br>
+                <div class="wrap_button">
+                    <input type="button" id="b1" class="button" value="SEARCH" onclick="calcRoute()">
+                    <input type="button" id="b2" class="button" value="RESET" onclick="clearDirection()">
+                </div>
+            </form>
+        </div>
+    </div>    
+    <div class="menu_div">
+        <ul id="list">
+            <li id="active">Position (Latitude, Longitude)</li>
+        </ul>
+    </div>
   </body>
 </html>
