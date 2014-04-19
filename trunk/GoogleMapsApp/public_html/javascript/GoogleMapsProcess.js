@@ -1,5 +1,5 @@
 var map;
-var count="1";
+var count="0";
 var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var points = new Array();
@@ -127,33 +127,50 @@ function calcRoute() {
 }
 
 function placeMarker(position,map){
-        var image = "../marker-icon-number/number_"+count+".png";
-        var marker = new google.maps.Marker();
-        marker.set("map",map);
-        marker.set("position",position);
-        marker.set("id",count);
-        marker.set("icon",image);
-        marker.set("draggable",true);
-        marker.set("animation",google.maps.Animation.DROP);
-        waypointMarkers[marker.id] = marker;
-        
-        var index;
-        google.maps.event.addListener(marker,'mousedown',function(event) {
-            index = points.indexOf(event.latLng.lat()+", "+event.latLng.lng());
-        });
+    var image = "../marker-icon-number/number_"+(parseInt(count)+1)+".png";
+    var marker = new google.maps.Marker();
+    marker.set("map",map);
+    marker.set("position",position);
+    marker.set("id",count);
+    marker.set("icon",image);
+    marker.set("draggable",true);
+    marker.set("animation",google.maps.Animation.DROP);
+    waypointMarkers[marker.id] = marker;
+    count++;
 
-        google.maps.event.addListener(marker,'dragend',function(event) {
-            points[index] = event.latLng.lat()+", "+event.latLng.lng();
-            var list = document.getElementsByTagName("li");
-            list[index+1].innerHTML = "Waypoint "+(index+1)+": "+points[index];
-        });
-	count++;
+    var index;
+//      เก็บพิกัดก่อนที่จะdrag marker เสร็จ เพื่อเอาพิกัดไปหาตำแหน่งที่เก็บใน array points ให้เจอก่อน
+//      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
+    google.maps.event.addListener(marker,'mousedown',function(event) {
+        index = points.indexOf(event.latLng.lat()+", "+event.latLng.lng());
+    });
+//      หลังจาก drag marker เสร็จจะอัพเดตพิกัดของ waypoint ใน listbox 
+//      พร้อมอัพเดตค่าที่เก็บไว้ใน array points ด้วย
+    google.maps.event.addListener(marker,'dragend',function(event) {
+        points[index] = event.latLng.lat()+", "+event.latLng.lng();
+        var list = document.getElementsByTagName("li");
+        list[index+1].innerHTML = "Waypoint "+(index+1)+": "+points[index];
+    });
+//      ใส่ listener เมื่อคลิกขวาที่ตัว marker จะทำการลบ waypoint ของ markerนั้น ในlistbox
+//      พร้อมลบค่าพิกัดที่เก็บใน point และเอาตัว marker ออกจากarray waypointMarkers
+//      พร้อมลบ marker นั้นออกจากแมพ สุดท้ายลดค่าตัวแปร count ที่เอาไว้นับ waypoint ลงหนึ่ง
+    google.maps.event.addListener(marker,"rightclick",function(event){
+        var index = points.indexOf(event.latLng.lat()+", "+event.latLng.lng());
+        document.getElementsByTagName("li")[index+1].parentNode.removeChild(document.getElementsByTagName("li")[index+1]);
+        points.splice(index,1);
+        count--;
+        waypointMarkers[index].setMap(null);
+        waypointMarkers.splice(index,1);
+    });
 }
 
+//ทำงานเมื่อกดปุ่ม RESET จะทำการเริ่ม reset ค่า count,array points, ใหม่
+//, ลบmarker ออกจากแผนที่ให้หมด
+//และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
 function clearDirection() {
   directionsDisplay.setMap(null);
   points = [];
-  count = 1;
+  count = 0;
   document.getElementById('address').value = '';
   document.getElementById('address2').value = '';
   var list = document.getElementsByTagName('li');
@@ -163,21 +180,13 @@ function clearDirection() {
   initialize();
 }
 
+//เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
 function addWaypointToList(){
     var ul = document.getElementById("list");
     var li = document.createElement("li");
     var position = points[points.length-1];
     li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)+1)+": "+position));
- //   li.addEventListener("click",removeWaypointFromList(position));
     ul.appendChild(li);
-}
-
-function removeWaypointFromList(position){
-    var index = points.indexOf(position);
-    this.parentNode.removeChild(this.parentNode);
-    points.splice(index,1);
-    count--;
-    waypointMarkers[index].setMap(null);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
