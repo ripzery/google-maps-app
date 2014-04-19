@@ -7,40 +7,106 @@ and open the template in the editor.
     Created on : Apr 18, 2014, 1:36:43 PM
     Author     : Phuchit
 */
+@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+    html{    
+    background:url(http://thekitemap.com/images/feedback-img.jpg) no-repeat;
+    background-size: cover;
+    height:100%;
+    }
 
-    html, body, #map-canvas {
-        height: 80%;
-        width: 80%;
-        padding: 0px;
+    body{
+        margin: 15px;
+        height: 100%;
+        width: 100%;
         margin-left: 10px;
         margin-right: auto;
     }
-    .controls {
-        margin-top: 16px;
-        border: 1px solid transparent;
-        border-radius: 2px 0 0 2px;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        height: 32px;
-        outline: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    #map-canvas{
+        width: 60%;
+        height: 60%;
     }
-    #address,#address2 {
-        background-color: #fff;
-        padding: 0 11px 0 13px;
-        width: 400px;
-        font-family: Roboto;
-        font-size: 15px;
-        font-weight: 300;
-        text-overflow: ellipsis;
+    
+    form {
+        width : 100%
     }
-    #panel {
+    .Text{
+        display : block;
+        color:#3c3c3c;
+	font-family: Helvetica, Arial, sans-serif;
+        font-weight:500;
+	font-size: 18px;
+	border-radius: 0;
+	line-height: 22px;
+	background-color: #fbfbfb;
+	padding: 13px 13px 13px 54px;
+        margin :25px auto 25px auto;
+	width:80%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+        border: 3px solid rgba(0,0,0,0);
+    }
+    
+    .Text:focus{
+        background: #fff;
+	box-shadow: 0;
+	border: 3px solid #3498db;
+	color: #3498db;
+	outline: none;
+        padding: 13px 13px 13px 54px; 
+    }
+
+    .button{
+        display :inline-block;
+        margin: 7px;
+        padding : 10px;
+        width: 30%;
+        height: 60px;
+        font-size: 22px;
+        color: white;
+        text-align: center;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        background: #3498db;
+        border: 0;
+        border-bottom: 2px solid #2a8bcc;
+        cursor: pointer;
+        -webkit-box-shadow: inset 0 -2px #2a8bcc;
+        box-shadow: inset 0 -2px #2a8bcc;
+    }
+    .button:active {
+      top: 1px;
+      outline: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+    
+    .wrap_button{
+        text-align: center;
+        display : block;
+        margin: auto;
+    }
+    
+    #form-main{
         position: absolute;
-        top: 5px;
-        left: 50%;
-        margin-left: -180px;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
+	float:left;
+        width: 60%;
+	padding-top:0px;
     }
+
+    #form-div {
+        position: absolute;
+	background-color:rgba(72,72,72,0.4);
+	//padding-left:35px;
+	//padding-right:35px;
+	padding-top:35px;
+	padding-bottom:35px;
+	float: left;
+	position: absolute;
+        width: 100%;
+        margin-top:25px;
+        margin-bottom: 30px;
+        -moz-border-radius: 7px;
+        -webkit-border-radius: 7px;
+    }
+    

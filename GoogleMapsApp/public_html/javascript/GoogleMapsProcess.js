@@ -8,7 +8,7 @@ function initialize() {
 	directionsDisplay = new google.maps.DirectionsRenderer();
   var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
   var mapOptions = {
-    zoom: 15,
+    zoom: 12,
     center: BTSAri
   };
    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -20,8 +20,6 @@ function initialize() {
   var input2 = document.getElementById('address2');
   var searchBox = new google.maps.places.SearchBox(input);
   var searchBox2 = new google.maps.places.SearchBox(input2);
-  var allsearchbox = new Array();
-  
 
   google.maps.event.addListener(searchBox, 'places_changed', function() {
     var places = searchBox.getPlaces();
@@ -101,6 +99,7 @@ function initialize() {
 	    window.alert("You have clicked on \nLatitude : "+event.latLng.lat().toString()
 	    +"\nLongitude : "+event.latLng.lng().toString());
 	    points.push(event.latLng.lat()+", "+event.latLng.lng());
+            addWaypointToList();
 	});
 }
 
@@ -129,9 +128,9 @@ function calcRoute() {
 
 function placeMarker(position,map){
 	infoWindow = new google.maps.InfoWindow({
-		content:count.toString(),
-		position: position,
-		map: map
+	content:count.toString(),
+	position: position,
+	map: map
 	});
 	count++;
 }
@@ -143,7 +142,13 @@ function clearDirection() {
   document.getElementById('address').value = '';
   document.getElementById('address2').value = '';
   initialize();
-  
+}
+
+function addWaypointToList(){
+    var ul = document.getElementById("list");
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode("Waypoint "+(count-1)+": "+points[points.length-1]));
+    ul.appendChild(li);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
