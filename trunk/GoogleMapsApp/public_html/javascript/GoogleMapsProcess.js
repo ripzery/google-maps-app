@@ -156,7 +156,18 @@ function placeMarker(position,map){
 //      พร้อมลบ marker นั้นออกจากแมพ สุดท้ายลดค่าตัวแปร count ที่เอาไว้นับ waypoint ลงหนึ่ง
     google.maps.event.addListener(marker,"rightclick",function(event){
         var index = points.indexOf(event.latLng.lat()+", "+event.latLng.lng());
-        document.getElementsByTagName("li")[index+1].parentNode.removeChild(document.getElementsByTagName("li")[index+1]);
+        var list = document.getElementsByTagName("li")[index+1].parentNode;
+        var waypoint = document.getElementsByTagName("li");
+        
+        //เปลี่ยนลำดับ waypoint ใน tag li ที่ index>index+1 จนถึง < length
+        for(var i=index+2,li;li = waypoint[i],i<waypoint.length;i++){
+            li.innerHTML = li.innerHTML.replace("Waypoint "+(i).toString(),"Waypoint "+(i-1).toString());
+            image = "../marker-icon-number/number_"+(i-1)+".png";
+            waypointMarkers[i-1].set("id",i-2);
+            waypointMarkers[i-1].setIcon(image);
+        }
+        
+        list.removeChild(waypoint[index+1]);
         points.splice(index,1);
         count--;
         waypointMarkers[index].setMap(null);
@@ -170,6 +181,7 @@ function placeMarker(position,map){
 function clearDirection() {
   directionsDisplay.setMap(null);
   points = [];
+  waypointMarkers  = [];
   count = 0;
   document.getElementById('address').value = '';
   document.getElementById('address2').value = '';
