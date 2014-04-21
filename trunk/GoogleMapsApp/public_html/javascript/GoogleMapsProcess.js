@@ -210,4 +210,14 @@ function addWaypointToList(){
     ul.appendChild(li);
 }
 
+// This default onbeforeunload event
+window.onbeforeunload = function(){
+    return "Do you want to leave?"
+}
+
+// A jQuery event (I think), which is triggered after "onbeforeunload"
+$(window).unload(function(){
+    //I will call my method
+});
+
 google.maps.event.addDomListener(window, 'load', initialize);
