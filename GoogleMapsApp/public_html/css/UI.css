@@ -55,10 +55,12 @@ and open the template in the editor.
         padding: 13px 13px 13px 54px; 
     }
 
+    /*
     .button{
         display :inline-block;
         padding : 0.6%;
         width: 40%;
+        margin-bottom: 35px;
         height: 60px;
         font-size: 22px;
         color: white;
@@ -70,7 +72,7 @@ and open the template in the editor.
         cursor: pointer;
         -webkit-box-shadow: inset 0 -2px #2a8bcc;
         box-shadow: inset 0 -2px #2a8bcc;
-    }
+    }*/
     
     .button2{
         display :inline-block;
@@ -89,16 +91,6 @@ and open the template in the editor.
         box-shadow: inset 0 -2px #333333;
     }
     
-    #b1{
-        margin-right:  6%;
-        margin-left: -7.5%;
-    }
-    
-    #b2{
-        margin-right:  1.5%;
-        margin-left: 4%;
-    }
-    
     .button:active {
       top: 1px;
       outline: none;
@@ -106,15 +98,7 @@ and open the template in the editor.
       box-shadow: none;
     }
     
-    .wrap_button{
-        position: absolute;
-        text-align: center;
-        display : block;
-        width : 100%;
-        top : 56%;
-    }
-    
-    #form-main{
+/*    #form-main{
         position: absolute;
         margin : 1.5% 0 0 15%;
         top : 53%;
@@ -149,4 +133,4 @@ and open the template in the editor.
         width: 11.5%;  
         height: 100%;
     }
-    
+    */
