@@ -18,7 +18,7 @@
     <script>
         $(document).ready(function() {
                 $('.Text2').editable('../php/test2.php',{
-                    cssclass : 'hey',
+                    cssclass : 'Text2',
                     indicator : 'Saving...',
                     tooltip   : 'Click to edit.',
                     type : 'text',
@@ -34,22 +34,24 @@
     <br><input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
     <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
     <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br><br>
-<!--    <select name=load class="combobox">
+    <select name=load class="combobox">
 	<option value=1 >xxxx</option>
 	<option value=2 >xxxx</option>
 	<option value=3 >xxxx</option>
 	<option value=4 >xxxx</option>
 	<option value=5 >xxxx</option>
-    </select>-->
-    <div class="editable">Option</div>
+    </select>
+
+<!--    <div class="combobox">Option</div>
     <script>
-        $('.editable').editable('../php/test.php', { 
+        $('.combobox').editable('../php/test.php', { 
+        cssclass : 'combobox',
         data   : " {'E':'Letter E','F':'Letter F','G':'Letter G', 'selected':'F'}",
         type   : 'select',
         name   : 'option',
         submit : 'OK'
        });
-    </script>
+    </script>-->
     <br><input type="button" class="button2" value="> LOAD" onclick="Load()"><br>
     <br><input type="button" class="button2" value="> RESET" onclick="clearDirection()"><br>
     <br><input type="button" class="button2" value="> XXXXXXX" onclick="">

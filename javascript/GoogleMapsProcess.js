@@ -121,7 +121,7 @@ function placeMarker(position,map){
 //      พร้อมลบค่าพิกัดที่เก็บใน point และเอาตัว marker ออกจากarray waypointMarkers
 //      พร้อมลบ marker นั้นออกจากแมพ สุดท้ายลดค่าตัวแปร count ที่เอาไว้นับ waypoint ลงหนึ่ง
     google.maps.event.addListener(marker,"rightclick",function(event){
-        var index = points.indexOf(event.latLng.lat()+", "+event.latLng.lng());
+        var index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
         var list = document.getElementsByTagName("li")[index+1].parentNode;
         var waypoint = document.getElementsByTagName("li");
         
