@@ -56,7 +56,7 @@ function initialize() {
       
   google.maps.event.addListener(map, 'click', function showAlert(event) {
 ﻿      placeMarker(event.latLng,map);
-﻿      points.push(event.latLng.lat()+", "+event.latLng.lng());
+﻿      points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
 ﻿  });
 }
@@ -190,21 +190,29 @@ function Save(){
     });
 }
 function Load(){
-    var return_data;
-    var name,command,points = [];
+    var return_dat;
+    var name,command;
+    var lat,lng;
+    clearDirection();
     $.ajax({
         url: "../php/load.php",
         success: function(d){
-            alert("Load file successful");
+            //alert("Load file successful");
             return_data = d.split(":");
             name = return_data[0];
             command = return_data[1];
             for(var i=2;i<return_data.length;i++){
-                alert(return_data[i]);
+                //alert(return_data[i]);
                 points.push(return_data[i]);
+                lat = points[i-2].split(",")[0];
+                lng = points[i-2].split(",")[1];
+                placeMarker(new google.maps.LatLng(lat,lng),map);
+                addWaypointToList();
             }
+            //calcRoute();
         }
     });
+    
 }
 
 // This default onbeforeunload event
