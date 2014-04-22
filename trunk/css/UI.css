@@ -13,7 +13,6 @@ and open the template in the editor.
 /*    background-attachment:scrollbar;*/
     height:100%;
     }
-
     body{
         margin: 15px;
         height: 100%;
@@ -36,7 +35,7 @@ and open the template in the editor.
 	font-size: 18px;
 	border-radius: 0;
 	line-height: 22px;
-	background-color: #fbfbfb;
+	background-color: #ffffff;
 	padding: 13px 13px 13px 13px;
         margin :0 0 25px 0;
 	width:99%;
@@ -98,7 +97,6 @@ and open the template in the editor.
         background: #FFFACD;
         border-color: #D2B48C;
     }
-    
 /*    #form-main{
         position: absolute;
         margin : 1.5% 0 0 15%;
@@ -140,8 +138,8 @@ and open the template in the editor.
 	background-color:#cf9e5f;
         font-weight:bold;
 }
-.button2:active {
+/*.button2:active {
 	position:relative;
 	top:1px;
-}
+}*/
 
