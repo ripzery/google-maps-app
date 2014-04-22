@@ -4,6 +4,7 @@ var directionsDisplay;
 var directionsService = new google.maps.DirectionsService();
 var points = new Array();
 var waypointMarkers = [];
+var checkroute = false;
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -60,18 +61,27 @@ function initialize() {
 ﻿  });
 }
 
+function shRoute(){
+  checkroute = true; 
+  calcRoute();
+}
+
+function azRoute(){
+  checkroute = false;
+  calcRoute();
+}
+
 function calcRoute() {
   var start = document.getElementById('address').value;
-  
   var wps = [];
   for(var i=1;i<points.length-1;i++){
-  ﻿  wps.push({location:points[i],stopover:true});
+      wps.push({location:points[i],stopover:true});
   }
   var request = {
       origin:points[0],
       destination:points[points.length-1],
       waypoints:wps,
-      optimizeWaypoints:true,
+      optimizeWaypoints:checkroute,
       travelMode: google.maps.TravelMode.DRIVING
   };
   
