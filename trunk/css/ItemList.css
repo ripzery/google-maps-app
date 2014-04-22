@@ -14,9 +14,9 @@
 
 .menu_div ul li
 {
-    background:#3f3f3f;
+    background:#D2B48C;
     line-height:45px;
-    border-bottom:1px solid #333;
+    border-bottom:1px solid #cf9e5f;
     text-decoration:none;
     color:#FFF;
     display:block;
@@ -24,10 +24,10 @@
 .menu_div ul li:hover
 {
     cursor : pointer;
-    background:#d40203;
+    background:#cf9e5f;
 }
 .menu_div ul li#active
 {
     text-align: center;
-    background:#d40203;
+    background:#cf9e5f;
 }

@@ -9,7 +9,8 @@ and open the template in the editor.
 */
 @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
     html{    
-    background:url(http://rmbiggs.files.wordpress.com/2011/03/vertical.png) repeat;
+    background:url("http://image.ohozaa.com/i/335/VBtQU.gif") repeat;
+/*    background-attachment:scrollbar;*/
     height:100%;
     }
 
@@ -54,48 +55,22 @@ and open the template in the editor.
 	outline: none;
         padding: 13px 13px 13px 54px; 
     }
-
-    /*
-    .button{
-        display :inline-block;
-        padding : 0.6%;
-        width: 40%;
-        margin-bottom: 35px;
-        height: 60px;
-        font-size: 22px;
-        color: white;
-        text-align: center;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-        background: #3498db;
-        border: 0;
-        border-bottom: 2px solid #2a8bcc;
-        cursor: pointer;
-        -webkit-box-shadow: inset 0 -2px #2a8bcc;
-        box-shadow: inset 0 -2px #2a8bcc;
-    }*/
     
     .button2{
         display :inline-block;
         padding : 0.6%;
         width: 14%;
         height: 7%;
+        border-radius:5px;
         font-size: 14px;
         color: white;
         text-align: left;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-        background: #999999;
+        background: #D2B48C;
         border: 0;
-        border-bottom: 2px solid #333333;
+        border-bottom: 0 solid #333333;
         cursor: pointer;
-        -webkit-box-shadow: inset 0 -2px #333333;
-        box-shadow: inset 0 -2px #333333;
-    }
-    
-    .button:active {
-      top: 1px;
-      outline: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
+        -webkit-box-shadow: inset 0 0 #333333;
+        box-shadow: inset 0 0 #333333;
     }
     
 /*    #form-main{
@@ -134,3 +109,13 @@ and open the template in the editor.
         height: 100%;
     }
     */
+
+.button2:hover {
+	background-color:#cf9e5f;
+        font-weight:bold;
+}
+.button2:active {
+	position:relative;
+	top:1px;
+}
+
