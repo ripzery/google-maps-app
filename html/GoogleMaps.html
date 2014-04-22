@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
-  <head>
+ <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>Maps Direction</title>
     <link rel="stylesheet" type="text/css" href="../css/UI.css" />
     <link rel="stylesheet" type="text/css" href="../css/ItemList.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="../apis/jquery.jeditable.mini.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
     <script src="../javascript/GoogleMapsProcess.js"></script>
 </head>
@@ -14,19 +15,41 @@
     <!--<input id="address" class="Text" type="text" placeholder="Enter Start Location">-->
     <div id="map-canvas" style="border: 5px solid burlywood;"></div>
     <div class="Text2">Untitled Map</div>
+    <script>
+        $(document).ready(function() {
+                $('.Text2').editable('../php/test2.php',{
+                    cssclass : 'hey',
+                    indicator : 'Saving...',
+                    tooltip   : 'Click to edit.',
+                    type : 'text',
+                    onblur : 'submit',
+                    id : 'test',
+                    name : 'newvalue',
+                });
+        });
+    </script>
     <input id="address" class="Text" type="text" placeholder="Search Location">
     <input type="button" class="button2" value="> MAPS" onclick=""><br>
     <br><input type="button" class="button2" value="> DETAIL" onclick=""><br>
     <br><input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
     <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
     <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br><br>
-    <select name=load class="combobox">
+<!--    <select name=load class="combobox">
 	<option value=1 >xxxx</option>
 	<option value=2 >xxxx</option>
 	<option value=3 >xxxx</option>
 	<option value=4 >xxxx</option>
 	<option value=5 >xxxx</option>
-    </select>
+    </select>-->
+    <div class="editable">Option</div>
+    <script>
+        $('.editable').editable('../php/test.php', { 
+        data   : " {'E':'Letter E','F':'Letter F','G':'Letter G', 'selected':'F'}",
+        type   : 'select',
+        name   : 'option',
+        submit : 'OK'
+       });
+    </script>
     <br><input type="button" class="button2" value="> LOAD" onclick="Load()"><br>
     <br><input type="button" class="button2" value="> RESET" onclick="clearDirection()"><br>
     <br><input type="button" class="button2" value="> XXXXXXX" onclick="">
