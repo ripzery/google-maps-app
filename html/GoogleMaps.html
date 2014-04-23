@@ -14,20 +14,7 @@
  <body>
     <!--<input id="address" class="Text" type="text" placeholder="Enter Start Location">-->
     <div id="map-canvas" style="border: 5px solid burlywood;"></div>
-    <div class="Text2">Untitled Map</div>
-    <script>
-        $(document).ready(function() {
-                $('.Text2').editable('../php/test2.php',{
-                    cssclass : 'Text2',
-                    indicator : 'Saving...',
-                    tooltip   : 'Click to edit.',
-                    type : 'text',
-                    onblur : 'submit',
-                    id : 'test',
-                    name : 'newvalue',
-                });
-        });
-    </script>
+    <div id="filename">UntitledMap</div>
     <input id="address" class="Text" type="text" placeholder="Search Location">
     <input type="button" class="button2" value="> MAPS" onclick=""><br>
     <br><input type="button" class="button2" value="> DETAIL" onclick=""><br>

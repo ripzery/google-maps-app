@@ -5,6 +5,7 @@ var directionsService = new google.maps.DirectionsService();
 var points = new Array();
 var waypointMarkers = [];
 var checkroute = false;
+var filename="UntitledMap";
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -15,9 +16,21 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     directionsDisplay.setMap(map);
-   
     markers = [];
-  
+    $(document).ready(function() {
+        $('#filename').editable('../php/test2.php',{
+            cssclass : 'Text2',
+            indicator : 'Saving...',
+            tooltip   : 'Click to edit.',
+            type : 'text',
+            onblur : 'submit',
+            id : 'test',
+            name : 'newvalue',
+            callback : function(value,settings){
+                filename = value;
+            }
+        });
+    });
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input);
 
@@ -108,12 +121,12 @@ function placeMarker(position,map){
 //      เก็บพิกัดก่อนที่จะdrag marker เสร็จ เพื่อเอาพิกัดไปหาตำแหน่งที่เก็บใน array points ให้เจอก่อน
 //      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
     google.maps.event.addListener(marker,'mousedown',function(event) {
-        index = points.indexOf(event.latLng.lat()+", "+event.latLng.lng());
+        index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
     });
 //      หลังจาก drag marker เสร็จจะอัพเดตพิกัดของ waypoint ใน listbox 
 //      พร้อมอัพเดตค่าที่เก็บไว้ใน array points ด้วย
     google.maps.event.addListener(marker,'dragend',function(event) {
-        points[index] = event.latLng.lat()+", "+event.latLng.lng();
+        points[index] = event.latLng.lat()+","+event.latLng.lng();
         var list = document.getElementsByTagName("li");
         list[index+1].innerHTML = "Waypoint "+(index+1)+": "+points[index];
     });
@@ -175,8 +188,12 @@ function addWaypointToList(){
     ul.appendChild(li);
 }
 
+function setFileName(name){
+    filename = name;
+}
+
 function Save(){
-    var filename = prompt("Enter filename : ");
+    alert(filename.replace(/\s/g, ""));
     $.ajax({
         type: "POST",
         url : "../php/save.php",
