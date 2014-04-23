@@ -22,7 +22,7 @@ and open the template in the editor.
     }
     #map-canvas{
         position : absolute;
-        margin : 9% 0 0 15%;
+        margin : 6.5% 0 0 15%;
         width: 52%;
         height: 75%;
     }
@@ -57,7 +57,7 @@ and open the template in the editor.
 /*	background-color: #fbfbfb;*/
 	padding: 0 0 0 13px;
         margin :0 0 18px 0;
-	width:95%;
+	width:40%;
 /*	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-ms-box-sizing: border-box;
