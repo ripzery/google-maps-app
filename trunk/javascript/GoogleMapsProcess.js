@@ -5,7 +5,7 @@ var directionsService = new google.maps.DirectionsService();
 var points = new Array();
 var waypointMarkers = [];
 var checkroute = false;
-var filename="UntitledMap";
+var filename="Untitled Map";
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -68,10 +68,10 @@ function initialize() {
   });
       
   google.maps.event.addListener(map, 'click', function showAlert(event) {
-﻿      placeMarker(event.latLng,map);
-﻿      points.push(event.latLng.lat()+","+event.latLng.lng());
+      placeMarker(event.latLng,map);
+      points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
-﻿  });
+  });
 }
 
 function shRoute(){
@@ -138,8 +138,9 @@ function placeMarker(position,map){
         var list = document.getElementsByTagName("li")[index+1].parentNode;
         var waypoint = document.getElementsByTagName("li");
         
+//        alert(index);
         //เปลี่ยนลำดับ waypoint ใน tag li ที่ index>index+1 จนถึง < length
-        for(var i=index+2,li;li = waypoint[i],i<waypoint.length;i++){
+        for(var i=index+2,li;li = waypoint[i+3],i<waypoint.length;i++){
             li.innerHTML = li.innerHTML.replace("Waypoint "+(i).toString(),"Waypoint "+(i-1).toString());
             image = "../marker-icon-number/number_"+(i-1)+".png";
             waypointMarkers[i-1].set("id",i-2);
@@ -164,7 +165,7 @@ function clearDirection() {
   count = 0;
   document.getElementById('address').value = '';
   var list = document.getElementsByTagName('li');
-  for(var i=list.length-1,li;li=list[i],i>0;i--){
+  for(var i=list.length-1,li;li=list[i],i>3;i--){
       li.parentNode.removeChild(li);
   }
   initialize();
@@ -207,7 +208,7 @@ function Save(){
     });
 }
 function Load(){
-    var return_dat;
+    var return_data;
     var name,command;
     var lat,lng;
     clearDirection();

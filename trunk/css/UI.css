@@ -9,7 +9,8 @@ and open the template in the editor.
 */
 @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
     html{    
-    background:url("http://image.ohozaa.com/i/335/VBtQU.gif") repeat;
+/*    background:url("http://image.ohozaa.com/i/335/VBtQU.gif") repeat;*/
+        background: #CD853F;
 /*    background-attachment:scrollbar;*/
     height:100%;
     }
@@ -22,9 +23,9 @@ and open the template in the editor.
     }
     #map-canvas{
         position : absolute;
-        margin : 6.5% 0 0 15%;
-        width: 52%;
-        height: 75%;
+        margin : 9% 0 0 15%;
+        width: 53.5%;
+        height: 60%;
     }
     .Text{
         display : block;
@@ -57,7 +58,7 @@ and open the template in the editor.
 /*	background-color: #fbfbfb;*/
 	padding: 0 0 0 13px;
         margin :0 0 18px 0;
-	width:40%;
+	width:95%;
 /*	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-ms-box-sizing: border-box;
@@ -76,14 +77,14 @@ and open the template in the editor.
     
     .button2{
         display :inline-block;
-        padding : 0.3% 0.3% 0.3% 0.7%;
-        width: 14%;
+        padding : 1% 0.5% 1% 0.5%;
+        width: 15%;
         height: 5%;
         border-radius:5px;
         font-size: 14px;
         color: white;
         text-align: left;
-        background: #D2B48C;
+        background: #f39c12;
         border: 0;
         border-bottom: 0 solid #333333;
         cursor: pointer;
@@ -137,7 +138,7 @@ and open the template in the editor.
     */
 
 .button2:hover {
-	background-color:#cf9e5f;
+	background-color:#e67e22;
         font-weight:bold;
 }
 /*.button2:active {
