@@ -1,20 +1,20 @@
 <?php
     $query = "SELECT * 
-FROM  `google-maps` 
-WHERE  `latlng1` IS NOT NULL 
-AND  `latlng2` IS NOT NULL ";
+    FROM  `google-maps`
+    ORDER BY `date` ASC";
     $sql = mysqli_connect("localhost", "root", "rabarip", "maps");
     $result = mysqli_query($sql, $query);
     $name = "";
     while($row = mysqli_fetch_array($result))
     {
         $name = $row['name'];
-        $i = 3;
+        $i = 4;
         echo $row['name'] . ":";
-        echo $row['command']. ":";
+        echo $row['route_type']. ":";
+        echo $row['date']. ":";
         while($row[$i]!=NULL&&$row[$i]!=""){
             if($row[$i+1]==NULL){
-                echo $row[$i];
+                echo $row[$i]."|";
             }else{
                 echo $row[$i].":";
             }

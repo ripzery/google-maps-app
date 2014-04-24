@@ -7,10 +7,15 @@
     <link rel="stylesheet" type="text/css" href="../css/UI.css" />
     <link rel="stylesheet" type="text/css" href="../css/Tab.css" />
     <link rel="stylesheet" type="text/css" href="../css/ItemList.css" />
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery.ui.theme.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui-1.10.4.custom.min.css" />
+    <script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+    <script src="../apis/jquery-1.11.0.min.js"></script>
+    <script src="../apis/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="../apis/jquery.jeditable.mini.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
     <script src="../javascript/GoogleMapsProcess.js"></script>
+    <script src="../javascript/DialogProcess.js"></script>
     <script>
             $(document).ready(function() {
                 $('.tabs .tab-links a').on('click', function(e)  {
@@ -28,7 +33,6 @@
     </script>
 </head>
  <body>
-    <!--<input id="address" class="Text" type="text" placeholder="Enter Start Location">-->
     <div class="tabs">
     <ul class="tab-links">
         <li class="active"><a href="#tab1">MAPS</a></li>
@@ -41,33 +45,11 @@
         <div id="map-canvas" style="border: 5px solid burlywood;"></div>
         <div id="filename" class="Text2">UntitledMap</div>
         <input id="address" class="Text" type="text" placeholder="Search Location">
-    <!--    <input type="button" class="button2" value="> MAPS" onclick=""><br>
-        <br><input type="button" class="button2" value="> DETAIL" onclick=""><br>-->
         <input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
         <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
         <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br>
-    <!--    <br>
-        <select name=load class="combobox">
-            <option value=1 >xxxx</option>
-            <option value=2 >xxxx</option>
-            <option value=3 >xxxx</option>
-            <option value=4 >xxxx</option>
-            <option value=5 >xxxx</option>
-        </select>-->
-
-    <!--    <div class="combobox">Option</div>
-        <script>
-            $('.combobox').editable('../php/test.php', { 
-            cssclass : 'combobox',
-            data   : " {'E':'Letter E','F':'Letter F','G':'Letter G', 'selected':'F'}",
-            type   : 'select',
-            name   : 'option',
-            submit : 'OK'
-           });
-        </script>-->
-        <br><input type="button" class="button2" value="> LOAD" onclick="Load()"><br>
+        <br><input type="button" class="button2" id="opener" onclick="Load()" value="> LOAD"><br>
         <br><input type="button" class="button2" value="> RESET" onclick="clearDirection()"><br>
-    <!--    <br><input type="button" class="button2" value="> XXXXXXX" onclick="">-->
         <br>
         <div class="menu_div">
             <ul id="list">
@@ -91,6 +73,18 @@
                 <!--<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum risus ornare mollis. In hac habitasse platea dictumst. Ut euismod tempus hendrerit. Morbi ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>-->
             </div>
         </div>
-</div>
+
+        <div id="dialog" title="Load maps from database">
+            Date sort by : 
+            <select id="combobox">
+            <option value="Python">Ascending</option>
+            <option value="Ruby">Descending</option>
+            </select>
+            <ol id="selectable"></ol>
+            <div id="search">
+                <input id="t" type="text" placeholder="Search File">
+            </div>
+        </div>
+    </div>
   </body>
 </html>

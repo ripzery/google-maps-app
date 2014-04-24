@@ -6,6 +6,7 @@ var points = new Array();
 var waypointMarkers = [];
 var checkroute = false;
 var filename="Untitled Map";
+var availableTags;
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -127,27 +128,23 @@ function placeMarker(position,map){
 //      พร้อมอัพเดตค่าที่เก็บไว้ใน array points ด้วย
     google.maps.event.addListener(marker,'dragend',function(event) {
         points[index] = event.latLng.lat()+","+event.latLng.lng();
-        var list = document.getElementsByTagName("li");
-        list[index+1].innerHTML = "Waypoint "+(index+1)+": "+points[index];
+        var list = $("#list").find("li");
+        list.eq(index+1).text("Waypoint "+(index+1)+": "+points[index]);
     });
 //      ใส่ listener เมื่อคลิกขวาที่ตัว marker จะทำการลบ waypoint ของ markerนั้น ในlistbox
 //      พร้อมลบค่าพิกัดที่เก็บใน point และเอาตัว marker ออกจากarray waypointMarkers
 //      พร้อมลบ marker นั้นออกจากแมพ สุดท้ายลดค่าตัวแปร count ที่เอาไว้นับ waypoint ลงหนึ่ง
     google.maps.event.addListener(marker,"rightclick",function(event){
         var index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
-        var list = document.getElementsByTagName("li")[index+1].parentNode;
-        var waypoint = document.getElementsByTagName("li");
-        
-//        alert(index);
+        var waypoint = $("#list").find("li");
         //เปลี่ยนลำดับ waypoint ใน tag li ที่ index>index+1 จนถึง < length
-        for(var i=index+2,li;li = waypoint[i+3],i<waypoint.length;i++){
-            li.innerHTML = li.innerHTML.replace("Waypoint "+(i).toString(),"Waypoint "+(i-1).toString());
+        for(var i=index+2,li;li = waypoint.eq(i+3),i<waypoint.length;i++){
+            li.text().replace("Waypoint "+(i).toString(),"Waypoint "+(i-1).toString());
             image = "../marker-icon-number/number_"+(i-1)+".png";
             waypointMarkers[i-1].set("id",i-2);
             waypointMarkers[i-1].setIcon(image);
         }
-        
-        list.removeChild(waypoint[index+1]);
+        waypoint.eq(index+1).remove();
         points.splice(index,1);
         count--;
         waypointMarkers[index].setMap(null);
@@ -159,18 +156,17 @@ function placeMarker(position,map){
 //, ลบmarker ออกจากแผนที่ให้หมด
 //และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
 function clearDirection() {
-  directionsDisplay.setMap(null);
-  points = [];
-  waypointMarkers  = [];
-  count = 0;
-  document.getElementById('address').value = '';
-  var list = document.getElementsByTagName('li');
-  for(var i=list.length-1,li;li=list[i],i>3;i--){
-      li.parentNode.removeChild(li);
+    directionsDisplay.setMap(null);
+    points = [];
+    waypointMarkers  = [];
+    count = 0;
+    $('#address').val('');
+    var list = $("#list").find("li");
+    for(var i=list.length-1,li;li=list.eq(i),i>0;i--){
+        li.remove();
+    initialize();
   }
-  initialize();
 }
-
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
 function addWaypointToList(){
     var ul = document.getElementById("list");
@@ -179,8 +175,9 @@ function addWaypointToList(){
     li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)+1)+": "+position));
     li.addEventListener('click',function(){
        var pos = this.innerHTML.split(" ");
-       var nodes = document.getElementsByTagName("li");
-       for(var i=0,node;i<nodes.length,node=nodes[i];i++){
+       var nodes = $("#list").find("li");
+       var nodes_length = nodes.length;
+       for(var i=0,node;i<nodes_length,node=nodes[i];i++){
            if(node===this){
                map.setCenter(waypointMarkers[i-1].getPosition());
            }
@@ -194,11 +191,16 @@ function setFileName(name){
 }
 
 function Save(){
+    var route_type;
+    if(checkroute){
+        route_type = 1;
+    }else
+        route_type = 0;
     alert(filename.replace(/\s/g, ""));
     $.ajax({
         type: "POST",
         url : "../php/save.php",
-        data: ({name : filename,command : "command",latlng: points}),
+        data: ({name : filename,route_type : route_type,latlng: points}),
         success: function(){
             alert("Send file to save.php successful.");
         },
@@ -208,25 +210,42 @@ function Save(){
     });
 }
 function Load(){
-    var return_data;
-    var name,command;
+    var field,row;
+    var name=[],route_type=[],date=[];
     var lat,lng;
     clearDirection();
     $.ajax({
         url: "../php/load.php",
         success: function(d){
             //alert("Load file successful");
-            return_data = d.split(":");
-            name = return_data[0];
-            command = return_data[1];
-            for(var i=2;i<return_data.length;i++){
-                //alert(return_data[i]);
-                points.push(return_data[i]);
-                lat = points[i-2].split(",")[0];
-                lng = points[i-2].split(",")[1];
-                placeMarker(new google.maps.LatLng(lat,lng),map);
-                addWaypointToList();
+            row = d.split("|");
+            for(var i=0;i<row.length-1;i++){
+                //alert(row.length);
+                field = row[i].split(":");
+                name.push(field[0]);
+                route_type.push(field[1]);
+                date.push(field[2]);
+                for(var k=3;k<field.length;k++){
+                    points.push(field[k]);
+                    lat = points[k-3].split(",")[0];
+                    lng = points[k-3].split(",")[1];
+                    //placeMarker(new google.maps.LatLng(lat,lng),map);
+                    //addWaypointToList();
+                }
             }
+            for(var i=0;i<name.length;i++){
+                var li = document.createElement("li");
+//                li.appendChild(document.createTextNode(name[i]+"            "+date[i]));
+                li.innerHTML = name[i]+date[i];
+                li.setAttribute("class","ui-widget-content");
+                $("ol").append(li);
+            }
+            availableTags = $("#selectable>li").map(function(){
+                return $(this).text();
+            }).get();
+            $( "#t" ).autocomplete({
+                source: availableTags
+            });
             //calcRoute();
         }
     });
