@@ -5,7 +5,7 @@ var directionsService = new google.maps.DirectionsService();
 var points = new Array();
 var waypointMarkers = [];
 var checkroute = false;
-var filename="Untitled Map";
+var filename="UntitledMap";
 var availableTags;
 
 function initialize() {
@@ -19,6 +19,15 @@ function initialize() {
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
     markers = [];
+    $.ajax({
+       type : "POST",
+       url : "../php/check.php",
+       data : {name : "UntitledMap"},
+       success : function(name){
+           $('#filename').text(name);
+           filename = name;
+       }
+    });
     $(document).ready(function() {
         $('#filename').editable('../php/test2.php',{
             cssclass : 'Text2',
@@ -221,6 +230,7 @@ function Load(){
         console.log(points[i]);
         points_temp.push(points[i]);
     }
+    clearDirection();
     points = [];
     for(var i=0;i<points_temp.length;i++){
         points.push(points_temp[i]);
@@ -235,7 +245,7 @@ function Load(){
 function initLoad(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
-    clearDirection();
+    points = [];
     $.ajax({
         url: "../php/load.php",
         success: function(d){
@@ -256,7 +266,8 @@ function initLoad(){
                 var li = document.createElement("li");
                 var route;
                 $(li).append(date[i]+" ");
-                if(route_type[i]==0){
+                if(route_type[i]==0)
+                {
                     route = "A-Z"
                     $(li).append(route+" ");
                 }else{
