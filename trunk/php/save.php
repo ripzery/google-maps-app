@@ -24,11 +24,25 @@
     {
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
-    if(mysqli_query($sql, "INSERT INTO `google-maps` (`name`,`route_type`,`date`,$pos_field) VALUES ('$filename','$route_type','$date',$pos_value);"))
-            echo "record successful";
-    else{
-        echo mysqli_error($sql);
-    }
+//    
+    $result = mysqli_query($sql,"SELECT `name` FROM `google-maps` WHERE `name`='". $filename ."'");
+        if(mysqli_num_rows($result)>0){
+            if(mysqli_query($sql, "REPLACE INTO `google-maps` (`name`,`route_type`,`date`,$pos_field) VALUES ('$filename','$route_type','$date',$pos_value);"))
+                echo "edit record successful";
+            else{
+                echo mysqli_error($sql);
+            }
+        }
+        else{
+            if(mysqli_query($sql, "INSERT INTO `google-maps` (`name`,`route_type`,`date`,$pos_field) VALUES ('$filename','$route_type','$date',$pos_value);"))
+                echo "insert record successful";
+            else{
+                echo mysqli_error($sql);
+            }
+        }
+        
+    
+    
     
     mysqli_close($sql);
 ?>
