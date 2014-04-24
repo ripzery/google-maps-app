@@ -86,7 +86,7 @@ function azRoute(){
 }
 
 function calcRoute() {
-  var start = document.getElementById('address').value;
+//  var start = document.getElementById('address').value;
   var wps = [];
   for(var i=1;i<points.length-1;i++){
       wps.push({location:points[i],stopover:true});
@@ -196,7 +196,7 @@ function Save(){
         route_type = 1;
     }else
         route_type = 0;
-    alert(filename.replace(/\s/g, ""));
+    filename = filename.replace(/\s/g, "");
     $.ajax({
         type: "POST",
         url : "../php/save.php",
@@ -210,34 +210,58 @@ function Save(){
     });
 }
 function Load(){
-    var field,row;
-    var name=[],route_type=[],date=[];
     var lat,lng;
+    var points_temp = [];
+    initialize();
+    for(var i=0;i<points.length;i++){
+        console.log(points[i]);
+        points_temp.push(points[i]);
+    }
+    points = [];
+    for(var i=0;i<points_temp.length;i++){
+        points.push(points_temp[i]);
+        lat = points[i].split(",")[0];
+        lng = points[i].split(",")[1];
+        placeMarker(new google.maps.LatLng(lat,lng),map);
+        addWaypointToList();
+    }
+    //calcRoute();
+}
+
+function initLoad(){
+    var field,row;
+    var name=[],route_type=[],date=[],points_array;
     clearDirection();
     $.ajax({
         url: "../php/load.php",
         success: function(d){
-            //alert("Load file successful");
             row = d.split("|");
+            points_array = new Array(row.length-1);
             for(var i=0;i<row.length-1;i++){
-                //alert(row.length);
                 field = row[i].split(":");
                 name.push(field[0]);
                 route_type.push(field[1]);
                 date.push(field[2]);
+                points_array[i] = new Array(field.length-3);
                 for(var k=3;k<field.length;k++){
-                    points.push(field[k]);
-                    lat = points[k-3].split(",")[0];
-                    lng = points[k-3].split(",")[1];
-                    //placeMarker(new google.maps.LatLng(lat,lng),map);
-                    //addWaypointToList();
+                    points_array[i][k-3] = field[k];
                 }
             }
+            $('#selectable').find("li").remove();
             for(var i=0;i<name.length;i++){
                 var li = document.createElement("li");
-//                li.appendChild(document.createTextNode(name[i]+"            "+date[i]));
-                li.innerHTML = name[i]+date[i];
+                var route;
+                $(li).append(date[i]+" ");
+                if(route_type[i]==0){
+                    route = "A-Z"
+                    $(li).append(route+" ");
+                }else{
+                    route = "Fast "
+                    $(li).append(route);
+                }
+                $(li).append(name[i]);
                 li.setAttribute("class","ui-widget-content");
+                li.setAttribute("style","text-align: left;word-spacing: 20px;");
                 $("ol").append(li);
             }
             availableTags = $("#selectable>li").map(function(){
@@ -246,10 +270,18 @@ function Load(){
             $( "#t" ).autocomplete({
                 source: availableTags
             });
-            //calcRoute();
+            $("#selectable").selectable({
+                selected: function(event, ui) { 
+                    var index = $(ui.selected).index();
+                    var number_of_points = points_array[index].length;
+                    points = [];
+                    for(var i=0;i<number_of_points;i++){
+                        points[i] = points_array[index][i];
+                    }
+                }                   
+            });
         }
     });
-    
 }
 
 // This default onbeforeunload event

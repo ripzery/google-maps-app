@@ -14,7 +14,8 @@ $(function() {
       height : 600,
       buttons: {
         "Load": function() {
-          $( this ).dialog( "close" );
+          Load();
+          $(this).dialog("close");
         },
         Cancel: function() {
           $( this ).dialog( "close" );
@@ -30,7 +31,7 @@ $(function() {
     $( "#selectable" ).selectable();
     $("#selectable").selectable({
         selected: function(event, ui) { 
-            $(ui.selected).addClass("ui-selected").siblings().removeClass("ui-selected");           
+            $(ui.selected).addClass("ui-selected").siblings().removeClass("ui-selected");
         }                   
     });
   });
