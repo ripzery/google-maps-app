@@ -1,0 +1,55 @@
+.ui-dialog 
+{
+    background:#34495e !important
+}​
+
+.ui-dialog-titlebar{
+    background: #95a5a6 !important
+}
+
+.ui-dialog-buttonpane{
+    background: #95a5a6 !important
+}
+
+#feedback { font-size: 1.0em; }
+#selectable .ui-selecting { background: #FECA40; }
+#selectable .ui-selected { background: #F39814; color: white; }
+#selectable:hover {cursor :pointer;}
+#selectable { 
+    position: absolute;
+    list-style-type: none; 
+    left:15%; 
+    padding: 0; 
+    width: 70%; 
+    max-height: 60%; 
+    overflow: auto;
+}
+#selectable li { margin: 3px; padding: 0.4em; font-size: 1.0em; height: 23px; }
+#t{
+        position: absolute;
+        width : 80%;
+        color:#3c3c3c;
+	font-family: Helvetica, Arial, sans-serif;
+        left : 10%;
+        bottom :8%;
+        font-weight:500;
+	font-size: 18px;
+	border-radius: 0;
+	line-height: 22px;
+	background-color: #ffffff;
+	padding: 13px 13px 13px 13px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+        border: 3px solid rgba(0,0,0,0);
+    }
+    #t:focus{
+        background: #fff;
+	box-shadow: 0;
+	border: 3px solid #3498db;
+	color: #3498db;
+	outline: none;
+        padding: 13px 13px 13px 54px; 
+    }
+    
