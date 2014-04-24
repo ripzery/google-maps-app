@@ -201,3 +201,10 @@ and open the template in the editor.
 .tbl_headerFix tr{
 		background-color: #FFF8BF;
 }
+
+#directions-panel {
+        height: 500px;
+        float: left;
+        width: 1320px;
+        overflow: auto;
+}
