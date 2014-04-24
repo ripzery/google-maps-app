@@ -19,6 +19,10 @@
     <script src="../javascript/TabsProcess.js"></script>
 </head>
  <body>
+     <table border="0" cellpadding="0" cellspacing="0">
+         <tbody>
+             <tr>
+                 <td width="1360">
     <div class="tabs">
     <ul class="tab-links">
         <li class="active"><a href="#tab1">MAPS</a></li>
@@ -28,25 +32,63 @@
  
     <div class="tab-content">
         <div id="tab1" class="tab active">
-        <div id="map-canvas" style="border: 5px solid burlywood;"></div>
-        <div id="filename" class="Text2">UntitledMap</div>
+<!--        <div id="map-canvas" style="border: 5px solid burlywood;"></div>-->
+        <div id="filename" class="Text2">Untitled Map</div>
         <input id="address" class="Text" type="text" placeholder="Search Location">
-        <input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
-        <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
-        <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br>
-        <br><input type="button" class="button2" id="opener" onclick="initLoad()" value="> LOAD"><br>
-        <br><input type="button" class="button2" value="> RESET" onclick="clearDirection()"><br>
-        <br>
-        <div class="menu_div">
-            <ul id="list">
-                <li id="active">Position (Latitude, Longitude)</li>
-            </ul>
-        </div>
+        <table border="0" cellpadding="0" cellspacing="10">
+            <tbody>
+                <tr>
+                    <td valign="top" width="220px">
+                        <input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
+                        <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
+                        <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br>
+                        <br><input type="button" class="button2" id="opener" onclick="initLoad()" value="> LOAD"><br>
+                        <br><input type="button" class="button2" value="> RESET" onclick="clearDirection()"><br>
+                    </td>
+                <td><div id="map-canvas" style="border: 5px solid burlywood;"></div></td>
+                               </tr>
+             </tbody>
+           </table>             
+                    <div class="menu_div">
+                        <ul id="list">
+                            <li id="active">Position (Latitude, Longitude)</li>
+                        </ul>
+                    </div>
         </div>
 
             <div id="tab2" class="tab">
-                <p>Tab #2 content goes here!</p>
-                <!--<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum risus ornare mollis. In hac habitasse platea dictumst. Ut euismod tempus hendrerit. Morbi ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>-->
+                <table border="1" cellpadding="10" cellspacing="10">
+                    <tbody>
+                        <tr>
+                            <td width ="1300">
+                                <div class="Text2">Search By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <select name=load class="combobox">
+                                    <option value=1 >xxxx</option>	
+                                    <option value=2 >xxxx</option>
+                                    <option value=3 >xxxx</option>
+                                    <option value=4 >xxxx</option>
+                                    <option value=5 >xxxx</option>
+                                    </select> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input class="Text3" type="text" placeholder="Search Map">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="button" class="button3" value="SEARCH" onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="button" class="button3" value="RESET" onclick="">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
             </div>
 
             <div id="tab3" class="tab">
@@ -72,5 +114,6 @@
             </div>
         </div>
     </div>
+</td></tr></tbody></table>
   </body>
 </html>

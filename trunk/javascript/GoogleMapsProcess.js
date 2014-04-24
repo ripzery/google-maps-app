@@ -205,7 +205,7 @@ function Save(){
             alert("Send file to save.php successful.");
         },
         error: function(xhr, status, error) {
-        alert(xhr.responseText);
+            alert(xhr.responseText);
        }
     });
 }
