@@ -67,17 +67,38 @@ and open the template in the editor.
     }
     .Text3{
         /*display : block;*/
-        left: 15%;
+/*        left: 15%;*/
         color:#3c3c3c;
 	font-family: Helvetica, Arial, sans-serif;
-        font-weight:500;
+/*        font-weight:500;*/
 	font-size: 18px;
 	border-radius: 0;
 	line-height: 22px;
 	padding: 0 0 0 13px;
         margin :0 0 18px 0;
         height: 40px;
-        width: 300px;
+/*        width: 300px;*/
+        
+/*	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+        border: 3px solid rgba(0,0,0,0);*/
+    }
+    .Text4{
+        /*display : block;*/
+/*        left: 15%;*/
+        color:#3c3c3c;
+	font-family: Helvetica, Arial, sans-serif;
+/*        font-weight:500;*/
+	font-size: 18px;
+	border-radius: 0;
+	line-height: 22px;
+	padding: 0 0 0 0px;
+        margin :0 0 18px 0;
+        height: 40px;
+        text-align: center;
+/*        width: 300px;*/
         
 /*	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -86,7 +107,7 @@ and open the template in the editor.
         border: 3px solid rgba(0,0,0,0);*/
     }
     
-    table{
+    #tablebody{
         margin-left: -11px;
         margin-top: -20px;
     }
@@ -154,4 +175,29 @@ and open the template in the editor.
 .button3:hover {
 	background-color:#e67e22;
         font-weight:bold;
+}
+
+.searchtable{
+    background-color: #f39c12;
+    border-color: #f39c12;
+}
+
+.searchtable tr{
+    background-color: #FFF8BF;
+}
+
+.containBody{
+		height:300px;
+		display:block;
+		overflow: auto;
+		border-bottom:0px solid #f39c12;
+                margin-left: -11px;
+}
+.tbl_headerFix{
+		border-bottom:0px;
+                background-color: #f39c12;
+                border-color: #f39c12;
+}
+.tbl_headerFix tr{
+		background-color: #FFF8BF;
 }
