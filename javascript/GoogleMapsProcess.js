@@ -17,6 +17,7 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     directionsDisplay.setMap(map);
+    directionsDisplay.setPanel(document.getElementById('directions-panel'));
     markers = [];
     $(document).ready(function() {
         $('#filename').editable('../php/test2.php',{
@@ -138,17 +139,19 @@ function placeMarker(position,map){
         var index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
         var waypoint = $("#list").find("li");
         //เปลี่ยนลำดับ waypoint ใน tag li ที่ index>index+1 จนถึง < length
-        for(var i=index+2,li;li = waypoint.eq(i+3),i<waypoint.length;i++){
-            li.text().replace("Waypoint "+(i).toString(),"Waypoint "+(i-1).toString());
+        for(var i=index+2,li;li = waypoint.eq(i),i<waypoint.length;i++){
+//            alert(i);
+            $(li).text($(li).text().replace("Waypoint "+(i).toString(),"Waypoint "+(i-1).toString()));
+//            alert(li.text());
             image = "../marker-icon-number/number_"+(i-1)+".png";
-            waypointMarkers[i-1].set("id",i-2);
+            waypointMarkers[i-1].set("id",i-1);
             waypointMarkers[i-1].setIcon(image);
         }
         waypoint.eq(index+1).remove();
         points.splice(index,1);
-        count--;
         waypointMarkers[index].setMap(null);
         waypointMarkers.splice(index,1);
+        count--;
     });
 }
 
@@ -157,6 +160,7 @@ function placeMarker(position,map){
 //และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
 function clearDirection() {
     directionsDisplay.setMap(null);
+    directionsDisplay.setPanel(null);
     points = [];
     waypointMarkers  = [];
     count = 0;
@@ -164,8 +168,8 @@ function clearDirection() {
     var list = $("#list").find("li");
     for(var i=list.length-1,li;li=list.eq(i),i>0;i--){
         li.remove();
-    initialize();
-  }
+  } 
+  initialize();
 }
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
 function addWaypointToList(){
