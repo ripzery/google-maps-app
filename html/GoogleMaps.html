@@ -16,21 +16,7 @@
     <script src="../apis/jquery.jeditable.mini.js"></script>
     <script src="../javascript/GoogleMapsProcess.js"></script>
     <script src="../javascript/DialogProcess.js"></script>
-    <script>
-            $(document).ready(function() {
-                $('.tabs .tab-links a').on('click', function(e)  {
-                    var currentAttrValue = $(this).attr('href');
-
-                    // Show/Hide Tabs
-                    $('.tabs ' + currentAttrValue).show().siblings().hide();
-
-                    // Change/remove current tab to active
-                    $(this).parent('li').addClass('active').siblings().removeClass('active');
-
-                    e.preventDefault();
-                });
-            });
-    </script>
+    <script src="../javascript/TabsProcess.js"></script>
 </head>
  <body>
     <div class="tabs">
@@ -48,7 +34,7 @@
         <input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
         <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
         <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br>
-        <br><input type="button" class="button2" id="opener" onclick="Load()" value="> LOAD"><br>
+        <br><input type="button" class="button2" id="opener" onclick="initLoad()" value="> LOAD"><br>
         <br><input type="button" class="button2" value="> RESET" onclick="clearDirection()"><br>
         <br>
         <div class="menu_div">
@@ -75,7 +61,7 @@
         </div>
 
         <div id="dialog" title="Load maps from database">
-            Date sort by : 
+            Date sort by :
             <select id="combobox">
             <option value="Python">Ascending</option>
             <option value="Ruby">Descending</option>
