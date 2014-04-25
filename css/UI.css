@@ -10,7 +10,7 @@ and open the template in the editor.
 @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
     html{    
 /*    background:url("http://image.ohozaa.com/i/335/VBtQU.gif") repeat;*/
-        background: #d35400;
+        background: #333333;
 /*    background-attachment:scrollbar;*/
     height:100%;
     }
@@ -130,7 +130,7 @@ and open the template in the editor.
         font-size: 14px;
         color: white;
         text-align: left;
-        background: #f39c12;
+        background: #1abc9c;
         border: 0;
         border-bottom: 0 solid #333333;
         cursor: pointer;
@@ -139,19 +139,19 @@ and open the template in the editor.
     }
 
 .button2:hover {
-	background-color:#e67e22;
+	background-color:#16a085;
         font-weight:bold;
 }
 /*.button2:active {
 	position:relative;
-	top:1px;
+	background-color:#16a085;
 }*/
 
 .combobox{
     width: 300px;
     height: 40px;
-    background-color: #ffc040;
-    border-color: #e67e22;
+    background-color: #1abc9c;
+    border-color: #16a085;
     border-radius: 5px;
 }
 
@@ -164,7 +164,7 @@ and open the template in the editor.
         font-size: 14px;
         color: white;
         text-align: center;
-        background: #f39c12;
+        background: #1abc9c;
         border: 0;
         border-bottom: 0 solid #333333;
         cursor: pointer;
@@ -173,21 +173,21 @@ and open the template in the editor.
     }
 
 .button3:hover {
-	background-color:#e67e22;
+	background-color:#16a085;
         font-weight:bold;
 }
 
 .searchtable{
-    background-color: #f39c12;
-    border-color: #f39c12;
+    background-color: #9cd6d6;
+    border-color: #9cd6d6;
 }
 
 .searchtable tr{
-    background-color: #FFF8BF;
+    background-color: #f5feff;
 }
 
 .containBody{
-		height:300px;
+		height:380px;
 		display:block;
 		overflow: auto;
 		border-bottom:0px solid #f39c12;
@@ -195,15 +195,15 @@ and open the template in the editor.
 }
 .tbl_headerFix{
 		border-bottom:0px;
-                background-color: #f39c12;
-                border-color: #f39c12;
+                background-color: #9cd6d6;
+                border-color: #9cd6d6;
 }
 .tbl_headerFix tr{
-		background-color: #FFF8BF;
+		background-color: #f5feff;
 }
 
 #directions-panel {
-        height: 500px;
+        height: 550px;
         float: left;
         width: 1320px;
         overflow: auto;
@@ -218,7 +218,7 @@ and open the template in the editor.
         font-size: 14px;
         color: white;
         text-align: center;
-        background: #f39c12;
+        background: #1abc9c;
         border: 0;
         border-bottom: 0 solid #333333;
         cursor: pointer;
@@ -227,6 +227,6 @@ and open the template in the editor.
     }
 
 .buttonx:hover {
-	background-color:#e67e22;
+	background-color:#16a085;
         font-weight:bold;
 }
