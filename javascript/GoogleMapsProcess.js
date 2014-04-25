@@ -7,6 +7,7 @@ var waypointMarkers = [];
 var checkroute = false;
 var filename="UntitledMap";
 var availableTags;
+var checktab2 = 0;
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -83,6 +84,14 @@ function initialize() {
       points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
   });
+  
+  $('.tabs .tab-links a').on('click', function(e)  {
+        var currentAttrValue = $(this).attr('href');
+//        alert(currentAttrValue==="#tab2");
+        if(currentAttrValue==="#tab2"){
+            addtable();
+        }       
+    });
 }
 
 function shRoute(){
@@ -221,6 +230,7 @@ function Save(){
             alert(xhr.responseText);
        }
     });
+    addtable();
 }
 function Load(){
     var lat,lng;
@@ -326,6 +336,74 @@ function initLoad(){
             });
         }
     });
+}
+
+function addtable(){
+    var field,row;
+    var name=[],route_type=[],date=[],points_array;
+    $('#tablesearch').find('tr').remove();
+    $.ajax({
+        url: "../php/load.php",
+        success: function(d){
+            row = d.split("|");
+            points_array = new Array(row.length-1);
+            for(var i=0;i<row.length-1;i++){
+                field = row[i].split(":");
+                name.push(field[0]);
+                route_type.push(field[1]);
+                date.push(field[2]);
+                points_array[i] = new Array(field.length-3);
+                for(var k=3;k<field.length;k++){
+                    points_array[i][k-3] = field[k];
+                }
+            }
+//            alert(name[0]);
+            for(var i=0;i<name.length;i++){
+                var tr = document.createElement("tr");
+                var td_delete = document.createElement("td");
+                var td_name = document.createElement("td");
+                var td_route = document.createElement("td");
+                var td_date = document.createElement("td");
+                var td_start = document.createElement("td");
+                var td_end = document.createElement("td");
+                var button = document.createElement("button");
+                button.innerHTML = "X";
+                button.setAttribute("class","buttonx");
+                $(td_delete).append(button);
+                td_delete.setAttribute("style","width:3%; text-align: center;");
+                td_delete.setAttribute("class","Text4");
+                $(td_name).append(name[i]);
+                td_name.setAttribute("style","width:17%; text-align: center;");
+                td_name.setAttribute("class","Text4");
+                if(route_type[i]==0)
+                {
+                    route = "A-Z"
+                    $(td_route).append(route);
+                }else{
+                    route = "Fast"
+                    $(td_route).append(route);
+                }
+                td_route.setAttribute("style","width:10%; text-align: center;");
+                td_route.setAttribute("class","Text4");
+                $(td_date).append(date[i]);
+                td_date.setAttribute("style","width:10%; text-align: center;");
+                td_date.setAttribute("class","Text4");
+                $(td_start).append(points_array[i][0]);
+                td_start.setAttribute("style","width:30%; text-align: center;");
+                td_start.setAttribute("class","Text4");
+                $(td_end).append(points_array[i][points_array[i].length-1]);
+                td_end.setAttribute("style","width:30%; text-align: center;");
+                td_end.setAttribute("class","Text4");
+                $(tr).append(td_delete);
+                $(tr).append(td_name);
+                $(tr).append(td_route);
+                $(tr).append(td_date);
+                $(tr).append(td_start);
+                $(tr).append(td_end);
+                $("#tablesearch").append(tr);
+            }
+        }
+    });   
 }
 
 // This default onbeforeunload event
