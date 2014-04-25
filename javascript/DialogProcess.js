@@ -3,15 +3,14 @@ $(function() {
       autoOpen: false,
       modal : true,
       show: {
-        effect: "blind",
-        duration: 1000
+        //effect: "slide",
+        //duration: 700,
       },
       hide: {
-        effect: "explode",
-        duration: 1000
+        //effect: "slide",
       },
       width : 700,
-      height : 600,
+      height : 500,
       buttons: {
         "Load": function() {
           Load();

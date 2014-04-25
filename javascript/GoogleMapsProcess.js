@@ -227,7 +227,7 @@ function Load(){
     var points_temp = [];
     initialize();
     for(var i=0;i<points.length;i++){
-        console.log(points[i]);
+        //console.log(points[i]);
         points_temp.push(points[i]);
     }
     clearDirection();
@@ -279,11 +279,19 @@ function initLoad(){
                 li.setAttribute("style","text-align: left;word-spacing: 20px;");
                 $("ol").append(li);
             }
-            availableTags = $("#selectable>li").map(function(){
-                return $(this).text();
-            }).get();
-            $( "#t" ).autocomplete({
-                source: availableTags
+            var allMapsData = $("ol").find("li");
+//            availableTags = $("#selectable>li").map(function(){
+//                return $(this).text();
+//            }).get();
+//            $( "#t" ).autocomplete({
+//                source: availableTags
+//            });
+            
+            $("#t").keyup(function(){
+                var len = allMapsData.length;
+                var string = $('#t').val();
+                $('ol>li:not(:contains(' + $('#t').val() + '))').hide();
+                $("ol>li:contains("+ string +")").show();
             });
             $("#selectable").selectable({
                 selected: function(event, ui) { 
@@ -294,6 +302,27 @@ function initLoad(){
                         points[i] = points_array[index][i];
                     }
                 }                   
+            });
+            $("#t").keydown(function(e){
+                if(e.keyCode===13&&$("#selectable>li").hasClass('ui-selected')){
+                    var index = $(".ui-selected").index();
+                    var number_of_points = points_array[index].length;
+                    points = [];
+                    for(var i=0;i<number_of_points;i++){
+                        points[i] = points_array[index][i];
+                    }
+                    $( "#dialog" ).dialog("close");
+                    $('ol>li').removeClass('ui-selected');
+                    Load();
+                    return false;
+                }
+                else if(e.keyCode===13){
+                    if($("ol>li:visible(:contains("+ $("#t").val() +"))").length>1){
+                        $("ol>li:visible(:contains("+ $("#t").val() +"))").first().addClass('ui-selected');
+                    }else if($("ol>li:contains("+ $("#t").val() +")").length===1){
+                        $("ol>li:visible(:contains("+ $("#t").val() +"))").first().addClass('ui-selected');
+                    }
+                }
             });
         }
     });
