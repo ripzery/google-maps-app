@@ -21,4 +21,5 @@
             $i++;
         }
     }
+    mysqli_close($sql);
 ?>
