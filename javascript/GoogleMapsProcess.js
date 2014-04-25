@@ -24,10 +24,6 @@ function initialize() {
        type : "POST",
        url : "../php/check.php",
        data : {name : "UntitledMap"},
-       success : function(name){
-           $('#filename').text(name);
-           filename = name;
-       }
     });
     $(document).ready(function() {
         $('#filename').editable('../php/test2.php',{
@@ -38,9 +34,6 @@ function initialize() {
             onblur : 'submit',
             id : 'test',
             name : 'newvalue',
-            callback : function(value,settings){
-                filename = value;
-            }
         });
     });
     var input = document.getElementById('address');
@@ -84,14 +77,6 @@ function initialize() {
       points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
   });
-  
-  $('.tabs .tab-links a').on('click', function(e)  {
-        var currentAttrValue = $(this).attr('href');
-//        alert(currentAttrValue==="#tab2");
-        if(currentAttrValue==="#tab2"){
-            addtable();
-        }       
-    });
 }
 
 function shRoute(){
@@ -208,17 +193,17 @@ function addWaypointToList(){
     ul.appendChild(li);
 }
 
-function setFileName(name){
-    filename = name;
-}
-
 function Save(){
     var route_type;
     if(checkroute){
         route_type = 1;
     }else
         route_type = 0;
-    filename = filename.replace(/\s/g, "");
+    if(points.length<2){
+        alert("Please insert start-end point.");
+        return false;
+    }
+    filename = $('#filename').text();
     $.ajax({
         type: "POST",
         url : "../php/save.php",
@@ -230,11 +215,12 @@ function Save(){
             alert(xhr.responseText);
        }
     });
-    addtable();
+    addTable();
 }
 function Load(){
     var lat,lng;
     var points_temp = [];
+    directionsDisplay.setPanel(null);
     initialize();
     for(var i=0;i<points.length;i++){
         //console.log(points[i]);
@@ -249,7 +235,12 @@ function Load(){
         placeMarker(new google.maps.LatLng(lat,lng),map);
         addWaypointToList();
     }
-    //calcRoute();
+    if(checkroute===0){
+        checkroute = false;
+    }else{
+        checkroute = true;
+    }
+    calcRoute();
 }
 
 function initLoad(){
@@ -311,6 +302,8 @@ function initLoad(){
                     for(var i=0;i<number_of_points;i++){
                         points[i] = points_array[index][i];
                     }
+                    $('#filename').text(name[index]);
+                    checkroute = route_type[index];
                 }                   
             });
             $("#t").keydown(function(e){
@@ -323,6 +316,8 @@ function initLoad(){
                     }
                     $( "#dialog" ).dialog("close");
                     $('ol>li').removeClass('ui-selected');
+                    $('#filename').text(name[index]);
+                    checkroute = route_type[index];
                     Load();
                     return false;
                 }
@@ -338,13 +333,16 @@ function initLoad(){
     });
 }
 
-function addtable(){
+function addTable(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
     $('#tablesearch').find('tr').remove();
+    alert("All tr is "+$('#tablesearch').find('tr').size());
+    alert("addTable is working...");
     $.ajax({
         url: "../php/load.php",
         success: function(d){
+            alert("Now success!");
             row = d.split("|");
             points_array = new Array(row.length-1);
             for(var i=0;i<row.length-1;i++){
@@ -375,26 +373,31 @@ function addtable(){
                 $(td_name).append(name[i]);
 //                $.ajax({
 //                    type : "POST",
-////                    url : "../php/editname.php",
+////                  url : "../php/editname.php",
 //                    data : {name : name[i]}
 ////                    success : function(name){
-////                        
 //////                        filename = name;
 ////                    }
 //                 });
                  $(document).ready(function() {
-                     $(td_name).editable('../php/test2.php',{
+                     $(td_name).editable('../php/editname.php',{
                          cssclass : 'Text4',
                          indicator : 'Saving...',
                          tooltip   : name[i],
                          type : 'text',
-//                         width : ($(td_name).width()+"px"),
+                         width : "120px",
+                         heigth : "50px",
                          onblur : 'submit',
                          id : 'editname',
-                         name : 'newvalue'
+                         name : 'newvalue',
+                         "submitdata": function (value, settings) {
+                            return {
+                                 "origValue": this.revert
+                            };
+ }
                      });
                  });
-                td_name.setAttribute("style","max-width:221px; text-align: center;");
+                td_name.setAttribute("style","min-width:215px;max-width:215px; text-align: center;");
                 td_name.setAttribute("class","Text4");
                 if(route_type[i]==0)
                 {
@@ -404,16 +407,16 @@ function addtable(){
                     route = "Fast"
                     $(td_route).append(route);
                 }
-                td_route.setAttribute("style","width:130px; text-align: center;");
+                td_route.setAttribute("style","width:140px; text-align: center;");
                 td_route.setAttribute("class","Text4");
                 $(td_date).append(date[i]);
-                td_date.setAttribute("style","width:130px; text-align: center;");
+                td_date.setAttribute("style","width:140px; text-align: center;");
                 td_date.setAttribute("class","Text4");
                 $(td_start).append(points_array[i][0]);
                 td_start.setAttribute("style","width:390px; text-align: center;");
                 td_start.setAttribute("class","Text4");
                 $(td_end).append(points_array[i][points_array[i].length-1]);
-                td_end.setAttribute("style","width:390px; text-align: center;");
+                td_end.setAttribute("style","width:385px; text-align: center;");
                 td_end.setAttribute("class","Text4");
                 $(tr).append(td_delete);
                 $(tr).append(td_name);
