@@ -217,6 +217,7 @@ function Save(){
     });
     addTable();
 }
+
 function Load(){
     var lat,lng;
     var points_temp = [];
@@ -336,6 +337,7 @@ function initLoad(){
 function addTable(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
+    console.log("Start addTable");
     $('#tablesearch').find('tr').remove();
     $.ajax({
         url: "../php/load.php",
@@ -344,6 +346,7 @@ function addTable(){
             points_array = new Array(row.length-1);
             for(var i=0;i<row.length-1;i++){
                 field = row[i].split(":");
+                console.log(field[0]);
                 name.push(field[0]);
                 route_type.push(field[1]);
                 date.push(field[2]);
@@ -366,6 +369,7 @@ function addTable(){
                 $(td_delete).append(button);
                 td_delete.setAttribute("style","width:39px; text-align: center;");
                 td_delete.setAttribute("class","Text4");
+                td_delete.setAttribute("onclick","deleteMap('"+name[i]+"')");
                 $(td_name).append(name[i]);
                  $(document).ready(function() {
                      $(td_name).editable('../php/editname.php',{
@@ -406,20 +410,8 @@ function addTable(){
                 $(td_end).append(points_array[i][points_array[i].length-1]);
                 td_end.setAttribute("style","width:385px; text-align: center;");
                 td_end.setAttribute("class","Text4");
-                $(button).click(function(){
-                    $.ajax({
-                        type: "POST",
-                        url : "../php/delete.php",
-                        data: ({name : name[i],route_type : route_type,latlng: points}),
-                        success: function(){
-                            alert("Send file to save.php successful.");
-                        },
-                        error: function(xhr, status, error) {
-                            alert(xhr.responseText);
-                       }
-                    });
-                });
                 button.setAttribute("class","buttonx");
+                $(tr).addClass("line");
                 $(tr).append(td_delete);
                 $(tr).append(td_name);
                 $(tr).append(td_route);
@@ -427,14 +419,38 @@ function addTable(){
                 $(tr).append(td_start);
                 $(tr).append(td_end);
                 $("#tablesearch").append(tr);
+//                $(button).click(function(){
+//                    $.ajax({
+//                        type: "POST",
+////                        url : "../php/delete.php",
+//                        data: ({name : name[i]}),
+//                        success: function(){
+//                            alert("Send file to delete.php successful.");
+//                            $('#tablesearch>tr>td:contains('+name[i]+')').hide();
+//                        },
+//                        error: function(xhr, status, error) {
+//                            alert(xhr.responseText);
+//                       }
+//                    });
+//                });
             }
         }
     });   
 }
 
-function deleteMap(){
-    alert("Hello World");
-//    addTable();
+function deleteMap(name){
+    $.ajax({
+        type: "POST",
+      url : "../php/delete.php",
+        data: ({name : name}),
+        success: function(){
+            //alert("Send file to delete.php successful.");
+        },
+        error: function(xhr, status, error) {
+            alert(xhr.responseText);
+        }
+    });
+    addTable();
 }
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
