@@ -25,27 +25,33 @@
             margin-left: -30px;
             display: block;
 /*            border-radius:10px 10px 0px 0px;*/
-            background:#f39c12;
+            background:#00b0d2;
             font-size:16px;
 /*            font-weight:600;*/
             color:#fff;
 /*            transition:all linear 0.15s;*/
             text-decoration:none;
-            border-color: #d35400;
-            border-style: solid;
-            border-width: 1px;
+            border-left-color: #333333;
+            border-left-style: solid;
+            border-left-width: 1px;
             font-family: Helvetica, Arial, sans-serif;
         }
  
         .tab-links a:hover {
-            background:#e67e22;
+            background:#006496;
             color:#fff;
             text-decoration:none;
             font-weight:bold;
         }
  
-    li.active a, li.active a:hover {
-        background:#d35400;
+    li.active a{
+        background:#e6f7f9;
+        color:#333;
+        font-weight:bold;
+    }
+    
+    li.active a:hover {
+        background:#006496;
         color:#fff;
         font-weight:bold;
     }
@@ -55,11 +61,12 @@
         padding:15px;
 /*        border-radius:3px;*/
 /*        box-shadow:-1px 1px 1px rgba(0,0,0,0.15);*/
-        background:#ffffa0;
+        background:#e6f7f9;
         margin-top: -16px;
         margin-left: 10px;
         width: 1320px;
         height: 555px;
+        overflow: hidden;
     }
  
         .tab {

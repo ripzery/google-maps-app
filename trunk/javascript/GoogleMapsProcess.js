@@ -337,12 +337,9 @@ function addTable(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
     $('#tablesearch').find('tr').remove();
-    alert("All tr is "+$('#tablesearch').find('tr').size());
-    alert("addTable is working...");
     $.ajax({
         url: "../php/load.php",
         success: function(d){
-            alert("Now success!");
             row = d.split("|");
             points_array = new Array(row.length-1);
             for(var i=0;i<row.length-1;i++){
