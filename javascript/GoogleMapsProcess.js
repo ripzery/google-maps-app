@@ -370,10 +370,31 @@ function addtable(){
                 button.innerHTML = "X";
                 button.setAttribute("class","buttonx");
                 $(td_delete).append(button);
-                td_delete.setAttribute("style","width:3%; text-align: center;");
+                td_delete.setAttribute("style","width:39px; text-align: center;");
                 td_delete.setAttribute("class","Text4");
                 $(td_name).append(name[i]);
-                td_name.setAttribute("style","width:17%; text-align: center;");
+//                $.ajax({
+//                    type : "POST",
+////                    url : "../php/editname.php",
+//                    data : {name : name[i]}
+////                    success : function(name){
+////                        
+//////                        filename = name;
+////                    }
+//                 });
+                 $(document).ready(function() {
+                     $(td_name).editable('../php/test2.php',{
+                         cssclass : 'Text4',
+                         indicator : 'Saving...',
+                         tooltip   : name[i],
+                         type : 'text',
+//                         width : ($(td_name).width()+"px"),
+                         onblur : 'submit',
+                         id : 'editname',
+                         name : 'newvalue'
+                     });
+                 });
+                td_name.setAttribute("style","max-width:221px; text-align: center;");
                 td_name.setAttribute("class","Text4");
                 if(route_type[i]==0)
                 {
@@ -383,16 +404,16 @@ function addtable(){
                     route = "Fast"
                     $(td_route).append(route);
                 }
-                td_route.setAttribute("style","width:10%; text-align: center;");
+                td_route.setAttribute("style","width:130px; text-align: center;");
                 td_route.setAttribute("class","Text4");
                 $(td_date).append(date[i]);
-                td_date.setAttribute("style","width:10%; text-align: center;");
+                td_date.setAttribute("style","width:130px; text-align: center;");
                 td_date.setAttribute("class","Text4");
                 $(td_start).append(points_array[i][0]);
-                td_start.setAttribute("style","width:30%; text-align: center;");
+                td_start.setAttribute("style","width:390px; text-align: center;");
                 td_start.setAttribute("class","Text4");
                 $(td_end).append(points_array[i][points_array[i].length-1]);
-                td_end.setAttribute("style","width:30%; text-align: center;");
+                td_end.setAttribute("style","width:390px; text-align: center;");
                 td_end.setAttribute("class","Text4");
                 $(tr).append(td_delete);
                 $(tr).append(td_name);
