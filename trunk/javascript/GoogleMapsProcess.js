@@ -363,19 +363,10 @@ function addTable(){
                 var td_end = document.createElement("td");
                 var button = document.createElement("button");
                 button.innerHTML = "X";
-                button.setAttribute("class","buttonx");
                 $(td_delete).append(button);
                 td_delete.setAttribute("style","width:39px; text-align: center;");
                 td_delete.setAttribute("class","Text4");
                 $(td_name).append(name[i]);
-//                $.ajax({
-//                    type : "POST",
-////                  url : "../php/editname.php",
-//                    data : {name : name[i]}
-////                    success : function(name){
-//////                        filename = name;
-////                    }
-//                 });
                  $(document).ready(function() {
                      $(td_name).editable('../php/editname.php',{
                          cssclass : 'Text4',
@@ -415,6 +406,20 @@ function addTable(){
                 $(td_end).append(points_array[i][points_array[i].length-1]);
                 td_end.setAttribute("style","width:385px; text-align: center;");
                 td_end.setAttribute("class","Text4");
+                $(button).click(function(){
+                    $.ajax({
+                        type: "POST",
+                        url : "../php/delete.php",
+                        data: ({name : name[i],route_type : route_type,latlng: points}),
+                        success: function(){
+                            alert("Send file to save.php successful.");
+                        },
+                        error: function(xhr, status, error) {
+                            alert(xhr.responseText);
+                       }
+                    });
+                });
+                button.setAttribute("class","buttonx");
                 $(tr).append(td_delete);
                 $(tr).append(td_name);
                 $(tr).append(td_route);
@@ -427,6 +432,10 @@ function addTable(){
     });   
 }
 
+function deleteMap(){
+    alert("Hello World");
+//    addTable();
+}
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
 //    return "Do you want to leave?"

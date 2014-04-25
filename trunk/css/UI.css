@@ -77,7 +77,7 @@ and open the template in the editor.
 	padding: 0 0 0 13px;
         margin :0 0 18px 0;
         height: 40px;
-/*        width: 300px;*/
+        width: 1080px;
         
 /*	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -147,15 +147,15 @@ and open the template in the editor.
 	background-color:#16a085;
 }*/
 
-.combobox{
+/*.combobox{
     width: 300px;
     height: 40px;
     background-color: #1abc9c;
     border-color: #16a085;
     border-radius: 5px;
-}
+}*/
 
-.button3{
+/*.button3{
         display :inline-block;
         padding : 10px 10px 10px 10px;
         width: 100px;
@@ -175,7 +175,7 @@ and open the template in the editor.
 .button3:hover {
 	background-color:#16a085;
         font-weight:bold;
-}
+}*/
 
 .searchtable{
     background-color: #9cd6d6;
