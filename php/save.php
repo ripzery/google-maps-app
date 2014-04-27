@@ -1,7 +1,7 @@
 <?php
-    $filename = $_POST['name'];
-    $route_type = $_POST['route_type'];
-    $latlng  = $_POST['latlng'];   
+    $filename = filter_input(INPUT_POST,'name');
+    $route_type = filter_input(INPUT_POST,'route_type');
+    $latlng = $_POST['latlng'];
     $pos_value = "";
     $i=0;
     $pos_field="";
