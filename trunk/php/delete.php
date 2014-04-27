@@ -1,6 +1,7 @@
 <?php
-    $filename = $_POST['name'];
-    $sql = mysqli_connect("localhost","root","first1209","maps");
-    mysqli_query($sql, "DELETE  FROM `google-maps`  WHERE `name` = '".$filename."'");
+    $filename = filter_input(INPUT_POST, 'name');
+    $sql = mysqli_connect("localhost","root","rabarip","maps");
+    $result = mysqli_query($sql, "DELETE  FROM `google-maps`  WHERE `name` = '".$filename."'");
+    echo $filename;
     mysqli_close($sql);
-?>
+    

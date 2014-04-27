@@ -10,10 +10,10 @@ $(document).ready(function() {
 
         e.preventDefault();
     });
-     $('.tabs .tab-links a').on('click', function(e)  {
-        var currentAttrValue = $(this).attr('href');
-        if(currentAttrValue==="#tab2"){
-            addTable();
-        }       
-    });
+//     $('.tabs .tab-links a').on('click', function(e)  {
+//        var currentAttrValue = $(this).attr('href');
+//        if(currentAttrValue==="#tab2"){
+//            addTable();
+//        }       
+//    });
 });

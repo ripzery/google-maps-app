@@ -20,6 +20,7 @@ function initialize() {
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
     markers = [];
+    addTable();
     $.ajax({
        type : "POST",
        url : "../php/check.php",
@@ -243,7 +244,6 @@ function Load(){
         points_temp.push(points[i]);
     }
     clearMap();
-    
     points = [];
     for(var i=0;i<points_temp.length;i++){
         points.push(points_temp[i]);
@@ -258,7 +258,6 @@ function Load(){
 function initLoad(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
-    points = [];
     $.ajax({
         url: "../php/load.php",
         success: function(d){
@@ -293,13 +292,6 @@ function initLoad(){
                 $("ol").append(li);
             }
             var allMapsData = $("ol").find("li");
-//            availableTags = $("#selectable>li").map(function(){
-//                return $(this).text();
-//            }).get();
-//            $( "#t" ).autocomplete({
-//                source: availableTags
-//            });
-            
             $("#t").keyup(function(){
                 var len = allMapsData.length;
                 var string = $('#t').val();
@@ -343,11 +335,7 @@ function initLoad(){
                     return false;
                 }
                 else if(e.keyCode===13){
-                    if($("ol>li:visible(:contains("+ $("#t").val() +"))").length>1){
-                        $("ol>li:visible(:contains("+ $("#t").val() +"))").first().addClass('ui-selected');
-                    }else if($("ol>li:contains("+ $("#t").val() +")").length===1){
-                        $("ol>li:visible(:contains("+ $("#t").val() +"))").first().addClass('ui-selected');
-                    }
+                    $("ol>li:visible(:contains("+ $("#t").val() +"))").first().addClass('ui-selected');
                 }
             });
         }
@@ -357,7 +345,6 @@ function initLoad(){
 function addTable(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
-    console.log("Start addTable");
     $('#tablesearch').find('tr').remove();
     $.ajax({
         url: "../php/load.php",
@@ -366,7 +353,6 @@ function addTable(){
             points_array = new Array(row.length-1);
             for(var i=0;i<row.length-1;i++){
                 field = row[i].split(":");
-                console.log(field[0]);
                 name.push(field[0]);
                 route_type.push(field[1]);
                 date.push(field[2]);
@@ -375,7 +361,6 @@ function addTable(){
                     points_array[i][k-3] = field[k];
                 }
             }
-//            alert(name[0]);
             for(var i=0;i<name.length;i++){
                 var tr = document.createElement("tr");
                 var td_delete = document.createElement("td");
@@ -389,7 +374,7 @@ function addTable(){
                 $(td_delete).append(button);
                 td_delete.setAttribute("style","width:39px; text-align: center;");
                 td_delete.setAttribute("class","Text4");
-                td_delete.setAttribute("onclick","deleteMap('"+name[i]+"')");
+                //td_delete.setAttribute("onclick","deleteMap('"+name[i]+"')");
                 $(td_name).append(name[i]);
                  $(document).ready(function() {
                      $(td_name).editable('../php/editname.php',{
@@ -411,14 +396,13 @@ function addTable(){
                  });
                 td_name.setAttribute("style","min-width:215px;max-width:215px; text-align: center;");
                 td_name.setAttribute("class","Text4");
-                if(route_type[i]==0)
+                if(route_type[i]===0)
                 {
                     route = "A-Z"
-                    $(td_route).append(route);
                 }else{
                     route = "Fast"
-                    $(td_route).append(route);
                 }
+                 $(td_route).append(route);
                 td_route.setAttribute("style","width:140px; text-align: center;");
                 td_route.setAttribute("class","Text4");
                 $(td_date).append(date[i]);
@@ -439,38 +423,23 @@ function addTable(){
                 $(tr).append(td_start);
                 $(tr).append(td_end);
                 $("#tablesearch").append(tr);
-//                $(button).click(function(){
-//                    $.ajax({
-//                        type: "POST",
-////                        url : "../php/delete.php",
-//                        data: ({name : name[i]}),
-//                        success: function(){
-//                            alert("Send file to delete.php successful.");
-//                            $('#tablesearch>tr>td:contains('+name[i]+')').hide();
-//                        },
-//                        error: function(xhr, status, error) {
-//                            alert(xhr.responseText);
-//                       }
-//                    });
-//                });
+                var table_row = $(tr);
+                var b = $(table_row).find("td:first button");
+                $(b).click(function(){
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url : "../php/delete.php",
+                        data : {name : $(this).parent().parent().find("td").eq(1).text()},
+                        success : function(return_name){
+                            alert("delete "+return_name+" from database successfully.");
+                        }
+                    });
+                      $(this).parent().parent().remove();
+                });
             }
         }
-    });   
-}
-
-function deleteMap(name){
-    $.ajax({
-        type: "POST",
-      url : "../php/delete.php",
-        data: ({name : name}),
-        success: function(){
-            //alert("Send file to delete.php successful.");
-        },
-        error: function(xhr, status, error) {
-            alert(xhr.responseText);
-        }
     });
-    addTable();
 }
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
