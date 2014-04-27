@@ -445,6 +445,13 @@ function addTable(){
             }
         }
     });
+    $('#searchdb').keyup(function(){
+        var row = $('#tablesearch tr');
+        for (var i=0;i<$(row).length;i++){
+            $(row[i]).find(':not(:contains('+$("#searchdb").val()+')):gt(1)').parent().hide();
+            $(row[i]).find(':contains('+$("#searchdb").val()+')').parent().show();
+        }
+    });
 }
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
