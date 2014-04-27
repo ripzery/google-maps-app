@@ -64,15 +64,7 @@
                         <tr>
                             <td width ="1300">
                                 <div class="Text2">Search By&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--                                    <select name=load class="combobox">
-                                    <option value=1 >All</option>	
-                                    <option value=2 >Name</option>
-                                    <option value=3 >Route Type</option>
-                                    <option value=4 >Date</option>
-                                    </select> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
-                                    <input class="Text3" type="text" placeholder="Search Map">
-<!--                                    <input type="button" class="button3" value="SEARCH" onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="button" class="button3" value="RESET" onclick="">-->
+                                    <input class="Text3" id = "searchdb" type="text" placeholder="Search Map">
                                 </div>
                             </td>
                         </tr>
@@ -118,8 +110,8 @@
         <div id="dialog" title="Load maps from database">
             Date sort by :
             <select id="combobox">
-            <option value="Python">Ascending</option>
-            <option value="Ruby">Descending</option>
+            <option value="Asc">Ascending</option>
+            <option value="Dsc">Descending</option>
             </select>
             <ol id="selectable"></ol>
             <div id="search">
