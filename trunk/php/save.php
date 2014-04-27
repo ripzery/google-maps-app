@@ -27,8 +27,10 @@
 //    
     $result = mysqli_query($sql,"SELECT `name` FROM `google-maps` WHERE `name`='". $filename ."'");
         if(mysqli_num_rows($result)>0){
-            if(mysqli_query($sql, "REPLACE INTO `google-maps` (`name`,`route_type`,`date`,$pos_field) VALUES ('$filename','$route_type','$date',$pos_value);"))
+            if(mysqli_query($sql, "REPLACE INTO `google-maps` (`name`,`route_type`,`date`,$pos_field) VALUES ('$filename','$route_type','$date',$pos_value);")){
                 echo "edit record successful";
+                echo $route_type;
+            }
             else{
                 echo mysqli_error($sql);
             }

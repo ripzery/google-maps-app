@@ -259,6 +259,7 @@ function initLoad(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
     $.ajax({
+        type :"POST",
         url: "../php/load.php",
         success: function(d){
             row = d.split("|");
@@ -307,9 +308,13 @@ function initLoad(){
                         points[i] = points_array[index][i];
                     }
                     $('#filename').text(name[index]);
-                    if(route_type[index]){
+                    alert(route_type[index]);
+                    if(route_type[index]===1)
+                    {
+                        alert("true");
                         checkroute = true;
-                    }else{
+                    }else if(route_type[index]===0){
+                        alert("false");
                         checkroute = false;
                     }
                    
@@ -326,7 +331,8 @@ function initLoad(){
                     $( "#dialog" ).dialog("close");
                     $('ol>li').removeClass('ui-selected');
                     $('#filename').text(name[index]);
-                    if(route_type[index]){
+                    if(route_type[index])
+                    {
                         checkroute = true;
                     }else{
                         checkroute = false;
@@ -347,6 +353,7 @@ function addTable(){
     var name=[],route_type=[],date=[],points_array;
     $('#tablesearch').find('tr').remove();
     $.ajax({
+        type : "POST",
         url: "../php/load.php",
         success: function(d){
             row = d.split("|");
