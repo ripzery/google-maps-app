@@ -301,6 +301,7 @@ function initLoad(){
             });
             $("#selectable").selectable({
                 selected: function(event, ui) { 
+                    $(ui.selected).addClass("ui-selected").siblings().removeClass("ui-selected");
                     var index = $(ui.selected).index();
                     var number_of_points = points_array[index].length;
                     points = [];
@@ -308,13 +309,10 @@ function initLoad(){
                         points[i] = points_array[index][i];
                     }
                     $('#filename').text(name[index]);
-                    alert(route_type[index]);
                     if(route_type[index]===1)
                     {
-                        alert("true");
                         checkroute = true;
                     }else if(route_type[index]===0){
-                        alert("false");
                         checkroute = false;
                     }
                    
