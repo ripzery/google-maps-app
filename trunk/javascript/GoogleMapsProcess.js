@@ -24,6 +24,9 @@ function initialize() {
        type : "POST",
        url : "../php/check.php",
        data : {name : "UntitledMap"},
+       success : function(return_value){
+           $('#filename').text(return_value);
+       }
     });
     $(document).ready(function() {
         $('#filename').editable('../php/test2.php',{
@@ -72,7 +75,7 @@ function initialize() {
     map.fitBounds(bounds);
   });
       
-  google.maps.event.addListener(map, 'click', function showAlert(event) {
+    google.maps.event.addListener(map, 'click', function showAlert(event) {
       placeMarker(event.latLng,map);
       points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
@@ -90,7 +93,13 @@ function azRoute(){
 }
 
 function calcRoute() {
-//  var start = document.getElementById('address').value;
+  if(points.length===1){
+      alert("Please enter end points.");
+      return false;
+  }else if(points.length===0){
+      alert("Please enter start and end points.");
+      return false;
+  }
   var wps = [];
   for(var i=1;i<points.length-1;i++){
       wps.push({location:points[i],stopover:true});
@@ -161,18 +170,23 @@ function placeMarker(position,map){
 //ทำงานเมื่อกดปุ่ม RESET จะทำการเริ่ม reset ค่า count,array points, ใหม่
 //, ลบmarker ออกจากแผนที่ให้หมด
 //และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
-function clearDirection() {
+function clearMap() {
     directionsDisplay.setMap(null);
     directionsDisplay.setPanel(null);
     points = [];
-    waypointMarkers  = [];
     count = 0;
     $('#address').val('');
+    for(var i=0;i<waypointMarkers.length;i++){
+        waypointMarkers[i].setMap(null);
+    }
+    waypointMarkers  = [];
     var list = $("#list").find("li");
     for(var i=list.length-1,li;li=list.eq(i),i>0;i--){
         li.remove();
-  } 
-  initialize();
+  }
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
+    directionsDisplay.setPanel(document.getElementById('directions-panel'));
 }
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
 function addWaypointToList(){
@@ -197,8 +211,10 @@ function Save(){
     var route_type;
     if(checkroute){
         route_type = 1;
-    }else
+    }else{
         route_type = 0;
+    }
+        
     if(points.length<2){
         alert("Please insert start-end point.");
         return false;
@@ -222,12 +238,12 @@ function Load(){
     var lat,lng;
     var points_temp = [];
     directionsDisplay.setPanel(null);
-    initialize();
     for(var i=0;i<points.length;i++){
         //console.log(points[i]);
         points_temp.push(points[i]);
     }
-    clearDirection();
+    clearMap();
+    
     points = [];
     for(var i=0;i<points_temp.length;i++){
         points.push(points_temp[i]);
@@ -235,11 +251,6 @@ function Load(){
         lng = points[i].split(",")[1];
         placeMarker(new google.maps.LatLng(lat,lng),map);
         addWaypointToList();
-    }
-    if(checkroute===0){
-        checkroute = false;
-    }else{
-        checkroute = true;
     }
     calcRoute();
 }
@@ -304,7 +315,12 @@ function initLoad(){
                         points[i] = points_array[index][i];
                     }
                     $('#filename').text(name[index]);
-                    checkroute = route_type[index];
+                    if(route_type[index]){
+                        checkroute = true;
+                    }else{
+                        checkroute = false;
+                    }
+                   
                 }                   
             });
             $("#t").keydown(function(e){
@@ -318,7 +334,11 @@ function initLoad(){
                     $( "#dialog" ).dialog("close");
                     $('ol>li').removeClass('ui-selected');
                     $('#filename').text(name[index]);
-                    checkroute = route_type[index];
+                    if(route_type[index]){
+                        checkroute = true;
+                    }else{
+                        checkroute = false;
+                    }
                     Load();
                     return false;
                 }
