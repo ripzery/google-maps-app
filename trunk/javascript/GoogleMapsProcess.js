@@ -329,10 +329,10 @@ function initLoad(){
                     $( "#dialog" ).dialog("close");
                     $('ol>li').removeClass('ui-selected');
                     $('#filename').text(name[index]);
-                    if(route_type[index])
+                    if(route_type[index]===1)
                     {
                         checkroute = true;
-                    }else{
+                    }else if(route_type[index]===0){
                         checkroute = false;
                     }
                     Load();
@@ -359,6 +359,7 @@ function addTable(){
             for(var i=0;i<row.length-1;i++){
                 field = row[i].split(":");
                 name.push(field[0]);
+//                alert(field[1]);
                 route_type.push(field[1]);
                 date.push(field[2]);
                 points_array[i] = new Array(field.length-3);
@@ -401,12 +402,15 @@ function addTable(){
                  });
                 td_name.setAttribute("style","min-width:215px;max-width:215px; text-align: center;");
                 td_name.setAttribute("class","Text4");
-                if(route_type[i]===0)
+                if(route_type[i]==="0")
                 {
                     route = "A-Z"
                 }else{
                     route = "Fast"
                 }
+//                else{
+//                    alert(route_type[i]);
+//                }
                  $(td_route).append(route);
                 td_route.setAttribute("style","width:140px; text-align: center;");
                 td_route.setAttribute("class","Text4");
