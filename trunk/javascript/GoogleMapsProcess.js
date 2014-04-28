@@ -1,13 +1,14 @@
 var map;
 var count="0";
 var directionsDisplay;
-var directionsService = new google.maps.DirectionsService();
+var directionsService;
 var points = new Array();
 var waypointMarkers = [];
 var checkroute = false;
 var filename="UntitledMap";
 var availableTags;
 var checktab2 = 0;
+var callroute = false;
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -80,6 +81,9 @@ function initialize() {
       placeMarker(event.latLng,map);
       points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
+      if(callroute && points.length >2){
+            calcRoute();
+        }
   });
 }
 
@@ -94,6 +98,8 @@ function azRoute(){
 }
 
 function calcRoute() {
+    callroute = true;
+  directionsService = new google.maps.DirectionsService();
   if(points.length===1){
       alert("Please enter end points.");
       return false;
@@ -146,6 +152,9 @@ function placeMarker(position,map){
 //      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
     google.maps.event.addListener(marker,'mousedown',function(event) {
         index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
+        if(callroute){
+            calcRoute();
+        }
     });
 //      หลังจาก drag marker เสร็จจะอัพเดตพิกัดของ waypoint ใน listbox 
 //      พร้อมอัพเดตค่าที่เก็บไว้ใน array points ด้วย
@@ -160,6 +169,9 @@ function placeMarker(position,map){
         }
         else{
             list.eq(points.length-1).text("Waypoint "+(index-1)+": "+points[index]);
+        }
+        if(callroute){
+            calcRoute();
         }
     });
 //      ใส่ listener เมื่อคลิกขวาที่ตัว marker จะทำการลบ waypoint ของ markerนั้น ในlistbox
@@ -191,6 +203,9 @@ function placeMarker(position,map){
             waypointMarkers.splice(index,1);
             count--;
         }
+        if(callroute){
+            calcRoute();
+        }
     });
 }
 
@@ -201,6 +216,7 @@ function clearMap() {
     directionsDisplay.setMap(null);
     directionsDisplay.setPanel(null);
     points = [];
+    callroute = false;
     count = 0;
     $('#address').val('');
     for(var i=0;i<waypointMarkers.length;i++){
