@@ -102,12 +102,12 @@ function calcRoute() {
       return false;
   }
   var wps = [];
-  for(var i=1;i<points.length-1;i++){
+  for(var i=2;i<points.length;i++){
       wps.push({location:points[i],stopover:true});
   }
   var request = {
       origin:points[0],
-      destination:points[points.length-1],
+      destination:points[1],
       waypoints:wps,
       optimizeWaypoints:checkroute,
       travelMode: google.maps.TravelMode.DRIVING
@@ -121,7 +121,16 @@ function calcRoute() {
 }
 
 function placeMarker(position,map){
-    var image = "../marker-icon-number/number_"+(parseInt(count)+1)+".png";
+    var image;
+    if(count==0){
+        image = "../marker-icon-number/number_0.png";
+    }
+    else if(count==1){
+        image = "../marker-icon-number/number_100.png";
+    }
+    else{
+        image = "../marker-icon-number/number_"+(parseInt(count)-1)+".png";
+    }
     var marker = new google.maps.Marker();
     marker.set("map",map);
     marker.set("position",position);
@@ -143,7 +152,15 @@ function placeMarker(position,map){
     google.maps.event.addListener(marker,'dragend',function(event) {
         points[index] = event.latLng.lat()+","+event.latLng.lng();
         var list = $("#list").find("li");
-        list.eq(index+1).text("Waypoint "+(index+1)+": "+points[index]);
+        if(index===0){
+            list.eq(index+1).text("Start : "+points[index]);
+        }
+        else if(index===1){
+            list.eq(points.length).text("End : "+points[index]);
+        }
+        else{
+            list.eq(points.length-1).text("Waypoint "+(index-1)+": "+points[index]);
+        }
     });
 //      ใส่ listener เมื่อคลิกขวาที่ตัว marker จะทำการลบ waypoint ของ markerนั้น ในlistbox
 //      พร้อมลบค่าพิกัดที่เก็บใน point และเอาตัว marker ออกจากarray waypointMarkers
@@ -151,20 +168,29 @@ function placeMarker(position,map){
     google.maps.event.addListener(marker,"rightclick",function(event){
         var index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
         var waypoint = $("#list").find("li");
+//        alert(waypoint.length);
         //เปลี่ยนลำดับ waypoint ใน tag li ที่ index>index+1 จนถึง < length
-        for(var i=index+2,li;li = waypoint.eq(i),i<waypoint.length;i++){
-//            alert(i);
-            $(li).text($(li).text().replace("Waypoint "+(i).toString(),"Waypoint "+(i-1).toString()));
-//            alert(li.text());
-            image = "../marker-icon-number/number_"+(i-1)+".png";
-            waypointMarkers[i-1].set("id",i-1);
-            waypointMarkers[i-1].setIcon(image);
+        if(index===0 || index===1){
+            clearMap();
         }
-        waypoint.eq(index+1).remove();
-        points.splice(index,1);
-        waypointMarkers[index].setMap(null);
-        waypointMarkers.splice(index,1);
-        count--;
+        else{
+            for(var i=index+1,li;li = waypoint.eq(i),i<waypoint.length-1;i++){
+    //            alert(i);
+                $(li).text($(li).text().replace("Waypoint "+(i-1).toString(),"Waypoint "+(i-2).toString()));
+    //            alert(li.text());
+//                alert(index);
+//                alert(i);
+                image = "../marker-icon-number/number_"+(i-2)+".png";
+                waypointMarkers[i].set("id",i-1);
+                waypointMarkers[i].setIcon(image);
+            }
+//            alert(waypoint.eq(3).text());
+            waypoint.eq(index).remove();
+            points.splice(index,1);
+            waypointMarkers[index].setMap(null);
+            waypointMarkers.splice(index,1);
+            count--;
+        }
     });
 }
 
@@ -194,18 +220,31 @@ function addWaypointToList(){
     var ul = document.getElementById("list");
     var li = document.createElement("li");
     var position = points[points.length-1];
-    li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)+1)+": "+position));
-    li.addEventListener('click',function(){
+        li.addEventListener('click',function(){
        var pos = this.innerHTML.split(" ");
        var nodes = $("#list").find("li");
        var nodes_length = nodes.length;
-       for(var i=0,node;i<nodes_length,node=nodes[i];i++){
+       for(var i=1,node;i<nodes_length,node=nodes[i];i++){
            if(node===this){
                map.setCenter(waypointMarkers[i-1].getPosition());
            }
        }
     });
-    ul.appendChild(li);
+    if($("#list>li").length<2){
+        li.appendChild(document.createTextNode("Start : "+position));
+        ul.appendChild(li);
+    }
+    else if($("#list>li").length===2){
+        li.appendChild(document.createTextNode("End : "+position));
+        ul.appendChild(li);
+    }
+    else{
+        li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)-1)+": "+position));
+        //console.log($("#list>li:nth-child(2)").text());
+        console.log(ul.childNodes[3].innerHTML);
+        ul.insertBefore(li,ul.childNodes[ul.childNodes.length-1]);
+    }
+//    ul.appendChild(li);
 }
 
 function Save(){
@@ -401,7 +440,7 @@ function addTable(){
                      });
                  });
                 td_name.setAttribute("style","min-width:215px;max-width:215px; text-align: center;");
-                td_name.setAttribute("class","Text4");
+                td_name.setAttribute("class","Text5");
                 if(route_type[i]==="0")
                 {
                     route = "A-Z"
@@ -420,7 +459,7 @@ function addTable(){
                 $(td_start).append(points_array[i][0]);
                 td_start.setAttribute("style","width:390px; text-align: center;");
                 td_start.setAttribute("class","Text4");
-                $(td_end).append(points_array[i][points_array[i].length-1]);
+                $(td_end).append(points_array[i][1]);
                 td_end.setAttribute("style","width:385px; text-align: center;");
                 td_end.setAttribute("class","Text4");
                 button.setAttribute("class","buttonx");
