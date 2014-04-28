@@ -2,7 +2,7 @@
     $query = "SELECT * 
     FROM  `google-maps`
     ORDER BY `date` ASC";
-    $sql = mysqli_connect("localhost", "root", "first1209", "maps");
+    $sql = mysqli_connect("localhost", "root", "rabarip", "maps");
     $result = mysqli_query($sql, $query);
     $name = "";
     while($row = mysqli_fetch_array($result))
