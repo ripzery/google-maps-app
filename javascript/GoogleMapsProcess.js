@@ -271,7 +271,6 @@ function Save(){
     else{
         route_type = 0;
     }
-        
     if(points.length<2){
         alert("Please insert start-end point.");
         return false;
