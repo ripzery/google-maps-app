@@ -28,6 +28,7 @@ function initialize() {
        data : {name : "UntitledMap"},
        success : function(return_value){
            $('#filename').text(return_value);
+           filename = return_value;
        }
     });
     $(document).ready(function() {
@@ -39,6 +40,9 @@ function initialize() {
             onblur : 'submit',
             id : 'test',
             name : 'newvalue',
+            success : function(return_name){
+                filename = return_name;
+            }
         });
     });
     var input = document.getElementById('address');
@@ -511,6 +515,10 @@ function addTable(){
             $(row[i]).find(':contains('+$("#searchdb").val()+')').parent().show();
         }
     });
+}
+
+function resetFileName(){
+    $('#filename').text(filename);
 }
 // This default onbeforeunload event
 //window.onbeforeunload = function(){

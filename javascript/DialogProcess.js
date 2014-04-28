@@ -17,6 +17,7 @@ $(function() {
           $(this).dialog("close");
         },
         Cancel: function() {
+          resetFileName();
           $( this ).dialog( "close" );
         }
       }
