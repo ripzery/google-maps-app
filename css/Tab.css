@@ -62,11 +62,13 @@
 /*        border-radius:3px;*/
 /*        box-shadow:-1px 1px 1px rgba(0,0,0,0.15);*/
         background:#e6f7f9;
+/*        background-attachment: scroll;
+        background-repeat: repeat-y;*/
         margin-top: -16px;
         margin-left: 10px;
         width: 1320px;
         height: 555px;
-        overflow: hidden;
+/*        overflow: auto;*/
     }
  
         .tab {
