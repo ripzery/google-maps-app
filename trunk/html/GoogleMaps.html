@@ -34,27 +34,27 @@
  
     <div class="tab-content">
         <div id="tab1" class="tab active">
-        <div id="filename" class="Text2">UntitledMap</div>
-        <input id="address" class="Text" type="text" placeholder="Search Location">
-        <table id="tablebody" border="0" cellpadding="0" cellspacing="10">
-            <tbody>
-                <tr>
-                    <td valign="top" width="220px">
-                        <input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
-                        <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
-                        <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br>
-                        <br><input type="button" class="button2" id="opener" onclick="initLoad()" value="> LOAD"><br>
-                        <br><input type="button" class="button2" value="> RESET" onclick="clearMap()"><br>
-                    </td>
-                <td><div id="map-canvas" style="border: 5px solid #006496;"></div></td>
-                               </tr>
-             </tbody>
-           </table>             
-                    <div class="menu_div">
-                        <ul id="list">
-                            <li id="active">Position (Latitude, Longitude)</li>
-                        </ul>
-                    </div>
+            <div id="filename" class="Text2">UntitledMap</div>
+            <input id="address" class="Text" type="text" placeholder="Search Location">
+            <table id="tablebody" border="0" cellpadding="0" cellspacing="10">
+                <tbody>
+                    <tr>
+                        <td valign="top" width="220px">
+                            <input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
+                            <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
+                            <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br>
+                            <br><input type="button" class="button2" id="opener" onclick="initLoad()" value="> LOAD"><br>
+                            <br><input type="button" class="button2" value="> RESET" onclick="clearMap()"><br>
+                        </td>
+                        <td><div id="map-canvas" style="border: 5px solid #006496;"></div></td>  
+                    </tr>
+                </tbody>
+            </table> 
+            <div class="menu_div">
+                <ul id="list">
+                    <li id="active">Position (Latitude, Longitude)</li>
+                </ul>
+            </div>            
         </div>
 
             <div id="tab2" class="tab">
