@@ -220,15 +220,17 @@ function addWaypointToList(){
     var ul = document.getElementById("list");
     var li = document.createElement("li");
     var position = points[points.length-1];
-        li.addEventListener('click',function(){
-       var pos = this.innerHTML.split(" ");
-       var nodes = $("#list").find("li");
-       var nodes_length = nodes.length;
-       for(var i=1,node;i<nodes_length,node=nodes[i];i++){
-           if(node===this){
-               map.setCenter(waypointMarkers[i-1].getPosition());
-           }
-       }
+    li.addEventListener('click',function(){
+        var pos = this.innerHTML.split(" ");
+        var nodes = $("#list").find("li");
+        var nodes_length = nodes.length;
+        if(this===nodes[1]){
+            map.setCenter(waypointMarkers[0].getPosition());
+        }else if(this===nodes[nodes.length-1]){
+            map.setCenter(waypointMarkers[1].getPosition());
+        }else{
+            map.setCenter(waypointMarkers[$(nodes).index(this)].getPosition());
+        }
     });
     if($("#list>li").length<2){
         li.appendChild(document.createTextNode("Start : "+position));
@@ -240,11 +242,9 @@ function addWaypointToList(){
     }
     else{
         li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)-1)+": "+position));
-        //console.log($("#list>li:nth-child(2)").text());
         console.log(ul.childNodes[3].innerHTML);
         ul.insertBefore(li,ul.childNodes[ul.childNodes.length-1]);
     }
-//    ul.appendChild(li);
 }
 
 function Save(){
