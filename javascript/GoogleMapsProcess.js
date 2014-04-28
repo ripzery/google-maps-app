@@ -251,7 +251,8 @@ function Save(){
     var route_type;
     if(checkroute){
         route_type = 1;
-    }else{
+    }
+    else{
         route_type = 0;
     }
         
