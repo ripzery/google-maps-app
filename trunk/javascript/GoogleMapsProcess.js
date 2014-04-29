@@ -12,6 +12,7 @@ var callroute = false;
 var service;
 var start_place,end_place;
 var count_service=0;
+var test = ['dasd','dsadad'];
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -86,7 +87,6 @@ function initialize() {
     service = new google.maps.places.PlacesService(map);  
     google.maps.event.addListener(map, 'click', function showAlert(event) {
       placeMarker(event.latLng,map);
-      //alert("This must be call later.");
       points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
       if(callroute && points.length >2){
@@ -154,26 +154,23 @@ function placeMarker(position,map){
     //marker.set("animation",google.maps.Animation.DROP);
     waypointMarkers[marker.id] = marker;
     count++;
-
-    if(count<3){
-        var request = {
-            location : position,
-            types : ['gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
-            rankBy : google.maps.places.RankBy.DISTANCE
-        };
-        service.nearbySearch(request,function(results,status){
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-                if(count==1){
-                    start_place = results[0].name +" "+ results[0].vicinity;
-                    $('#list').find("li").eq(1).text("Start : "+start_place);
-                }
-                else if(count==2){
-                    end_place = results[0].name +" "+results[0].vicinity;
-                    $('#list').find("li:last").text("End : "+end_place);
-                }
-            } 
-        }); 
-    }
+    var request = {
+        location : position,
+        types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
+        rankBy : google.maps.places.RankBy.DISTANCE
+    };
+    service.nearbySearch(request,function(results,status){
+        if (status == google.maps.places.PlacesServiceStatus.OK){
+            if(-1!==$("#list>li:nth-child(2)").text().indexOf(",")){
+                start_place = results[0].name +" "+ results[0].vicinity;
+                $("#list>li:nth-child(2)").text("Start : "+start_place);
+            }
+            else if(-1!==$("#list>li:last").text().indexOf(",")){
+                end_place = results[0].name +" "+results[0].vicinity;
+                $("#list>li:last").text("End : "+end_place);
+            }
+        }
+    }); 
     var index;
 //      เก็บพิกัดก่อนที่จะdrag marker เสร็จ เพื่อเอาพิกัดไปหาตำแหน่งที่เก็บใน array points ให้เจอก่อน
 //      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
@@ -286,21 +283,11 @@ function addWaypointToList(){
         }
     });
     if($("#list>li").length<2){
-        //alert(start_place)
-        if(start_place==undefined){
-            li.appendChild(document.createTextNode("Start : "+position));
-        }else{
-            li.appendChild(document.createTextNode("Start : "+start_place));
-        }
+        li.appendChild(document.createTextNode("Start : "+position));
         ul.appendChild(li);
     }
     else if($("#list>li").length===2){
-        //alert(end_place);
-        if(end_place==undefined){
-            li.appendChild(document.createTextNode("End : "+position));
-        }else{
-            li.appendChild(document.createTextNode("End : "+end_place));
-        }
+        li.appendChild(document.createTextNode("End : "+position));
         ul.appendChild(li);
     }
     else{
