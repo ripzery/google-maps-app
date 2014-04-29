@@ -349,6 +349,7 @@ function initLoad(){
     var sort_list = document.getElementById("combobox");
     var option_select;
     var value_selected = "Asc";
+    $('#combobox').val("Asc");
     
 //    $(sort_list).on('change',function(e){
 //        option_select = $('#combobox>option:selected',this);
@@ -374,6 +375,23 @@ function initLoad(){
             }
             $('#selectable').find("li").remove();
 //            alert(value_selected);
+            for(var i=0;i<name.length;i++){
+                        var li = document.createElement("li");
+                        var route;
+                        $(li).append(date[i]+" ");
+                        if(route_type[i]==0)
+                        {
+                            route = "A-Z"
+                            $(li).append(route+" ");
+                        }else{
+                            route = "Fast "
+                            $(li).append(route);
+                        }
+                        $(li).append(name[i]);
+                        li.setAttribute("class","ui-widget-content");
+                        li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                        $("ol").append(li);
+            }
             $(sort_list).on('change',function(e){
                 option_select = $('#combobox>option:selected',this);
                 value_selected = this.value;
