@@ -9,6 +9,9 @@ var filename="UntitledMap";
 var availableTags;
 var checktab2 = 0;
 var callroute = false;
+var service;
+var start_place,end_place;
+var count_service=0;
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer();
@@ -80,9 +83,10 @@ function initialize() {
     }
     map.fitBounds(bounds);
   });
-      
+    service = new google.maps.places.PlacesService(map);  
     google.maps.event.addListener(map, 'click', function showAlert(event) {
       placeMarker(event.latLng,map);
+      //alert("This must be call later.");
       points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
       if(callroute && points.length >2){
@@ -147,10 +151,29 @@ function placeMarker(position,map){
     marker.set("id",count);
     marker.set("icon",image);
     marker.set("draggable",true);
-    marker.set("animation",google.maps.Animation.DROP);
+    //marker.set("animation",google.maps.Animation.DROP);
     waypointMarkers[marker.id] = marker;
     count++;
 
+    if(count<3){
+        var request = {
+            location : position,
+            types : ['gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
+            rankBy : google.maps.places.RankBy.DISTANCE
+        };
+        service.nearbySearch(request,function(results,status){
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                if(count==1){
+                    start_place = results[0].name +" "+ results[0].vicinity;
+                    $('#list').find("li").eq(1).text("Start : "+start_place);
+                }
+                else if(count==2){
+                    end_place = results[0].name +" "+results[0].vicinity;
+                    $('#list').find("li:last").text("End : "+end_place);
+                }
+            } 
+        }); 
+    }
     var index;
 //      เก็บพิกัดก่อนที่จะdrag marker เสร็จ เพื่อเอาพิกัดไปหาตำแหน่งที่เก็บใน array points ให้เจอก่อน
 //      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
@@ -163,13 +186,24 @@ function placeMarker(position,map){
 //      หลังจาก drag marker เสร็จจะอัพเดตพิกัดของ waypoint ใน listbox 
 //      พร้อมอัพเดตค่าที่เก็บไว้ใน array points ด้วย
     google.maps.event.addListener(marker,'dragend',function(event) {
+        request.location = event.latLng;
         points[index] = event.latLng.lat()+","+event.latLng.lng();
         var list = $("#list").find("li");
         if(index===0){
-            list.eq(index+1).text("Start : "+points[index]);
+            service.nearbySearch(request,function(results,status){
+                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                    $("#list>li").eq(1).text("Start : " + results[0].name +" "+ results[0].vicinity);
+                }
+            });
+            list.eq(index+1).text("Start : "+start_place);
         }
         else if(index===1){
-            list.eq(points.length).text("End : "+points[index]);
+            service.nearbySearch(request,function(results,status){
+                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                    $("#list>li:last").text("End : " + results[0].name +" "+ results[0].vicinity);
+                }
+            });
+            list.eq(points.length).text("End : "+end_place);
         }
         else{
             list.eq(points.length-1).text("Waypoint "+(index-1)+": "+points[index]);
@@ -212,7 +246,6 @@ function placeMarker(position,map){
         }
     });
 }
-
 //ทำงานเมื่อกดปุ่ม RESET จะทำการเริ่ม reset ค่า count,array points, ใหม่
 //, ลบmarker ออกจากแผนที่ให้หมด
 //และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
@@ -253,16 +286,25 @@ function addWaypointToList(){
         }
     });
     if($("#list>li").length<2){
-        li.appendChild(document.createTextNode("Start : "+position));
+        //alert(start_place)
+        if(start_place==undefined){
+            li.appendChild(document.createTextNode("Start : "+position));
+        }else{
+            li.appendChild(document.createTextNode("Start : "+start_place));
+        }
         ul.appendChild(li);
     }
     else if($("#list>li").length===2){
-        li.appendChild(document.createTextNode("End : "+position));
+        //alert(end_place);
+        if(end_place==undefined){
+            li.appendChild(document.createTextNode("End : "+position));
+        }else{
+            li.appendChild(document.createTextNode("End : "+end_place));
+        }
         ul.appendChild(li);
     }
     else{
         li.appendChild(document.createTextNode("Waypoint "+(points.indexOf(position)-1)+": "+position));
-        console.log(ul.childNodes[3].innerHTML);
         ul.insertBefore(li,ul.childNodes[ul.childNodes.length-1]);
     }
 }
