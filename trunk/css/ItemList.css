@@ -1,7 +1,7 @@
-.menu_div ul
+.menu_div ul#list
 {
     position: absolute;
-    display: block;
+    display: inline-block;
     width: 348px;
     top: 169px;
     left: 941px;
@@ -10,11 +10,11 @@
     font-family:Arial, Helvetica, sans-serif;
     font-size:12px;
     color:#FFF;
-    list-style:none;
+    list-style: none;
     text-indent:15px;
 }
 
-.menu_div ul li
+.menu_div ul#list li
 {
     background:#1abc9c;
     line-height:45px;
@@ -23,12 +23,12 @@
     color:#FFF;
 /*    margin-right: 50px; */
 }
-.menu_div ul li:hover
+.menu_div ul#list li:hover
 {
     cursor : pointer;
     background:#16a085;
 }
-.menu_div ul li#active
+.menu_div ul#list li#active
 {
     text-align: center;
     background:#16a085;
