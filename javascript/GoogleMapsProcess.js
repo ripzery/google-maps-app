@@ -137,10 +137,10 @@ function calcRoute() {
 function placeMarker(position,map){
     var image;
     if(count==0){
-        image = "../marker-icon-number/number_0.png";
+        image = "../marker-icon-number/start.png";
     }
     else if(count==1){
-        image = "../marker-icon-number/number_100.png";
+        image = "../marker-icon-number/end.png";
     }
     else{
         image = "../marker-icon-number/number_"+(parseInt(count)-1)+".png";
@@ -346,6 +346,16 @@ function Load(){
 function initLoad(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
+    var sort_list = document.getElementById("combobox");
+    var option_select;
+    var value_selected = "Asc";
+    
+//    $(sort_list).on('change',function(e){
+//        option_select = $('#combobox>option:selected',this);
+//        value_selected = this.value;
+//        alert(value_selected);
+//    })
+    
     $.ajax({
         type :"POST",
         url: "../php/load.php",
@@ -363,23 +373,52 @@ function initLoad(){
                 }
             }
             $('#selectable').find("li").remove();
-            for(var i=0;i<name.length;i++){
-                var li = document.createElement("li");
-                var route;
-                $(li).append(date[i]+" ");
-                if(route_type[i]==0)
-                {
-                    route = "A-Z"
-                    $(li).append(route+" ");
-                }else{
-                    route = "Fast "
-                    $(li).append(route);
+//            alert(value_selected);
+            $(sort_list).on('change',function(e){
+                option_select = $('#combobox>option:selected',this);
+                value_selected = this.value;
+//                alert(value_selected);
+                $("ol").find('li').remove();
+                if(value_selected==='Asc'){
+                    //alert("This is ASC fn");
+                    for(var i=0;i<name.length;i++){
+                        var li = document.createElement("li");
+                        var route;
+                        $(li).append(date[i]+" ");
+                        if(route_type[i]==0)
+                        {
+                            route = "A-Z"
+                            $(li).append(route+" ");
+                        }else{
+                            route = "Fast "
+                            $(li).append(route);
+                        }
+                        $(li).append(name[i]);
+                        li.setAttribute("class","ui-widget-content");
+                        li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                        $("ol").append(li);
+                    }
                 }
-                $(li).append(name[i]);
-                li.setAttribute("class","ui-widget-content");
-                li.setAttribute("style","text-align: left;word-spacing: 20px;");
-                $("ol").append(li);
-            }
+                else{
+                    for(var i=name.length-1;i>=0;i--){
+                        var li = document.createElement("li");
+                        var route;
+                        $(li).append(date[i]+" ");
+                        if(route_type[i]==0)
+                        {
+                            route = "A-Z"
+                            $(li).append(route+" ");
+                        }else{
+                            route = "Fast "
+                            $(li).append(route);
+                        }
+                        $(li).append(name[i]);
+                        li.setAttribute("class","ui-widget-content");
+                        li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                        $("ol").append(li);
+                    }
+                }
+            });
             var allMapsData = $("ol").find("li");
             $("#t").keyup(function(){
                 var len = allMapsData.length;
@@ -485,7 +524,7 @@ function addTable(){
                             return {
                                  "origValue": this.revert
                             };
- }
+                        }
                      });
                  });
                 td_name.setAttribute("style","min-width:215px;max-width:215px; text-align: center;");
