@@ -13,27 +13,32 @@
         font-size: 18px;
         font-weight: bold;
         margin: 0;
-        padding: 5px 0 4px 0;
-        background-color: #eef4f1;
-        border-top: 1px solid #e0ede9;
-        border-bottom: 1px solid #e0ede9;
-		width: 665px;
+        padding: 20px 0 18px 0;
+        background-color: #7fc6bc;
+        border-bottom: 1px solid #edf7f2;
+	width: 665px;
 }
 
-#navlist a, #navlist a:link {
+#navlist a:link , #navlist a {
         margin: 0;
-        padding: 5px 570px 4px 9px;
-        color: #95bbae;
-        border-right: 1px dashed #d1e3db;
+        padding: 20px 570px 18px 9px;
+        color: #3e454c;
+        border-right: 1px dashed #4bb5c1;
         text-decoration: none;
-		width: 665px;
+	width: 665px;
 }
 
-#navlist li.active,#navlist li a:hover{
-        color: #95bbae;
-        background-color: #deebe5;
-		width: 665px;
+#navlist li.active{
+        color: #3e454c;
+        background-color: #edf7f2;
+	width: 665px;
 }
+
+/*#navlist li a:hover{
+        color: #fff6e5;
+        background-color: #e08283;
+	width: 665px;
+}*/
 
 .tab {
         display:none;
@@ -47,9 +52,9 @@
         padding:15px;
 /*        border-radius:3px;*/
 /*        box-shadow:-1px 1px 1px rgba(0,0,0,0.15);*/
-        background:#deebe5;
+        background-color: #edf7f2;
         margin-top: 0px;
         margin-left: 0px;
         height: 100%;
-		width:1300px;
+	width:1300px;
 }
