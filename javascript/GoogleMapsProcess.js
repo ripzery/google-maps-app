@@ -1,7 +1,7 @@
 var map;
 var count="0";
 var directionsDisplay;
-var directionsService;
+var directionsService = new google.maps.DirectionsService();
 var points = new Array();
 var waypointMarkers = [];
 var checkroute = false;
@@ -50,6 +50,20 @@ function initialize() {
     });
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input);
+    
+//    var div = document.createElement("div");
+//    var control = document.createElement("input");
+//    control.type = "checkbox";
+//    control.innerHTML = "Show marker";
+//    control.setAttribute("id","control");
+//    control.setAttribute("style","width:100px,heigth:100px");
+//    control.index = 1;
+//    div.appendChild(control);
+//    map.controls[google.maps.ControlPosition.TOP_LEFT].push(div);
+//    
+//    google.maps.event.addDomListener(control,'click',function(){
+//        
+//    });
 
     google.maps.event.addListener(searchBox, 'places_changed', function() {
     var places = searchBox.getPlaces();
@@ -86,7 +100,8 @@ function initialize() {
     service = new google.maps.places.PlacesService(map);  
     google.maps.event.addListener(map, 'click', function showAlert(event) {
       points.push(event.latLng.lat()+","+event.latLng.lng());
-      addWaypointToList();placeMarker(event.latLng,map);
+      addWaypointToList();
+      placeMarker(event.latLng,map);
       if(callroute && points.length >2){
             calcRoute();
         }
@@ -105,7 +120,7 @@ function azRoute(){
 
 function calcRoute() {
   callroute = true;
-  directionsService = new google.maps.DirectionsService();
+//  directionsService = new google.maps.DirectionsService();
   if(points.length===1){
       alert("Please enter end points.");
       return false;
@@ -117,7 +132,7 @@ function calcRoute() {
   for(var i=2;i<points.length;i++){
       wps.push({location:points[i],stopover:true});
   }
-  var request = {
+    var request = {
       origin:points[0],
       destination:points[1],
       waypoints:wps,
@@ -130,6 +145,12 @@ function calcRoute() {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
       directionsDisplay.setRouteIndex(parseInt(pick_r));
+//      var order = "Start > ";
+//      for(var i=0;i<response.routes[0].waypoint_order.length;i++){
+//          order = order + "Waypoint "+(response.routes[0].waypoint_order[i]+1)+" > ";
+//      }
+//      order = order + "End";
+      //alert(response.routes[0].waypoint_order);
     }
   });
 }
@@ -228,11 +249,7 @@ function placeMarker(position,map){
         }
         else{
             for(var i=index+1,li;li = waypoint.eq(i),i<waypoint.length-1;i++){
-    //            alert(i);
                 $(li).text($(li).text().replace("Waypoint "+(i-1).toString(),"Waypoint "+(i-2).toString()));
-    //            alert(li.text());
-//                alert(index);
-//                alert(i);
                 image = "../marker-icon-number/number_"+(i-2)+".png";
                 waypointMarkers[i].set("id",i-1);
                 waypointMarkers[i].setIcon(image);
@@ -245,6 +262,7 @@ function placeMarker(position,map){
             count--;
         }
         if(callroute){
+//            alert("CalcRoute again!");
             calcRoute();
         }
     });
