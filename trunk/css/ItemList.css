@@ -3,7 +3,7 @@
     position: absolute;
     display: inline-block;
     width: 350px;
-    top: 205px;
+    top: 234px;
     left: 930px;
     font-family:Arial, Helvetica, sans-serif;
     font-size:12px;
@@ -14,21 +14,23 @@
 
 .menu_div ul#list li
 {
-    background:#1abc9c;
+    background:#fff;
     line-height:45px;
-    border-bottom:1px solid #16a085;
+    border-bottom:1px solid #4bb5c1;
     text-decoration:none;
-    color:#FFF;
+    color:#2185c5;
 /*    margin-right: 50px; */
 }
 .menu_div ul#list li:hover
 {
     cursor : pointer;
-    background:#16a085;
+    background:#7fc6bc;
+    color: #fff;
 }
 .menu_div ul#list li#active
 {
     text-align: center;
-    background:#16a085;
+    background:#4bb5c1;
+    color: #fff;
     display:block;
 }
