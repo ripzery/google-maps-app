@@ -11,11 +11,10 @@ var checktab2 = 0;
 var callroute = false;
 var service;
 var pick_r = 0;
-var option = {draggable : true};
 var start_place,end_place;
 
 function initialize() {
-    directionsDisplay = new google.maps.DirectionsRenderer(option);
+    directionsDisplay = new google.maps.DirectionsRenderer();
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
         zoom: 12,
@@ -86,9 +85,8 @@ function initialize() {
   });
     service = new google.maps.places.PlacesService(map);  
     google.maps.event.addListener(map, 'click', function showAlert(event) {
-      placeMarker(event.latLng,map);
       points.push(event.latLng.lat()+","+event.latLng.lng());
-      addWaypointToList();
+      addWaypointToList();placeMarker(event.latLng,map);
       if(callroute && points.length >2){
             calcRoute();
         }
@@ -161,18 +159,23 @@ function placeMarker(position,map){
         types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
         rankBy : google.maps.places.RankBy.DISTANCE
     };
-    service.nearbySearch(request,function(results,status){
-        if (status == google.maps.places.PlacesServiceStatus.OK&&count<3){
-            if(-1!==$("#list>li:nth-child(2)").text().indexOf(",")){
+    //alert($("#list>li:nth-child(2)").text().indexOf(","));
+    if(count==1){
+        service.nearbySearch(request,function(results,status){
+            if (status == google.maps.places.PlacesServiceStatus.OK){
                 start_place = results[0].name +" "+ results[0].vicinity;
                 $("#list>li:nth-child(2)").text("Start : "+start_place);
             }
-            else if(-1!==$("#list>li:last").text().indexOf(",")){
+        });
+    }
+    else if(count==2){
+        service.nearbySearch(request,function(results,status){
+            if (status == google.maps.places.PlacesServiceStatus.OK){
                 end_place = results[0].name +" "+results[0].vicinity;
                 $("#list>li:last").text("End : "+end_place);
             }
-        }
-    }); 
+        });
+    }
     var index;
 //      เก็บพิกัดก่อนที่จะdrag marker เสร็จ เพื่อเอาพิกัดไปหาตำแหน่งที่เก็บใน array points ให้เจอก่อน
 //      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
@@ -524,12 +527,11 @@ function addTable(){
             for(var i=0;i<row.length-1;i++){
                 field = row[i].split(":");
                 name.push(field[0]);
-//                alert(field[1]);
                 route_type.push(field[1]);
-                date.push(field[2]);
-                points_array[i] = new Array(field.length-3);
-                for(var k=3;k<field.length;k++){
-                    points_array[i][k-3] = field[k];
+                date.push(field[3]);
+                points_array[i] = new Array(2);
+                for(var k=4;k<6;k++){
+                    points_array[i][k-4] = field[k];
                 }
             }
             for(var i=0;i<name.length;i++){
