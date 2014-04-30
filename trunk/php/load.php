@@ -8,9 +8,10 @@
     while($row = mysqli_fetch_array($result))
     {
         $name = $row['name'];
-        $i = 4;
+        $i = 5;
         echo $row['name'] . ":";
         echo $row['route_type']. ":";
+        echo $row['pick_route'] . ":";
         echo $row['date']. ":";
         while($row[$i]!=""){
             if($row[$i+1]==""){

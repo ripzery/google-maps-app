@@ -10,12 +10,12 @@ var availableTags;
 var checktab2 = 0;
 var callroute = false;
 var service;
+var pick_r = 0;
+var option = {draggable : true};
 var start_place,end_place;
-var count_service=0;
-var test = ['dasd','dsadad'];
 
 function initialize() {
-    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay = new google.maps.DirectionsRenderer(option);
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
         zoom: 12,
@@ -106,7 +106,7 @@ function azRoute(){
 }
 
 function calcRoute() {
-    callroute = true;
+  callroute = true;
   directionsService = new google.maps.DirectionsService();
   if(points.length===1){
       alert("Please enter end points.");
@@ -123,6 +123,7 @@ function calcRoute() {
       origin:points[0],
       destination:points[1],
       waypoints:wps,
+      provideRouteAlternatives : true,
       optimizeWaypoints:checkroute,
       travelMode: google.maps.TravelMode.DRIVING
   };
@@ -130,6 +131,7 @@ function calcRoute() {
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
+      directionsDisplay.setRouteIndex(parseInt(pick_r));
     }
   });
 }
@@ -160,7 +162,7 @@ function placeMarker(position,map){
         rankBy : google.maps.places.RankBy.DISTANCE
     };
     service.nearbySearch(request,function(results,status){
-        if (status == google.maps.places.PlacesServiceStatus.OK){
+        if (status == google.maps.places.PlacesServiceStatus.OK&&count<3){
             if(-1!==$("#list>li:nth-child(2)").text().indexOf(",")){
                 start_place = results[0].name +" "+ results[0].vicinity;
                 $("#list>li:nth-child(2)").text("Start : "+start_place);
@@ -203,7 +205,8 @@ function placeMarker(position,map){
             list.eq(points.length).text("End : "+end_place);
         }
         else{
-            list.eq(points.length-1).text("Waypoint "+(index-1)+": "+points[index]);
+            console.log(index-1);
+            list.eq(index).text("Waypoint "+(index-1)+": "+points[index]);
         }
         if(callroute){
             calcRoute();
@@ -274,7 +277,8 @@ function addWaypointToList(){
         var pos = this.innerHTML.split(" ");
         var nodes = $("#list").find("li");
         var nodes_length = nodes.length;
-        if(this===nodes[1]){
+        if(this===nodes[1])
+        {
             map.setCenter(waypointMarkers[0].getPosition());
         }else if(this===nodes[nodes.length-1]){
             map.setCenter(waypointMarkers[1].getPosition());
@@ -298,6 +302,8 @@ function addWaypointToList(){
 
 function Save(){
     var route_type;
+    pick_r = directionsDisplay.getRouteIndex();
+    alert(pick_r);
     if(checkroute){
         route_type = 1;
     }
@@ -312,7 +318,7 @@ function Save(){
     $.ajax({
         type: "POST",
         url : "../php/save.php",
-        data: ({name : filename,route_type : route_type,latlng: points}),
+        data: ({name : filename,route_type : route_type,pick_route : pick_r,latlng: points}),
         success: function(){
             alert("Send file to save.php successful.");
         },
@@ -341,21 +347,34 @@ function Load(){
         addWaypointToList();
     }
     calcRoute();
+    //directionsDisplay.setRouteIndex(parseInt(pick_r));
+    var request = {
+        location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
+        types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
+        rankBy : google.maps.places.RankBy.DISTANCE
+    };
+    service.nearbySearch(request,function(results,status){
+        if (status == google.maps.places.PlacesServiceStatus.OK){
+            start_place = results[0].name +" "+ results[0].vicinity;
+            $("#list>li:nth-child(2)").text("Start : "+start_place);
+        }
+    });
+    request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
+    service.nearbySearch(request,function(results,status){
+        if (status == google.maps.places.PlacesServiceStatus.OK){
+            end_place = results[0].name +" "+ results[0].vicinity;
+            $("#list>li:last").text("End: "+end_place);
+        }
+    }); 
 }
 
 function initLoad(){
     var field,row;
-    var name=[],route_type=[],date=[],points_array;
+    var name=[],route_type=[],pick_route=[],date=[],points_array;
     var sort_list = document.getElementById("combobox");
     var option_select;
     var value_selected = "Asc";
     $('#combobox').val("Asc");
-    
-//    $(sort_list).on('change',function(e){
-//        option_select = $('#combobox>option:selected',this);
-//        value_selected = this.value;
-//        alert(value_selected);
-//    })
     
     $.ajax({
         type :"POST",
@@ -367,30 +386,30 @@ function initLoad(){
                 field = row[i].split(":");
                 name.push(field[0]);
                 route_type.push(field[1]);
-                date.push(field[2]);
-                points_array[i] = new Array(field.length-3);
-                for(var k=3;k<field.length;k++){
-                    points_array[i][k-3] = field[k];
+                pick_route.push(field[2]);
+                date.push(field[3]);
+                points_array[i] = new Array(field.length-4);
+                for(var k=4;k<field.length;k++){
+                    points_array[i][k-4] = field[k];
                 }
             }
             $('#selectable').find("li").remove();
-//            alert(value_selected);
             for(var i=0;i<name.length;i++){
-                        var li = document.createElement("li");
-                        var route;
-                        $(li).append(date[i]+" ");
-                        if(route_type[i]==0)
-                        {
-                            route = "A-Z"
-                            $(li).append(route+" ");
-                        }else{
-                            route = "Fast "
-                            $(li).append(route);
-                        }
-                        $(li).append(name[i]);
-                        li.setAttribute("class","ui-widget-content");
-                        li.setAttribute("style","text-align: left;word-spacing: 20px;");
-                        $("ol").append(li);
+                var li = document.createElement("li");
+                var route;
+                $(li).append(date[i]+" ");
+                if(route_type[i]==0)
+                {
+                    route = "A-Z"
+                    $(li).append(route+" ");
+                }else{
+                    route = "Fast "
+                    $(li).append(route);
+                }
+                $(li).append(name[i]);
+                li.setAttribute("class","ui-widget-content");
+                li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                $("ol").append(li);
             }
             $(sort_list).on('change',function(e){
                 option_select = $('#combobox>option:selected',this);
@@ -460,7 +479,7 @@ function initLoad(){
                     }else if(route_type[index]===0){
                         checkroute = false;
                     }
-                   
+                    pick_r = pick_route[index];
                 }                   
             });
             $("#t").keydown(function(e){
@@ -480,6 +499,7 @@ function initLoad(){
                     }else if(route_type[index]===0){
                         checkroute = false;
                     }
+                    pick_r = pick_route[index];
                     Load();
                     return false;
                 }
