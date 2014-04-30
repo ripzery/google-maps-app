@@ -21,44 +21,58 @@
 
 </head>
  <body>
-     <table id="tablebody" border="0" cellpadding="0" cellspacing="0">
-         <tbody>
-             <tr>
-                 <td width="1360">
-    <div class="tabs">
-    <ul class="tab-links">
-        <li class="active"><a href="#tab1">MAPS</a></li>
-        <li><a href="#tab2">ALL MAPS</a></li>
-        <li><a href="#tab3">MAP DETAIL</a></li>
-    </ul>
- 
-    <div class="tab-content">
-        <div id="tab1" class="tab active">
-            <div id="filename" class="Text2">UntitledMap</div>
-            <input id="address" class="Text" type="text" placeholder="Search Location">
-<!--            <div class="menu_div">-->
-                <table id="tablebody" border="0" cellpadding="0" cellspacing="10">
-                        <tr>
-                            <td valign="top" width="220px">
-                                <input type="button" class="button2" value="> FIND SHORTEST ROUTE" onclick="shRoute()"><br>
-                                <br><input type="button" class="button2" value="> FIND A-Z ROUTE" onclick="azRoute()"><br>
-                                <br><input type="button" class="button2" value="> SAVE" onclick="Save()"><br>
-                                <br><input type="button" class="button2" id="opener" onclick="initLoad()" value="> LOAD"><br>
-                                <br><input type="button" class="button2" value="> RESET" onclick="clearMap()"><br>
-                            </td>
-                            <td><div id="map-canvas" style="border: 5px solid #006496;"></div></td>  
-                            <td>        
-                                <div class="menu_div">
-                                    <ul id="list">
-                                        <li id="active">Position (Latitude, Longitude)</li>
-                                    </ul>
-                                </div> 
-                            </td>
-                        </tr>
-                </table> 
-<!--            </div>-->
-            <div id="directions-panel"></div>
-        </div>
+     <div id="navcontainer">
+<table width="1300" border="0" align="left" cellpadding="0" cellspacing="0">
+<tr>
+            <td>
+                        <ul id="navlist">
+                          <li class="active"><a href="#tab1">Map&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></li>
+                            <li><a href="#tab2">All Maps</a></li>
+                        </ul>
+                    
+      </td>
+      </tr>
+  <tr>
+    <td>
+    	<div class="tab-content">
+        	<div id="tab1" class="tab active">
+           	  <table width="1200" border="0" align="center">
+                  <tr>
+                  <td><table width="1300" border="0">
+                    <tr valign="middle">
+                      <td width="225"><div id="filename" class="Text2">UntitledMap</div></td>
+                      <td width="1062"><input id="address" class="Text" type="text" placeholder="Search Location"></td>
+                    </tr>
+              			</table>
+                    </td>  
+                </tr>
+                  <tr>
+                    <td>
+                    <br /><table width="1300" border="0">
+                      <tr>
+                        <td><input type="button" class="button2" value="SHORT ROUTE" onclick="shRoute()">
+                       	<input type="button" class="button2" value="A-Z ROUTE" onclick="azRoute()">
+       	                <input type="button" class="button2" value="SAVE" onclick="Save()">
+       	                <input type="button" class="button2" id="opener" onclick="initLoad()" value="LOAD">
+       	                <input type="button" class="button2" value="RESET" onclick="clearMap()"></td>       	                  
+                      </tr>
+                    </table></td>
+                </tr>
+                <tr>
+                <td><br />
+                  <table width="1300" border="0">
+                    <tr>
+                      <td width="918"><div id="map-canvas" style="border: 5px solid #006496;"></div><div id="directions-panel"></div></td>
+                      <td width="372" class="menu_div">
+                          <ul id="list">
+                                <li id="active">Position (Latitude, Longitude)</li>
+                          </ul>
+                      </td>
+                    </tr>
+                  </table></td>
+                </tr>
+                </table>
+           	</div>
 
             <div id="tab2" class="tab">
                 &nbsp;              
@@ -104,10 +118,6 @@
                 </table>
                 
             </div>
-
-            <div id="tab3" class="tab">
-                <div id="directions-panel"></div>
-            </div>
         </div>
 
         <div id="dialog" title="Load maps from database">
@@ -121,7 +131,6 @@
                 <input id="t" type="text" placeholder="Search File" autofocus>
             </div>
         </div>
-    </div>
-</td></tr></tbody></table>
-  </body>
+</td></tr></tbody></table></div>
+</body>
 </html>
