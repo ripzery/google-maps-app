@@ -51,6 +51,33 @@ function initialize() {
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input);
     
+    $('#chk').iCheck({
+        checkboxClass: 'icheckbox_minimal-green',
+        increaseArea: '20%' // optional
+    });
+    $('#chk').on('ifChecked', function(event){
+        for(var i=0;i<waypointMarkers.length;i++){
+            waypointMarkers[i].setVisible(false);
+        }
+    });
+    $('#chk').on('ifUnchecked', function(event){
+        for(var i=0;i<waypointMarkers.length;i++){
+            waypointMarkers[i].setVisible(true);
+        }
+    });
+//    var div = document.createElement("div");
+//    var control = document.createElement("input");
+//    control.type = "checkbox";
+//    control.innerHTML = "Show marker";
+//    control.setAttribute("id","control");
+//    control.setAttribute("style","width:100px,heigth:100px");
+//    control.index = 1;
+//    div.appendChild(control);
+//    map.controls[google.maps.ControlPosition.TOP_LEFT].push(div);
+//    
+//    google.maps.event.addDomListener(control,'click',function(){
+//        
+//    });
 
     var select = document.createElement("select");
     var option = document.createElement("option");
