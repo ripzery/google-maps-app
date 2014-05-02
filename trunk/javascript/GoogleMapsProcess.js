@@ -65,45 +65,7 @@ function initialize() {
             waypointMarkers[i].setVisible(true);
         }
     });
-//    var div = document.createElement("div");
-//    var control = document.createElement("input");
-//    control.type = "checkbox";
-//    control.innerHTML = "Show marker";
-//    control.setAttribute("id","control");
-//    control.setAttribute("style","width:100px,heigth:100px");
-//    control.index = 1;
-//    div.appendChild(control);
-//    map.controls[google.maps.ControlPosition.TOP_LEFT].push(div);
-//    
-//    google.maps.event.addDomListener(control,'click',function(){
-//        
-//    });
 
-    var select = document.createElement("select");
-    var option = document.createElement("option");
-    var option2 = document.createElement("option");
-    select.id = "s1";
-    option.innerHTML = "HIDE MARKER";
-    select.multiple = "multiple";
-    select.appendChild(option);
-    
-    document.getElementById("TEST").appendChild(select);
-    $(document).ready(function(){
-        $("#s1").dropdownchecklist({ emptyText: "SHOW MARKER",
-            onItemClick : function(checkbox,selector){
-                var justchecked = checkbox.prop("checked");
-                if(!selector.options[0].selected){
-                    for(var i=0;i<waypointMarkers.length;i++){
-                        waypointMarkers[i].setVisible(false);
-                    }
-                }else{
-                    for(var i=0;i<waypointMarkers.length;i++){
-                        waypointMarkers[i].setVisible(true);
-                    }
-                }
-            }   
-        });
-    });
     google.maps.event.addListener(searchBox, 'places_changed', function() {
     var places = searchBox.getPlaces();
 
