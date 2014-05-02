@@ -56,13 +56,13 @@ function initialize() {
     var option = document.createElement("option");
     var option2 = document.createElement("option");
     select.id = "s1";
-    option.innerHTML = "Hide Marker";
+    option.innerHTML = "HIDE MARKER";
     select.multiple = "multiple";
     select.appendChild(option);
     
     document.getElementById("TEST").appendChild(select);
     $(document).ready(function(){
-        $("#s1").dropdownchecklist({ emptyText: "Show Marker",
+        $("#s1").dropdownchecklist({ emptyText: "SHOW MARKER",
             onItemClick : function(checkbox,selector){
                 var justchecked = checkbox.prop("checked");
                 if(!selector.options[0].selected){

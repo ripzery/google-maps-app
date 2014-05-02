@@ -3,27 +3,35 @@
 , .ui-dropdownchecklist .ui-widget-header {
 	border: none;
 }
-.ui-dropdownchecklist-indent {
+/*.ui-dropdownchecklist-indent {
 	padding-left: 7px;
-}
+}*/
 /* Font size of 0 on the -selector and an explicit medium on -text required to eliminate 
    descender problems within the containers and still have a valid size for the text */
 .ui-dropdownchecklist-selector-wrapper
 , .ui-widget.ui-dropdownchecklist-selector-wrapper {
 	vertical-align: middle;
-	font-size: 0px;
+	font-size: 14px;
+        
 }
 .ui-dropdownchecklist-selector {
-	padding: 1px 2px 2px 2px;
+        padding : 12px 0 12px 0;
+        text-align: center;
 	font-size: 0px;
+        border-radius: 5px 5px 0 0;
 }
 .ui-dropdownchecklist-text {
-	font-size: medium;
+	font-size: 14px;
 }
-.ui-dropdownchecklist-item
-, .ui-dropdownchecklist-item input {
+.ui-dropdownchecklist-item{
+    vertical-align: middle;
+    width:212px;
+    padding : 10px 0 10px 0;
+    border-radius: 0 0 5px 5px;
+}
+.ui-dropdownchecklist-item input {
     vertical-align: middle;
 }
 .ui-dropdownchecklist-group {
-	padding: 1px 2px 2px 2px;
+	padding : 10px 10px 10px 10px;
 }
