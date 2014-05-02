@@ -184,12 +184,12 @@ and open the template in the editor.
 }*/
 
 .searchtable{
-    background-color: #b5e655;
-    border-color: #9cd6d6;
+    background-color: #913D88;
+    border-color: #913D88;
 }
 
 .searchtable tr{
-    background-color: #fff;
+    background-color: #dec7e9;
 }
 
 .containBody{
@@ -202,12 +202,12 @@ and open the template in the editor.
 
 .tbl_headerFix{
 		border-bottom:0px;
-                background-color: #b5e655;
-                border-color: #9cd6d6;
+                background-color: #913D88;
+                border-color: #913D88;
 }
 
 .tbl_headerFix tr{
-		background-color: #fff;
+		background-color: #dec7e9;
 }
 
 #directions-panel {
@@ -224,9 +224,9 @@ and open the template in the editor.
         height: 40px;*/
         border-radius:5px;
         font-size: 14px;
-        color: white;
+        color: black;
         text-align: center;
-        background: #b5e655;
+        background: white;
         border: 0;
         border-bottom: 0 solid #333333;
         cursor: pointer;
@@ -235,6 +235,7 @@ and open the template in the editor.
     }
 
 .buttonx:hover {
-	background-color:#96ca2d;
+	background-color:black;
         font-weight:bold;
+        color: #fff;
 }

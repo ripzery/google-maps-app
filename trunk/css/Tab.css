@@ -14,7 +14,7 @@
         font-weight: bold;
         margin: 0;
         padding: 20px 0 18px 0;
-        background-color: #7fc6bc;
+        background-color: #EF4836;
         border-bottom: 1px solid #edf7f2;
 	width: 665px;
 }
@@ -30,7 +30,7 @@
 
 #navlist li.active{
         color: #3e454c;
-        background-color: #edf7f2;
+        background-color: #F2F1EF;
 	width: 665px;
 }
 
@@ -52,7 +52,7 @@
         padding:15px;
 /*        border-radius:3px;*/
 /*        box-shadow:-1px 1px 1px rgba(0,0,0,0.15);*/
-        background-color: #edf7f2;
+        background-color: #F2F1EF;
         margin-top: 0px;
         margin-left: 0px;
         height: 100%;
