@@ -9,13 +9,16 @@
     <link rel="stylesheet" type="text/css" href="../css/ItemList.css" />
     <link rel="stylesheet" type="text/css" href="../css/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../css/jquery.ui.theme.css" />
-    <link rel="stylesheet" type="text/css" href="../css/jquery-ui-1.10.4.custom.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui-1.10.4.custom.css" />
+    <link href="../apis/minimal/green.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="../apis/dropdown/css/ui.dropdownchecklist.themeroller.css" />
     <script src="//maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
     <script src="../apis/jquery-1.11.0.min.js"></script>
     <script src="../apis/jquery-ui-1.10.4.custom.min.js"></script>
     <script src="../apis/jquery.jeditable.mini.js"></script>
-    <script type="text/javascript" src ="../apis/dropdown/js/ui.dropdownchecklist-1.4-min.js"></script>
+
+    <script src="../apis/icheck.js"></script>
+
     <script src="../javascript/GoogleMapsProcess.js"></script>
     <script src="../javascript/DialogProcess.js"></script>
     <script src="../javascript/TabsProcess.js"></script>
@@ -53,7 +56,7 @@
                     <br /><table width="1300" border="0">
                       <tr>
                         <td>
-                        <div id="TEST" style="display:inline-block"></div>  
+                        <label id="hide_marker"><input id="chk" type="checkbox" checked> Hide Marker</label>
                         <input type="button" class="button2" value="SHORT ROUTE" onclick="shRoute()">
                        	<input type="button" class="button2" value="A-Z ROUTE" onclick="azRoute()">
        	                <input type="button" class="button2" value="SAVE" onclick="Save()">
