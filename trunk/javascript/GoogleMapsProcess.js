@@ -105,13 +105,18 @@ function initialize() {
     map.fitBounds(bounds);
   });
     findPlace = new google.maps.places.PlacesService(map);  
-    google.maps.event.addListener(map, 'click', function showAlert(event) {
-      points.push(event.latLng.lat()+","+event.latLng.lng());
-      addWaypointToList();
-      placeMarker(event.latLng,map);
-      if(isCalcRoute && points.length >2){
-            calcRoute();
+    google.maps.event.addListener(map, 'click', function(event) {
+      if(waypointMarkers.length<10){
+        console.log(waypointMarkers.length);
+        points.push(event.latLng.lat()+","+event.latLng.lng());
+        addWaypointToList();
+        placeMarker(event.latLng,map);
+        if(isCalcRoute && points.length >2){
+              calcRoute();
         }
+      }else{
+          alert("Reach maximum 8 waypoints!");
+      }
   });
 }
 
