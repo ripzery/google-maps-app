@@ -1,17 +1,22 @@
-var map;
-var count="0";
-var directionsDisplay;
-var directionsService = new google.maps.DirectionsService();
-var points = new Array();
-var waypointMarkers = [];
-var checkroute = false;
-var filename="UntitledMap";
-var availableTags;
-var checktab2 = 0;
-var callroute = false;
-var service;
-var pick_r = 0;
-var start_place,end_place;
+var map; // เอาไว้ initilize map-canvas จาก google
+var count="0"; // เอาไว้นับ marker เพิ่มค่าเมื่อคลิกวาง marker บน map
+var directionsDisplay; // เอาไว้setDirection ที่คำนวนได้จาก directionsService
+var directionsService = new google.maps.DirectionsService(); //เอาไว้เรียก method route เพื่อหาเส้นทาง
+var points = new Array(); // เอาไว้เก็บตำแหน่งของพิกัดในของ marker
+var waypointMarkers = []; // เอาไว้เก็บobject Marker 
+var isOptimize = false; // เอาไว้เช็คว่าการคำนวณเส้นทางเป็นแบบไหน {true:หาเส้นที่เร็วที่สุด,false:หาตามลำดับ waypoint} 
+var fileName="UntitledMap";// เอาไว้รีเซ็ตชื่อไฟล์กับมาเป็นเหมือนเดิมโดยเรียก method resetFileName
+var isCalcRoute = false; // เอาไว้เช็คว่าเรียกฟังก์ชั่น calcroute หรือยัง เอาไว้แยกเวลา เพิ่ม/เลื่อน/ลบ marker แล้ว คำนวณเส้นทางอัตโนมัติ
+var findPlace; //เอาไว้หาสถานที่ใกล้เคียงกับจุดที่เราคลิก
+var pickRouteIndex = 0; // เอาไว้เก็บว่าเราเลือกเส้นทางไหน ใน alternative route (ที่google แนะนำเพิ่มเติม)
+var startPlace,endPlace; // เอาไว้เก็บชื่อของสถานที่เริ่มต้นกับสถานที่ที่ต้องการจะไป
+
+/*
+ * initialize() :  
+ * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
+ * DirectionService, map, directionsDisplay, findPlace
+ * และกำหนด eventlistener เมื่อ click บน map, check/uncheck checkbox, ค้นหา searchbox
+ */
 
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer({});
@@ -31,7 +36,7 @@ function initialize() {
        data : {name : "UntitledMap"},
        success : function(return_value){
            $('#filename').text(return_value);
-           filename = return_value;
+           fileName = return_value;
        }
     });
     $(document).ready(function() {
@@ -44,12 +49,12 @@ function initialize() {
             id : 'test',
             name : 'newvalue',
             success : function(return_name){
-                filename = return_name;
+                fileName = return_name;
             }
         });
     });
     var input = document.getElementById('address');
-    var searchBox = new google.maps.places.SearchBox(input);
+    var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบauto complete
     
     $('#chk').iCheck({
         checkboxClass: 'icheckbox_minimal-green',
@@ -66,7 +71,8 @@ function initialize() {
         }
     });
 
-    google.maps.event.addListener(searchBox, 'places_changed', function() {
+    
+    google.maps.event.addListener(searchBox, 'places_changed', function() {// เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
     var places = searchBox.getPlaces();
 
     for (var i = 0, marker; marker = markers[i]; i++) {
@@ -98,29 +104,39 @@ function initialize() {
     }
     map.fitBounds(bounds);
   });
-    service = new google.maps.places.PlacesService(map);  
+    findPlace = new google.maps.places.PlacesService(map);  
     google.maps.event.addListener(map, 'click', function showAlert(event) {
       points.push(event.latLng.lat()+","+event.latLng.lng());
       addWaypointToList();
       placeMarker(event.latLng,map);
-      if(callroute && points.length >2){
+      if(isCalcRoute && points.length >2){
             calcRoute();
         }
   });
 }
 
+/*
+ * shRoute,azRoute เอาไว้เรียกเมื่อกดปุ่ม Short Route,A-Z Route ตามลำดับ ซึ่งจะมีวิธีการคำนวณเส้นทางต่างกันคือ
+ * Short Route จะคำนวณเส้นทางสั้นที่สุด
+ * A-Z จะคำนวณตามลำดับของ waypoints
+ */
 function shRoute(){
-  checkroute = true; 
+  isOptimize = true; 
   calcRoute();
 }
 
 function azRoute(){
-  checkroute = false;
+  isOptimize = false;
   calcRoute();
 }
 
+/*
+ * calcRoute()
+ * เอาไว้ส่ง start,end,waypoint ทั้งหมดให้ google render เส้นทางออกมาให้
+ * ผ่าน method DirectionsService.route และให้ directionsDisplay.setDirection(ผลลัพธ์ที่ได้จาก callback function)
+ */
 function calcRoute() {
-  callroute = true;
+  isCalcRoute = true;
 //  directionsService = new google.maps.DirectionsService();
   if(points.length===1){
       alert("Please enter end points.");
@@ -138,14 +154,14 @@ function calcRoute() {
       destination:points[1],
       waypoints:wps,
       provideRouteAlternatives : true,
-      optimizeWaypoints:checkroute,
+      optimizeWaypoints:isOptimize,
       travelMode: google.maps.TravelMode.DRIVING
   };
   
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
-      directionsDisplay.setRouteIndex(parseInt(pick_r));
+      directionsDisplay.setRouteIndex(parseInt(pickRouteIndex));
 //      var order = "Start > ";
 //      for(var i=0;i<response.routes[0].waypoint_order.length;i++){
 //          order = order + "Waypoint "+(response.routes[0].waypoint_order[i]+1)+" > ";
@@ -155,6 +171,13 @@ function calcRoute() {
     }
   });
 }
+
+/*
+ * placeMarker()
+ * ทำงานเมื่อคลิกบนmap,โหลดข้อมูลจาก database เอาไว้วาง markerบนพิกัดที่ต้องการพร้อมกับ
+ * เซ็ต eventlistener เมื่อ drag,right-click บนmarker (drag=edit position,right-click=remove marker)
+ * 
+ */
 
 function placeMarker(position,map){
     var image;
@@ -183,18 +206,18 @@ function placeMarker(position,map){
     };
     //alert($("#list>li:nth-child(2)").text().indexOf(","));
     if(count==1){
-        service.nearbySearch(request,function(results,status){
+        findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
-                start_place = results[0].name +" "+ results[0].vicinity;
-                $("#list>li:nth-child(2)").text("Start : "+start_place);
+                startPlace = results[0].name +" "+ results[0].vicinity;
+                $("#list>li:nth-child(2)").text("Start : "+startPlace);
             }
         });
     }
     else if(count==2){
-        service.nearbySearch(request,function(results,status){
+        findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
-                end_place = results[0].name +" "+results[0].vicinity;
-                $("#list>li:last").text("End : "+end_place);
+                endPlace = results[0].name +" "+results[0].vicinity;
+                $("#list>li:last").text("End : "+endPlace);
             }
         });
     }
@@ -203,7 +226,7 @@ function placeMarker(position,map){
 //      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
     google.maps.event.addListener(marker,'mousedown',function(event) {
         index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
-        if(callroute){
+        if(isCalcRoute){
             calcRoute();
         }
     });
@@ -214,26 +237,26 @@ function placeMarker(position,map){
         points[index] = event.latLng.lat()+","+event.latLng.lng();
         var list = $("#list").find("li");
         if(index===0){
-            service.nearbySearch(request,function(results,status){
+            findPlace.nearbySearch(request,function(results,status){
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     $("#list>li").eq(1).text("Start : " + results[0].name +" "+ results[0].vicinity);
                 }
             });
-            list.eq(index+1).text("Start : "+start_place);
+            list.eq(index+1).text("Start : "+startPlace);
         }
         else if(index===1){
-            service.nearbySearch(request,function(results,status){
+            findPlace.nearbySearch(request,function(results,status){
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     $("#list>li:last").text("End : " + results[0].name +" "+ results[0].vicinity);
                 }
             });
-            list.eq(points.length).text("End : "+end_place);
+            list.eq(points.length).text("End : "+endPlace);
         }
         else{
             console.log(index-1);
             list.eq(index).text("Waypoint "+(index-1)+": "+points[index]);
         }
-        if(callroute){
+        if(isCalcRoute){
             calcRoute();
         }
     });
@@ -262,7 +285,7 @@ function placeMarker(position,map){
             waypointMarkers.splice(index,1);
             count--;
         }
-        if(callroute){
+        if(isCalcRoute){
 //            alert("CalcRoute again!");
             calcRoute();
         }
@@ -275,7 +298,7 @@ function clearMap() {
     directionsDisplay.setMap(null);
     directionsDisplay.setPanel(null);
     points = [];
-    callroute = false;
+    isCalcRoute = false;
     count = 0;
     $('#address').val('');
     for(var i=0;i<waypointMarkers.length;i++){
@@ -322,11 +345,16 @@ function addWaypointToList(){
     }
 }
 
+/*
+ * Save()
+ * นำค่า filename,route_type,pickRouteIndex,points เก็บลง database ผ่าน ajax called
+ * พร้อมกับ refresh ค่าในตาราง tab2
+ */
 function Save(){
     var route_type;
-    pick_r = directionsDisplay.getRouteIndex();
-    alert(pick_r);
-    if(checkroute){
+    pickRouteIndex = directionsDisplay.getRouteIndex();
+    alert(pickRouteIndex);
+    if(isOptimize){
         route_type = 1;
     }
     else{
@@ -336,11 +364,11 @@ function Save(){
         alert("Please insert start-end point.");
         return false;
     }
-    filename = $('#filename').text();
+    fileName = $('#filename').text();
     $.ajax({
         type: "POST",
         url : "../php/save.php",
-        data: ({name : filename,route_type : route_type,pick_route : pick_r,latlng: points}),
+        data: ({name : fileName,route_type : route_type,pick_route : pickRouteIndex,latlng: points}),
         success: function(){
             alert("Send file to save.php successful.");
         },
@@ -351,6 +379,11 @@ function Save(){
     addTable();
 }
 
+/*
+ * InitLoad() -> Load() (InitLoad จะต้องเรียกก่อน Load เสมอ)
+ * เรียก modal dialog ที่สามารถ search ข้อมูลไฟล์ที่ต้องการจะโหลดได้ เมื่อคลิก/ใส่ข้อความใน searchbox เพื่อเลือก 
+ * ก้จะโหลด filename,route_type,date,start,end มาเก็บไว้ในตัวแปรเพื่อเตรียมนำมาแสดงผลบนหน้าจอ
+ */
 function Load(){
     var lat,lng;
     var points_temp = [];
@@ -369,23 +402,23 @@ function Load(){
         addWaypointToList();
     }
     calcRoute();
-    //directionsDisplay.setRouteIndex(parseInt(pick_r));
+    //directionsDisplay.setRouteIndex(parseInt(pickRouteIndex));
     var request = {
         location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
         types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
         rankBy : google.maps.places.RankBy.DISTANCE
     };
-    service.nearbySearch(request,function(results,status){
+    findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
-            start_place = results[0].name +" "+ results[0].vicinity;
-            $("#list>li:nth-child(2)").text("Start : "+start_place);
+            startPlace = results[0].name +" "+ results[0].vicinity;
+            $("#list>li:nth-child(2)").text("Start : "+startPlace);
         }
     });
     request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
-    service.nearbySearch(request,function(results,status){
+    findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
-            end_place = results[0].name +" "+ results[0].vicinity;
-            $("#list>li:last").text("End: "+end_place);
+            endPlace = results[0].name +" "+ results[0].vicinity;
+            $("#list>li:last").text("End: "+endPlace);
         }
     }); 
 }
@@ -497,11 +530,11 @@ function initLoad(){
                     $('#filename').text(name[index]);
                     if(route_type[index]===1)
                     {
-                        checkroute = true;
+                        isOptimize = true;
                     }else if(route_type[index]===0){
-                        checkroute = false;
+                        isOptimize = false;
                     }
-                    pick_r = pick_route[index];
+                    pickRouteIndex = pick_route[index];
                 }                   
             });
             $("#t").keydown(function(e){
@@ -517,11 +550,11 @@ function initLoad(){
                     $('#filename').text(name[index]);
                     if(route_type[index]===1)
                     {
-                        checkroute = true;
+                        isOptimize = true;
                     }else if(route_type[index]===0){
-                        checkroute = false;
+                        isOptimize = false;
                     }
-                    pick_r = pick_route[index];
+                    pickRouteIndex = pick_route[index];
                     Load();
                     return false;
                 }
@@ -533,6 +566,10 @@ function initLoad(){
     });
 }
 
+/*
+ * addTable()
+ * เป็นการโหลดค่าจาก database มาลงตารางใน tabs2
+ */
 function addTable(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
@@ -644,8 +681,13 @@ function addTable(){
     });
 }
 
+/*
+ * resetFileName()
+ * เป็นการ reset ชื่อไฟล์กลับไปเป็นค่าเดิม
+ * 
+ */
 function resetFileName(){
-    $('#filename').text(filename);
+    $('#filename').text(fileName);
 }
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
