@@ -625,6 +625,7 @@ function addTable(){
                 $(td_delete).append(button);
 //                td_delete.setAttribute("style","width=50px");
                 $(td_name).append(name[i]);
+                
                 $(td_name).editable({
                     type : "text",
                     showbuttons : false,
