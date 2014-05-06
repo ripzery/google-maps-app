@@ -646,7 +646,8 @@ function addTable(){
 //                else{
 //                    alert(route_type[i]);
 //                }
-                 $(td_route).append(route);
+                $(td_route).append(route);
+                td_route.setAttribute("style","width:150px;");
                 $(td_date).append(date[i]);
                 $(td_start).append(points_array[i][0]);
                 $(td_end).append(points_array[i][1]);
