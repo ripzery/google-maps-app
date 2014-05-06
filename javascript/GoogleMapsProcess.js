@@ -429,9 +429,7 @@ function Load(){
 function initLoad(){
     var field,row;
     var name=[],route_type=[],pick_route=[],date=[],points_array;
-    var sort_list = document.getElementById("combobox");
-    var option_select;
-    var value_selected = "Asc";
+    var sort_list = $('.dropdown-menu').parent();
     //$('#combobox').val("Asc");
     
     $.ajax({
@@ -469,13 +467,11 @@ function initLoad(){
                 li.setAttribute("style","text-align: left;word-spacing: 20px;");
                 $("#selectable").append(li);
             }
-            $(sort_list).on('change',function(e){
-                option_select = $('#combobox>option:selected',this);
-                value_selected = this.value;
-//                alert(value_selected);
-                $("#selectable").find('a').remove();
-                if(value_selected==='Asc'){
-                    //alert("This is ASC fn");
+            $(sort_list).on('show.bs.dropdown',function(e){
+//                alert("Change!");
+                $('#Asc').on('click',function(){
+                    $("#selectable").find('a').remove();
+                    $('#order').text("Ascending");
                     for(var i=0;i<name.length;i++){
                         var li = document.createElement("a");
                         $(li).addClass("list-group-item");
@@ -490,14 +486,16 @@ function initLoad(){
                             $(li).append(route);
                         }
                         $(li).append(name[i]);
-                        li.setAttribute("class","ui-widget-content");
+                        li.setAttribute("class","list-group-item");
                         li.setAttribute("style","text-align: left;word-spacing: 20px;");
                         $("#selectable").append(li);
                     }
-                }
-                else{
+                });
+                $('#Dsc').on('click',function(){
+                    $("#selectable").find('a').remove();
+                    $('#order').text("Descending");
                     for(var i=name.length-1;i>=0;i--){
-                        var li = document.createElement("li");
+                        var li = document.createElement("a");
                         var route;
                         $(li).append(date[i]+" ");
                         if(route_type[i]==0)
@@ -509,11 +507,11 @@ function initLoad(){
                             $(li).append(route);
                         }
                         $(li).append(name[i]);
-                        li.setAttribute("class","ui-widget-content");
+                        li.setAttribute("class","list-group-item");
                         li.setAttribute("style","text-align: left;word-spacing: 20px;");
-                        $("ol").append(li);
+                        $("#selectable").append(li);
                     }
-                }
+                });
             });
             var allMapsData = $("#selectable").find("a");
             $("#t").keyup(function(){
