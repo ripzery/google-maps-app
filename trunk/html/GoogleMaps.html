@@ -6,7 +6,7 @@
     <title>Maps Direction</title>
     <link rel="stylesheet" type="text/css" href="../css/UI.css" />
     <link rel="stylesheet" type="text/css" href="../css/dialog.css" />
-    <link href="../apis/minimal/green.css" rel="stylesheet">
+    <link href="../apis/minimal/blue.css" rel="stylesheet">
     <link rel="stylesheet" href="../bootflat/css/site.min.css">
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,800,700,400italic,600italic,700italic,800italic,300italic" rel="stylesheet" type="text/css">
     <link href="../bootstrap_editable/css/bootstrap-editable.css" rel="stylesheet">
@@ -49,45 +49,32 @@
                                </div>
                                <div class="panel-body">
                                     <div id="map-canvas" style="border: 5px solid #5D9CEC;"></div>
-                                    <div class="row" style="margin-top: 25px;">
-                                            <div class="col-md-1" style="margin: -5px 0 0 20px;">
-                                                <label id="hide_marker"><input id="chk" type="checkbox" > Hide Marker</label>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary btn-block" onclick="shRoute()">SHORT ROUTE</button>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary btn-block" onclick="azRoute()">A-Z ROUTE</button>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary btn-block" onclick="Save()">SAVE</button>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" id="opener" class="btn btn-primary btn-block" onclick="initLoad()">LOAD</button>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary btn-block" onclick="clearMap()">RESET</button>
-                                            </div>
+                                    <div class="row tooltip-demo" style="margin-top: 25px;">
+                                        <div class="col-md-2" style="margin: 5px 0 0 0px;font-size: 15px;">
+                                            <label id="hide_marker"><input id="chk" type="checkbox" > Hide Marker</label>
                                         </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Find a shortest route without waypoints order consideration." onclick="shRoute()">SHORT ROUTE</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Find a route with waypoints order consideration." onclick="azRoute()">A-Z ROUTE</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Save filename, waypoint, start-end position, alternative route, and modified date into database." onclick="Save()">SAVE</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" id="opener" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Load filename, waypoint, start-end position, alternative route, and last modified date." onclick="initLoad()">LOAD</button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Reset to initial state." onclick="clearMap()">RESET</button>
+                                        </div>
+                                    </div>
                                </div>
                              </div>
                             </div>
                             <div class="col-md-4">
-<!--                                <div class="panel panel-primary">
-                                   <div class="panel-heading">
-                                     <h3 class="panel-title">Markers List Panel</h3>
-                                   </div>
-                                   <div class="panel-body menu_div">
-                                       <div class="menu_div">
-                                            <ul id="list">
-                                                <li id="active">Position (Latitude, Longitude)</li>
-                                            </ul>
-                                       </div>
-                                       
-                                   </div>
-                                </div>-->
                                 <div class="list-group" id="list">
-                                    <a href="#" class="list-group-item active">Position (Latitude, Longitude)</a>
+                                    <a href="#" class="list-group-item active" style="background-color: #3bafda">Position (Latitude, Longitude)</a>
                                 </div>
                             </div>
                         </div>

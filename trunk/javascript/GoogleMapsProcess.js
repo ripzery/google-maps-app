@@ -54,7 +54,7 @@ function initialize() {
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบauto complete
     
     $('#chk').iCheck({
-        checkboxClass: 'icheckbox_minimal-green',
+        checkboxClass: 'icheckbox_minimal-blue',
         increaseArea: '20%' // optional
     });
     $('#chk').on('ifChecked', function(event){
