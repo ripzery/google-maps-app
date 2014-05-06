@@ -8,10 +8,6 @@ and open the template in the editor.
     Author     : Phuchit
 */
 /*@import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);*/
-    @font-face {
-    font-family: SourceSansPro-Regular;
-    src: url("../SourceSansPro-Regular.otf") format("opentype");  
-    }
 /*    html{    
     background:url("http://image.ohozaa.com/i/335/VBtQU.gif") repeat;
         background: #e6f7f9;
@@ -56,7 +52,6 @@ and open the template in the editor.
     }
     .Text3{
         color:#3c3c3c;
-	font-family: SourceSansPro-Regular;
 	font-size: 18px;
 	border-radius: 0;
 	line-height: 22px;
@@ -72,7 +67,6 @@ and open the template in the editor.
     }
     .Text4{
         color:#3c3c3c;
-	font-family: SourceSansPro-Regular;
 	font-size: 18px;
 	border-radius: 0;
 	line-height: 22px;
@@ -99,7 +93,6 @@ and open the template in the editor.
     .button2{
         display :inline-block;
         padding : 10px 10px 10px 10px;
-        font-family: SourceSansPro-Regular;
         float : right;
         width: 220px;
         height: 40px;
