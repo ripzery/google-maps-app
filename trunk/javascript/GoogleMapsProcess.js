@@ -356,7 +356,7 @@ function addWaypointToList(){
 function Save(){
     var route_type;
     pickRouteIndex = directionsDisplay.getRouteIndex();
-    alert(pickRouteIndex);
+//    alert(pickRouteIndex);
     if(isOptimize){
         route_type = 1;
     }
@@ -622,7 +622,10 @@ function addTable(){
                 var td_end = document.createElement("td");
                 var button = document.createElement("button");
                 button.innerHTML = "X";
+                $(button).addClass("btn btn-danger btn-block");
+                button.setAttribute("style","width:30px;margin-left:auto;margin-right:auto;");
                 $(td_delete).append(button);
+//                td_delete.setAttribute("style","width=50px");
                 $(td_name).append(name[i]);
                 $(td_name).editable({
                     type : "text",
