@@ -40,15 +40,12 @@ function initialize() {
        }
     });
     $(document).ready(function() {
-        $('#filename').editable('../php/test2.php',{
-            cssclass : 'Text2',
-            indicator : 'Saving...',
-            tooltip   : 'Click to edit.',
-            type : 'text',
-            onblur : 'submit',
-            id : 'test',
-            name : 'newvalue',
-            success : function(return_name){
+        $('#filename').editable({
+            showbuttons : false,
+            highlight : "#5D9CEC",
+            mode : "popup",
+            placement : "bottom",
+            success : function(response,return_name){
                 fileName = return_name;
             }
         });
@@ -214,7 +211,7 @@ function placeMarker(position,map){
         findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
                 startPlace = results[0].name +" "+ results[0].vicinity;
-                $("#list>li:nth-child(2)").text("Start : "+startPlace);
+                $("#list>a:nth-child(2)").text("Start : "+startPlace);
             }
         });
     }
@@ -222,7 +219,7 @@ function placeMarker(position,map){
         findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
                 endPlace = results[0].name +" "+results[0].vicinity;
-                $("#list>li:last").text("End : "+endPlace);
+                $("#list>a:last").text("End : "+endPlace);
             }
         });
     }
@@ -240,11 +237,11 @@ function placeMarker(position,map){
     google.maps.event.addListener(marker,'dragend',function(event) {
         request.location = event.latLng;
         points[index] = event.latLng.lat()+","+event.latLng.lng();
-        var list = $("#list").find("li");
+        var list = $("#list").find("a");
         if(index===0){
             findPlace.nearbySearch(request,function(results,status){
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    $("#list>li").eq(1).text("Start : " + results[0].name +" "+ results[0].vicinity);
+                    $("#list>a").eq(1).text("Start : " + results[0].name +" "+ results[0].vicinity);
                 }
             });
             list.eq(index+1).text("Start : "+startPlace);
@@ -252,7 +249,7 @@ function placeMarker(position,map){
         else if(index===1){
             findPlace.nearbySearch(request,function(results,status){
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    $("#list>li:last").text("End : " + results[0].name +" "+ results[0].vicinity);
+                    $("#list>a:last").text("End : " + results[0].name +" "+ results[0].vicinity);
                 }
             });
             list.eq(points.length).text("End : "+endPlace);
@@ -270,7 +267,7 @@ function placeMarker(position,map){
 //      พร้อมลบ marker นั้นออกจากแมพ สุดท้ายลดค่าตัวแปร count ที่เอาไว้นับ waypoint ลงหนึ่ง
     google.maps.event.addListener(marker,"rightclick",function(event){
         var index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
-        var waypoint = $("#list").find("li");
+        var waypoint = $("#list").find("a");
 //        alert(waypoint.length);
         //เปลี่ยนลำดับ waypoint ใน tag li ที่ index>index+1 จนถึง < length
         if(index===0 || index===1){
@@ -310,7 +307,7 @@ function clearMap() {
         waypointMarkers[i].setMap(null);
     }
     waypointMarkers  = [];
-    var list = $("#list").find("li");
+    var list = $("#list").find("a");
     for(var i=list.length-1,li;li=list.eq(i),i>0;i--){
         li.remove();
   }
@@ -321,11 +318,12 @@ function clearMap() {
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
 function addWaypointToList(){
     var ul = document.getElementById("list");
-    var li = document.createElement("li");
+    var li = document.createElement("a");
     var position = points[points.length-1];
+    li.classList.add("list-group-item");
     li.addEventListener('click',function(){
         var pos = this.innerHTML.split(" ");
-        var nodes = $("#list").find("li");
+        var nodes = $("#list").find("a");
         var nodes_length = nodes.length;
         if(this===nodes[1])
         {
@@ -336,11 +334,11 @@ function addWaypointToList(){
             map.setCenter(waypointMarkers[$(nodes).index(this)].getPosition());
         }
     });
-    if($("#list>li").length<2){
+    if($("#list>a").length<2){
         li.appendChild(document.createTextNode("Start : "+position));
         ul.appendChild(li);
     }
-    else if($("#list>li").length===2){
+    else if($("#list>a").length===2){
         li.appendChild(document.createTextNode("End : "+position));
         ul.appendChild(li);
     }
@@ -416,14 +414,14 @@ function Load(){
     findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
             startPlace = results[0].name +" "+ results[0].vicinity;
-            $("#list>li:nth-child(2)").text("Start : "+startPlace);
+            $("#list>a:nth-child(2)").text("Start : "+startPlace);
         }
     });
     request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
     findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
             endPlace = results[0].name +" "+ results[0].vicinity;
-            $("#list>li:last").text("End: "+endPlace);
+            $("#list>a:last").text("End: "+endPlace);
         }
     }); 
 }
@@ -434,7 +432,7 @@ function initLoad(){
     var sort_list = document.getElementById("combobox");
     var option_select;
     var value_selected = "Asc";
-    $('#combobox').val("Asc");
+    //$('#combobox').val("Asc");
     
     $.ajax({
         type :"POST",
@@ -453,9 +451,9 @@ function initLoad(){
                     points_array[i][k-4] = field[k];
                 }
             }
-            $('#selectable').find("li").remove();
+            $('#selectable').find("a").remove();
             for(var i=0;i<name.length;i++){
-                var li = document.createElement("li");
+                var li = document.createElement("a");
                 var route;
                 $(li).append(date[i]+" ");
                 if(route_type[i]==0)
@@ -467,19 +465,20 @@ function initLoad(){
                     $(li).append(route);
                 }
                 $(li).append(name[i]);
-                li.setAttribute("class","ui-widget-content");
+                li.setAttribute("class","list-group-item");
                 li.setAttribute("style","text-align: left;word-spacing: 20px;");
-                $("ol").append(li);
+                $("#selectable").append(li);
             }
             $(sort_list).on('change',function(e){
                 option_select = $('#combobox>option:selected',this);
                 value_selected = this.value;
 //                alert(value_selected);
-                $("ol").find('li').remove();
+                $("#selectable").find('a').remove();
                 if(value_selected==='Asc'){
                     //alert("This is ASC fn");
                     for(var i=0;i<name.length;i++){
-                        var li = document.createElement("li");
+                        var li = document.createElement("a");
+                        $(li).addClass("list-group-item");
                         var route;
                         $(li).append(date[i]+" ");
                         if(route_type[i]==0)
@@ -493,7 +492,7 @@ function initLoad(){
                         $(li).append(name[i]);
                         li.setAttribute("class","ui-widget-content");
                         li.setAttribute("style","text-align: left;word-spacing: 20px;");
-                        $("ol").append(li);
+                        $("#selectable").append(li);
                     }
                 }
                 else{
@@ -516,42 +515,60 @@ function initLoad(){
                     }
                 }
             });
-            var allMapsData = $("ol").find("li");
+            var allMapsData = $("#selectable").find("a");
             $("#t").keyup(function(){
                 var len = allMapsData.length;
                 var string = $('#t').val();
-                $('ol>li:not(:contains(' + $('#t').val() + '))').hide();
-                $("ol>li:contains("+ string +")").show();
+                $('#selectable>a:not(:contains(' + $('#t').val() + '))').hide();
+                $("#selectable>a:contains("+ string +")").show();
             });
-            $("#selectable").selectable({
-                selected: function(event, ui) { 
-                    $(ui.selected).addClass("ui-selected").siblings().removeClass("ui-selected");
-                    var index = $(ui.selected).index();
-                    var number_of_points = points_array[index].length;
-                    points = [];
-                    for(var i=0;i<number_of_points;i++){
-                        points[i] = points_array[index][i];
-                    }
-                    $('#filename').text(name[index]);
-                    if(route_type[index]===1)
-                    {
-                        isOptimize = true;
-                    }else if(route_type[index]===0){
-                        isOptimize = false;
-                    }
-                    pickRouteIndex = pick_route[index];
-                }                   
+//            $("#selectable").selectable({
+//                selected: function(event, ui) { 
+//                    $(ui.selected).addClass("active").siblings().removeClass("ui-selected");
+//                    var index = $(ui.selected).index();
+//                    var number_of_points = points_array[index].length;
+//                    points = [];
+//                    for(var i=0;i<number_of_points;i++){
+//                        points[i] = points_array[index][i];
+//                    }
+//                    $('#filename').text(name[index]);
+//                    if(route_type[index]===1)
+//                    {
+//                        isOptimize = true;
+//                    }else if(route_type[index]===0){
+//                        isOptimize = false;
+//                    }
+//                    pickRouteIndex = pick_route[index];
+//                }                   
+//            });
+            $("#selectable>a").click(function(){
+                $(this).addClass("active").siblings().removeClass("active");
+                var index = $(this).index();
+                var number_of_points = points_array[index].length;
+                points = [];
+                for(var i=0;i<number_of_points;i++){
+                    points[i] = points_array[index][i];
+                }
+                $('#filename').text(name[index]);
+                if(route_type[index]===1)
+                {
+                    isOptimize = true;
+                }else if(route_type[index]===0){
+                    isOptimize = false;
+                }
+                pickRouteIndex = pick_route[index];
+                
             });
             $("#t").keydown(function(e){
-                if(e.keyCode===13&&$("#selectable>li").hasClass('ui-selected')){
-                    var index = $(".ui-selected").index();
+                if(e.keyCode===13&&$("#selectable>a").hasClass('active')){
+                    var index = $(".active").index();
                     var number_of_points = points_array[index].length;
                     points = [];
                     for(var i=0;i<number_of_points;i++){
                         points[i] = points_array[index][i];
                     }
                     $( "#dialog" ).dialog("close");
-                    $('ol>li').removeClass('ui-selected');
+                    $('#selectable>a').removeClass('active');
                     $('#filename').text(name[index]);
                     if(route_type[index]===1)
                     {
@@ -564,7 +581,7 @@ function initLoad(){
                     return false;
                 }
                 else if(e.keyCode===13){
-                    $("ol>li:visible(:contains("+ $("#t").val() +"))").first().addClass('ui-selected');
+                    $("#selectable>a:visible(:contains("+ $("#t").val() +"))").first().addClass('active');
                 }
             });
         }
@@ -578,7 +595,7 @@ function initLoad(){
 function addTable(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
-    $('#tablesearch').find('tr').remove();
+    $('#tablebody').find('tr:gt(0)').remove();
     $.ajax({
         type : "POST",
         url: "../php/load.php",
@@ -606,30 +623,19 @@ function addTable(){
                 var button = document.createElement("button");
                 button.innerHTML = "X";
                 $(td_delete).append(button);
-                td_delete.setAttribute("style","width:39px; text-align: center;");
-                td_delete.setAttribute("class","Text4");
-                //td_delete.setAttribute("onclick","deleteMap('"+name[i]+"')");
                 $(td_name).append(name[i]);
-                 $(document).ready(function() {
-                     $(td_name).editable('../php/editname.php',{
-                         cssclass : 'Text4',
-                         indicator : 'Saving...',
-                         tooltip   : name[i],
-                         type : 'text',
-                         width : "120px",
-                         heigth : "50px",
-                         onblur : 'submit',
-                         id : 'editname',
-                         name : 'newvalue',
-                         "submitdata": function (value, settings) {
-                            return {
-                                 "origValue": this.revert
-                            };
-                        }
-                     });
-                 });
-                td_name.setAttribute("style","min-width:215px;max-width:215px; text-align: center;");
-                td_name.setAttribute("class","Text5");
+                $(td_name).editable({
+                    type : "text",
+                    showbuttons : false,
+                    mode : "inline",
+                    pk : {name : ""},
+                    params : function(params){
+//                        params.newValue = params.value;
+                        params.origValue = $(this).text();
+                        return params;
+                    },
+                    url : "../php/editname.php"
+                });
                 if(route_type[i]==="0")
                 {
                     route = "A-Z"
@@ -640,26 +646,17 @@ function addTable(){
 //                    alert(route_type[i]);
 //                }
                  $(td_route).append(route);
-                td_route.setAttribute("style","width:140px; text-align: center;");
-                td_route.setAttribute("class","Text4");
                 $(td_date).append(date[i]);
-                td_date.setAttribute("style","width:140px; text-align: center;");
-                td_date.setAttribute("class","Text4");
                 $(td_start).append(points_array[i][0]);
-                td_start.setAttribute("style","width:390px; text-align: center;");
-                td_start.setAttribute("class","Text4");
                 $(td_end).append(points_array[i][1]);
-                td_end.setAttribute("style","width:385px; text-align: center;");
-                td_end.setAttribute("class","Text4");
-                button.setAttribute("class","buttonx");
-                $(tr).addClass("line");
+//                $(tr).addClass("line");
                 $(tr).append(td_delete);
                 $(tr).append(td_name);
                 $(tr).append(td_route);
                 $(tr).append(td_date);
                 $(tr).append(td_start);
                 $(tr).append(td_end);
-                $("#tablesearch").append(tr);
+                $("#tablebody").append(tr);
                 var table_row = $(tr);
                 var b = $(table_row).find("td:first button");
                 $(b).click(function(){
@@ -678,7 +675,7 @@ function addTable(){
         }
     });
     $('#searchdb').keyup(function(){
-        var row = $('#tablesearch tr');
+        var row = $('#tablebody tr');
         for (var i=0;i<$(row).length;i++){
             $(row[i]).find(':not(:contains('+$("#searchdb").val()+')):gt(1)').parent().hide();
             $(row[i]).find(':contains('+$("#searchdb").val()+')').parent().show();
