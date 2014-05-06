@@ -1,5 +1,5 @@
 <?php
-$name = filter_input(INPUT_POST,'newvalue');
+$name = filter_input(INPUT_POST,'value');
 $origin_name = filter_input(INPUT_POST,'origValue');
 date_default_timezone_set('Thailand/Bangkok');
 $date = date('Y-m-d', time());

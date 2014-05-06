@@ -1,30 +1,15 @@
-$(function() {
-    $( "#dialog" ).dialog({
-      autoOpen: false,
-      modal : true,
-      show: {
-        //effect: "slide",
-        //duration: 700,
-      },
-      hide: {
-        //effect: "slide",
-      },
-      width : 700,
-      height : 500,
-      buttons: {
-        "Load": function() {
-          Load();
-          $(this).dialog("close");
-        },
-        Cancel: function() {
-          resetFileName();
-          $( this ).dialog( "close" );
-        }
-      }
-    });
- 
+$(function() {    
     $( "#opener" ).click(function() {
-      $( "#dialog" ).dialog( "open" );
+        $('.modal').modal();                      // initialized with defaults
+        $('.modal').modal({ keyboard: false });   // initialized with no keyboard
+        $('#modal').modal('show');  
+    });
+    $("#doLoad").click(function(){
+        Load();
+        $('.modal').modal('hide');
+    });
+    $("#doClose").click(function(){
+         resetFileName();
     });
 });
   
