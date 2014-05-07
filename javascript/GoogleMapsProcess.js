@@ -10,7 +10,11 @@ var isCalcRoute = false; // เอาไว้เช็คว่าเรีย�
 var findPlace; //เอาไว้หาสถานที่ใกล้เคียงกับจุดที่เราคลิก
 var pickRouteIndex = 0; // เอาไว้เก็บว่าเราเลือกเส้นทางไหน ใน alternative route (ที่google แนะนำเพิ่มเติม)
 var startPlace,endPlace; // เอาไว้เก็บชื่อของสถานที่เริ่มต้นกับสถานที่ที่ต้องการจะไป
-
+var polylineOptionsActual = {
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+    strokeWeight: 5
+};
 /*
  * initialize() :  
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -19,7 +23,8 @@ var startPlace,endPlace; // เอาไว้เก็บชื่อของ�
  */
 
 function initialize() {
-    directionsDisplay = new google.maps.DirectionsRenderer({});
+    
+    directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
         zoom: 12,
@@ -311,7 +316,7 @@ function clearMap() {
     for(var i=list.length-1,li;li=list.eq(i),i>0;i--){
         li.remove();
   }
-    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
 }
