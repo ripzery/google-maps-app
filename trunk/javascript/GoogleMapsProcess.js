@@ -23,7 +23,6 @@ var polylineOptionsActual = {
  */
 
 function initialize() {
-    
     directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
@@ -108,15 +107,16 @@ function initialize() {
   });
     findPlace = new google.maps.places.PlacesService(map);  
     google.maps.event.addListener(map, 'click', function(event) {
-      if(waypointMarkers.length<10){
-        console.log(waypointMarkers.length);
+      if(waypointMarkers.length<10)
+      {
         points.push(event.latLng.lat()+","+event.latLng.lng());
         addWaypointToList();
         placeMarker(event.latLng,map);
         if(isCalcRoute && points.length >2){
               calcRoute();
         }
-      }else{
+      }
+      else{
           alert("Reach maximum 8 waypoints!");
       }
   });
@@ -315,7 +315,7 @@ function clearMap() {
     var list = $("#list").find("a");
     for(var i=list.length-1,li;li=list.eq(i),i>0;i--){
         li.remove();
-  }
+    }
     directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
@@ -379,12 +379,13 @@ function Save(){
         data: ({name : fileName,route_type : route_type,pick_route : pickRouteIndex,latlng: points}),
         success: function(){
             alert("Send file to save.php successful.");
+            addTable();
         },
         error: function(xhr, status, error) {
             alert(xhr.responseText);
        }
     });
-    addTable();
+    
 }
 
 /*
@@ -598,7 +599,7 @@ function initLoad(){
 function addTable(){
     var field,row;
     var name=[],route_type=[],date=[],points_array;
-    $('#tablebody').find('tr:gt(0)').remove();
+    $('#tablebody').find('tr').remove();
     $.ajax({
         type : "POST",
         url: "../php/load.php",
