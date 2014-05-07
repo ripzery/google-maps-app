@@ -11,8 +11,8 @@ var findPlace; //เอาไว้หาสถานที่ใกล้เค
 var pickRouteIndex = 0; // เอาไว้เก็บว่าเราเลือกเส้นทางไหน ใน alternative route (ที่google แนะนำเพิ่มเติม)
 var startPlace,endPlace; // เอาไว้เก็บชื่อของสถานที่เริ่มต้นกับสถานที่ที่ต้องการจะไป
 var polylineOptionsActual = {
-    strokeColor: '#FF0000',
-    strokeOpacity: 1.0,
+    strokeColor: '#000000',
+    strokeOpacity: 0.5,
     strokeWeight: 5
 };
 /*
