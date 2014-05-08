@@ -1,11 +1,12 @@
 $(function() {    
     $("#guide").click(function(){
-        $('#direction').modal();
-        $('#direction').modal({ keyboard: false });
+        $('#direction').modal({keyboard : false,draggable : true});
+//        $('#direction').modal({ keyboard: false });
     });
+     
     $( "#opener" ).click(function() {
-        $('#hey').modal();                      // initialized with defaults
-        $('#hey').modal({ keyboard: false });   // initialized with no keyboard
+            $('#hey').modal({keyboard : false});                      // initialized with defaults
+//        $('#hey').modal({ keyboard: false });   // initialized with no keyboard
     });
     $("#doLoad").click(function(){
         Load();
@@ -14,5 +15,7 @@ $(function() {
     $("#doClose").click(function(){
          resetFileName();
     });
+    
+    $('.alert').alert('open');
 });
   

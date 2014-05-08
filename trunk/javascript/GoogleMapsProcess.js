@@ -71,6 +71,28 @@ function initialize() {
             waypointMarkers[i].setVisible(true);
         }
     });
+    
+    $('body').keypress(function (event){
+       if(event.which== 102){
+           $('#shRoute').trigger('click');
+       }else if(event.which == 97){
+           $('#azRoute').trigger('click');
+       }else if(event.which == 115){
+           $('#save').trigger('click');
+       }else if(event.which == 108){
+           $('#opener').trigger('click');
+       }else if(event.which == 49){
+           $('#suggestRoute>li').eq(0).trigger('click');
+       }else if(event.which == 50){
+           $('#suggestRoute>li').eq(1).trigger('click');
+       }else if(event.which == 51){
+           $('#suggestRoute>li').eq(2).trigger('click');
+       }else if(event.which == 100){
+           $('#guide').trigger('click');
+       }else if(event.which ==114){
+           $('#reset').trigger('click');
+       }
+    });
 
     google.maps.event.addListener(searchBox, 'places_changed', function() {// เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
     var places = searchBox.getPlaces();
@@ -210,8 +232,10 @@ function calcRoute() {
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       $('#suggestRoute>li').remove();
-      if(response.routes.length>1){
-        for(var i =0;i<response.routes.length;i++){
+      if(response.routes.length>1)
+      {
+        for(var i =0;i<response.routes.length;i++)
+        {
             var li = document.createElement("li");
             var a = document.createElement("a");
             $(a).attr('href="#"');
@@ -221,7 +245,8 @@ function calcRoute() {
         }
         directionsDisplay.setDirections(response);
         directionsDisplay.setRouteIndex(0);
-        $('#suggestRoute>li').click(function(){
+        $('#suggestRoute>li').click(function()
+        {
             directionsDisplay.setDirections(response);
             if($('#suggestRoute>li').index(this)==0){
                 directionsDisplay.setRouteIndex(0);
