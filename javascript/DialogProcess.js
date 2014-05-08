@@ -1,12 +1,15 @@
 $(function() {    
+    $("#guide").click(function(){
+        $('#direction').modal();
+        $('#direction').modal({ keyboard: false });
+    });
     $( "#opener" ).click(function() {
-        $('.modal').modal();                      // initialized with defaults
-        $('.modal').modal({ keyboard: false });   // initialized with no keyboard
-        $('#modal').modal('show');  
+        $('#hey').modal();                      // initialized with defaults
+        $('#hey').modal({ keyboard: false });   // initialized with no keyboard
     });
     $("#doLoad").click(function(){
         Load();
-        $('.modal').modal('hide');
+        $('#hey').modal('hide');
     });
     $("#doClose").click(function(){
          resetFileName();

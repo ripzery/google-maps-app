@@ -50,23 +50,39 @@
                                <div class="panel-body">
                                     <div id="map-canvas" style="border: 5px solid #5D9CEC;"></div>
                                     <div class="row tooltip-demo" style="margin-top: 25px;">
-                                        <div class="col-md-2" style="margin: 5px 0 0 0px;font-size: 15px;">
-                                            <label id="hide_marker"><input id="chk" type="checkbox" > Hide Marker</label>
+                                        <div class="col-md-2">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">CALC ROUTE<span class="caret"></span></button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                  <li><a href="#" onclick="shRoute()" data-toggle="tooltip" data-placement="right" title="Find a shortest route without waypoints order consideration.">SHORT ROUTE</a></li>
+                                                  <li><a href="#" onclick="azRoute()" data-toggle="tooltip" data-placement="right" title="Find a route with waypoints order consideration.">A-Z ROUTE</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <div class="col-md-2">
-                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Find a shortest route without waypoints order consideration." onclick="shRoute()">SHORT ROUTE</button>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SAVE/LOAD<span class="caret"></span></button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                  <li><a href="#" onclick="Save()" data-toggle="tooltip" data-placement="right" title="Save filename, waypoint, start-end position, alternative route, and modified date into database.">SAVE</a></li>
+                                                  <li><a href="#" id="opener" onclick="initLoad()" data-toggle="tooltip" data-placement="right" title="Load filename, waypoint, start-end position, alternative route, and last modified date.">LOAD</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" style="margin-left: -20px;margin-right: 20px;">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SUGGEST ROUTE<span class="caret"></span></button>
+                                                <ul class="dropdown-menu" id="suggestRoute" role="menu">
+                                                </ul>
+                                            </div>
                                         </div>
                                         <div class="col-md-2">
-                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Find a route with waypoints order consideration." onclick="azRoute()">A-Z ROUTE</button>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Save filename, waypoint, start-end position, alternative route, and modified date into database." onclick="Save()">SAVE</button>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" id="opener" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Load filename, waypoint, start-end position, alternative route, and last modified date." onclick="initLoad()">LOAD</button>
+                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Show direction informations." id="guide">GUIDE</button>
                                         </div>
                                         <div class="col-md-2">
                                             <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Reset to initial state." onclick="clearMap()">RESET</button>
+                                        </div>
+                                        <div class="col-md-2" style="margin: 5px 0 0 0px;font-size: 15px;">
+                                            <label id="hide_marker"><input id="chk" type="checkbox" > Hide Marker</label>
                                         </div>
                                     </div>
                                </div>
@@ -77,21 +93,6 @@
                                     <a href="#" class="list-group-item active" style="background-color: #3bafda">Position (Latitude, Longitude)</a>
                                 </div>
                             </div>
-                        </div>
-                     </div>
-                     <div class="example">
-                        <div class="row">
-                           <div class="col-md-8">
-                               <div class="panel panel-primary">
-                                   <div class="panel-heading">
-                                        <h3 class="panel-title">Direction Panel</h3>
-                                   </div>
-                                   <div class="panel-body">
-                                        <div class="containbody" id="directions-panel"></div>
-                                   </div>
-                                </div>
-                               
-                           </div>
                         </div>
                      </div>
                  </div>
@@ -148,19 +149,7 @@
              </div>
          </div>
      </div>
-<!--    <div id="dialog" title="Load maps from database">
-        Date sort by :
-        <select id="combobox">
-            <option value="Asc">Ascending</option>
-            <option value="Dsc">Descending</option>
-        </select>
-        <ol id="selectable"></ol>
-        <div id="search">
-            <input id="t" type="text" placeholder="Search File" autofocus>
-        </div>
-    </div>-->
-
-    <div class="modal fade">
+    <div class="modal fade" id="hey">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -209,6 +198,27 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" id="doClose" data-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary" id="doLoad">Load</button>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="modal fade" id="direction">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" style="text-align: center;">Direction Information</h3>
+            </div>
+            <div class="modal-body">
+                <div class="example">
+                    <div class="row">
+                        <div class ="col-md-12">
+                            <div class="containbody" id="directions-panel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>

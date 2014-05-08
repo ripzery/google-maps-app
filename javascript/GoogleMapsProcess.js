@@ -72,7 +72,6 @@ function initialize() {
         }
     });
 
-    
     google.maps.event.addListener(searchBox, 'places_changed', function() {// เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
     var places = searchBox.getPlaces();
 
@@ -137,6 +136,49 @@ function azRoute(){
   calcRoute();
 }
 
+
+function searchLongRoute(waypoints) {
+  var route;
+  var unit = 10;
+  var unit_num = Math.ceil((waypoints.length+Math.ceil(waypoints.length/unit)-1)/unit);
+ 
+  for (var start_num = 0; start_num < waypoints.length-1;) {
+    var s = waypoints[start_num];
+    var next_start = ((waypoints.length>=start_num+unit)?(start_num+unit):(waypoints.length))-1;
+    var e = waypoints[next_start];
+    var w = waypoints.slice(start_num+1, next_start);
+    
+    direction.route({
+      'origin': s.location,
+      'destination': e.location,
+      'travelMode': tMode,
+      'waypoints': w,
+      'avoidHighways': true,
+      'avoidTolls': true
+    }, function(ret, st){
+      if (st == google.maps.DirectionsStatus.OK) {
+        if (route) {
+          route.routes[0].legs = route.routes[0].legs.concat(ret.routes[0].legs);
+          route.routes[0].overview_path = route.routes[0].overview_path.concat(ret.routes[0].overview_path);
+          route.routes[0].bounds = route.routes[0].bounds.extend(ret.routes[0].bounds.getNorthEast());
+          route.routes[0].bounds = route.routes[0].bounds.extend(ret.routes[0].bounds.getSouthWest());
+        } else {
+          route = ret;
+        }
+      } else {
+        console.log(st);
+      }
+      if (!--unit_num) {
+        renderer.setMap(map);
+        renderer.setDirections(route);
+      }
+    });
+    
+    start_num = next_start;
+  }
+}
+
+
 /*
  * calcRoute()
  * เอาไว้ส่ง start,end,waypoint ทั้งหมดให้ google render เส้นทางออกมาให้
@@ -167,8 +209,31 @@ function calcRoute() {
   
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(response);
-      directionsDisplay.setRouteIndex(parseInt(pickRouteIndex));
+      $('#suggestRoute>li').remove();
+      if(response.routes.length>1){
+        for(var i =0;i<response.routes.length;i++){
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            $(a).attr('href="#"');
+            $(a).append(response.routes[i].summary+" "+response.routes[i].legs[0].distance.text +" " +response.routes[1].legs[0].duration.text);
+            $(li).append(a);
+            $('#suggestRoute').append(li);
+        }
+        directionsDisplay.setDirections(response);
+        directionsDisplay.setRouteIndex(0);
+        $('#suggestRoute>li').click(function(){
+            directionsDisplay.setDirections(response);
+            if($('#suggestRoute>li').index(this)==0){
+                directionsDisplay.setRouteIndex(0);
+            }else if($('#suggestRoute>li').index(this)==1){
+                directionsDisplay.setRouteIndex(1);
+            }else{
+                directionsDisplay.setRouteIndex(2);
+            }
+        });
+      }else{
+          directionsDisplay.setDirections(response);
+      }
 //      var order = "Start > ";
 //      for(var i=0;i<response.routes[0].waypoint_order.length;i++){
 //          order = order + "Waypoint "+(response.routes[0].waypoint_order[i]+1)+" > ";
@@ -385,7 +450,6 @@ function Save(){
             alert(xhr.responseText);
        }
     });
-    
 }
 
 /*
