@@ -15,6 +15,7 @@ var polylineOptionsActual = {
     strokeOpacity: 0.5,
     strokeWeight: 5
 };
+
 /*
  * initialize() :  
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -56,7 +57,6 @@ function initialize() {
     });
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบauto complete
-    
     $('#chk').iCheck({
         checkboxClass: 'icheckbox_minimal-blue',
         increaseArea: '20%' // optional
@@ -72,28 +72,45 @@ function initialize() {
         }
     });
     
-    $('body').keypress(function (event){
-       if(event.which== 102){
-           $('#shRoute').trigger('click');
-       }else if(event.which == 97){
-           $('#azRoute').trigger('click');
-       }else if(event.which == 115){
-           $('#save').trigger('click');
-       }else if(event.which == 108){
-           $('#opener').trigger('click');
-       }else if(event.which == 49){
-           $('#suggestRoute>li').eq(0).trigger('click');
-       }else if(event.which == 50){
-           $('#suggestRoute>li').eq(1).trigger('click');
-       }else if(event.which == 51){
-           $('#suggestRoute>li').eq(2).trigger('click');
-       }else if(event.which == 100){
-           $('#guide').trigger('click');
-       }else if(event.which ==114){
-           $('#reset').trigger('click');
-       }
-    });
-
+    var hotkey = function (event){
+            if(!$('#address').is(':focus') && !$('#t').is(':focus') && !$('#searchdb').is(':focus')){
+                if(event.which === 102){// f
+                    $('#shRoute').trigger('click');
+                }else if(event.which === 97){// a
+                    $('#azRoute').trigger('click');
+                }else if(event.which === 115){// s
+                    $('#save').trigger('click');
+                }else if(event.which === 108){// l
+                    $('#opener').trigger('click');
+                }else if(event.which === 49){// 1
+                    $('#suggestRoute>li').eq(0).trigger('click');
+                }else if(event.which === 50){// 2
+                    $('#suggestRoute>li').eq(1).trigger('click');
+                }else if(event.which === 51){// 3
+                    $('#suggestRoute>li').eq(2).trigger('click');
+                }else if(event.which === 103){// G
+                    $('#guide').trigger('click');
+                }else if(event.which === 114){// R
+                    $('#reset').trigger('click');
+                }
+            }
+        };
+    
+        $('body').keypress(hotkey);
+        $('a[data-toggle="tab"]').on('show.bs.tab',function(e){
+           if($(e.target).text()==="Database"){
+               $('body').unbind('keypress',hotkey); 
+           }else{
+               $('body').bind('keypress',hotkey); 
+           } 
+        });
+        $('.editable').on('shown',function(){
+            $('body').unbind('keypress',hotkey); 
+        });
+        $('.editable').on('hidden',function(){
+            $('body').bind('keypress',hotkey); 
+        });
+        
     google.maps.event.addListener(searchBox, 'places_changed', function() {// เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
     var places = searchBox.getPlaces();
 
@@ -158,49 +175,6 @@ function azRoute(){
   calcRoute();
 }
 
-
-function searchLongRoute(waypoints) {
-  var route;
-  var unit = 10;
-  var unit_num = Math.ceil((waypoints.length+Math.ceil(waypoints.length/unit)-1)/unit);
- 
-  for (var start_num = 0; start_num < waypoints.length-1;) {
-    var s = waypoints[start_num];
-    var next_start = ((waypoints.length>=start_num+unit)?(start_num+unit):(waypoints.length))-1;
-    var e = waypoints[next_start];
-    var w = waypoints.slice(start_num+1, next_start);
-    
-    direction.route({
-      'origin': s.location,
-      'destination': e.location,
-      'travelMode': tMode,
-      'waypoints': w,
-      'avoidHighways': true,
-      'avoidTolls': true
-    }, function(ret, st){
-      if (st == google.maps.DirectionsStatus.OK) {
-        if (route) {
-          route.routes[0].legs = route.routes[0].legs.concat(ret.routes[0].legs);
-          route.routes[0].overview_path = route.routes[0].overview_path.concat(ret.routes[0].overview_path);
-          route.routes[0].bounds = route.routes[0].bounds.extend(ret.routes[0].bounds.getNorthEast());
-          route.routes[0].bounds = route.routes[0].bounds.extend(ret.routes[0].bounds.getSouthWest());
-        } else {
-          route = ret;
-        }
-      } else {
-        console.log(st);
-      }
-      if (!--unit_num) {
-        renderer.setMap(map);
-        renderer.setDirections(route);
-      }
-    });
-    
-    start_num = next_start;
-  }
-}
-
-
 /*
  * calcRoute()
  * เอาไว้ส่ง start,end,waypoint ทั้งหมดให้ google render เส้นทางออกมาให้
@@ -244,16 +218,19 @@ function calcRoute() {
             $('#suggestRoute').append(li);
         }
         directionsDisplay.setDirections(response);
-        directionsDisplay.setRouteIndex(0);
+        directionsDisplay.setRouteIndex(parseInt(pickRouteIndex));
         $('#suggestRoute>li').click(function()
         {
             directionsDisplay.setDirections(response);
             if($('#suggestRoute>li').index(this)==0){
                 directionsDisplay.setRouteIndex(0);
+                pickRouteIndex = 0;
             }else if($('#suggestRoute>li').index(this)==1){
                 directionsDisplay.setRouteIndex(1);
+                pickRouteIndex = 1;
             }else{
                 directionsDisplay.setRouteIndex(2);
+                pickRouteIndex = 2;
             }
         });
       }else{
@@ -293,6 +270,7 @@ function placeMarker(position,map){
     marker.set("id",count);
     marker.set("icon",image);
     marker.set("draggable",true);
+    marker.setZIndex(parseInt(count));
     //marker.set("animation",google.maps.Animation.DROP);
     waypointMarkers[marker.id] = marker;
     count++;
@@ -500,7 +478,7 @@ function Load(){
         addWaypointToList();
     }
     calcRoute();
-    //directionsDisplay.setRouteIndex(parseInt(pickRouteIndex));
+//    directionsDisplay.setRouteIndex(parseInt(pickRouteIndex));
     var request = {
         location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
         types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
@@ -533,13 +511,16 @@ function initLoad(){
         success: function(d){
             row = d.split("|");
             points_array = new Array(row.length-1);
+            console.log("Begin : points_array size is " + points_array.length);
             for(var i=0;i<row.length-1;i++){
                 field = row[i].split(":");
+                console.log("Fields of row "+i+" are "+field.length+ " fields");
                 name.push(field[0]);
                 route_type.push(field[1]);
                 pick_route.push(field[2]);
                 date.push(field[3]);
                 points_array[i] = new Array(field.length-4);
+                console.log("Points_array "+ i+" has been created!");
                 for(var k=4;k<field.length;k++){
                     points_array[i][k-4] = field[k];
                 }
@@ -563,12 +544,12 @@ function initLoad(){
                 $("#selectable").append(li);
             }
             $(sort_list).on('show.bs.dropdown',function(e){
-//                alert("Change!");
                 $('#Asc').on('click',function(){
                     $("#selectable").find('a').remove();
                     $('#order').text("Ascending");
                     for(var i=0;i<name.length;i++){
                         var li = document.createElement("a");
+                        $(li).attr("href='#'");
                         $(li).addClass("list-group-item");
                         var route;
                         $(li).append(date[i]+" ");
@@ -583,6 +564,10 @@ function initLoad(){
                         $(li).append(name[i]);
                         li.setAttribute("class","list-group-item");
                         li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                        $(li).click(function(){
+                           $(this).addClass("active");
+                           $(this).siblings().removeClass("active");
+                        });
                         $("#selectable").append(li);
                     }
                 });
@@ -591,6 +576,7 @@ function initLoad(){
                     $('#order').text("Descending");
                     for(var i=name.length-1;i>=0;i--){
                         var li = document.createElement("a");
+                        $(li).attr("href='#'");
                         var route;
                         $(li).append(date[i]+" ");
                         if(route_type[i]==0)
@@ -604,6 +590,10 @@ function initLoad(){
                         $(li).append(name[i]);
                         li.setAttribute("class","list-group-item");
                         li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                        $(li).click(function(){
+                           $(this).addClass("active");
+                           $(this).siblings().removeClass("active");
+                        });
                         $("#selectable").append(li);
                     }
                 });
@@ -615,25 +605,9 @@ function initLoad(){
                 $('#selectable>a:not(:contains(' + $('#t').val() + '))').hide();
                 $("#selectable>a:contains("+ string +")").show();
             });
-//            $("#selectable").selectable({
-//                selected: function(event, ui) { 
-//                    $(ui.selected).addClass("active").siblings().removeClass("ui-selected");
-//                    var index = $(ui.selected).index();
-//                    var number_of_points = points_array[index].length;
-//                    points = [];
-//                    for(var i=0;i<number_of_points;i++){
-//                        points[i] = points_array[index][i];
-//                    }
-//                    $('#filename').text(name[index]);
-//                    if(route_type[index]===1)
-//                    {
-//                        isOptimize = true;
-//                    }else if(route_type[index]===0){
-//                        isOptimize = false;
-//                    }
-//                    pickRouteIndex = pick_route[index];
-//                }                   
-//            });
+            $("#selectable>a").click(function(){
+                $(this).addClass("active").siblings().removeClass("active");
+            });
             $("#selectable>a").click(function(){
                 $(this).addClass("active").siblings().removeClass("active");
                 var index = $(this).index();
@@ -727,12 +701,12 @@ function addTable(){
                     mode : "inline",
                     pk : {name : ""},
                     params : function(params){
-//                        params.newValue = params.value;
                         params.origValue = $(this).text();
                         return params;
                     },
                     url : "../php/editname.php"
                 });
+//                alert($(td_name).attr('class'));
                 if(route_type[i]==="0")
                 {
                     route = "A-Z"

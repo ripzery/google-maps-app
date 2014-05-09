@@ -3,19 +3,25 @@ $(function() {
         $('#direction').modal({keyboard : false,draggable : true});
 //        $('#direction').modal({ keyboard: false });
     });
+    
+    $('body').keyup(function(event){
+       if(event.keyCode === 27){
+           $('#direction').modal('hide');
+           $('#load').modal('hide');
+       } 
+    });
      
     $( "#opener" ).click(function() {
-            $('#hey').modal({keyboard : false});                      // initialized with defaults
-//        $('#hey').modal({ keyboard: false });   // initialized with no keyboard
+            $('#load').modal({keyboard : false});                      // initialized with defaults
+//        $('#load').modal({ keyboard: false });   // initialized with no keyboard
     });
     $("#doLoad").click(function(){
         Load();
-        $('#hey').modal('hide');
+        $('#load').modal('hide');
     });
     $("#doClose").click(function(){
+        $('#order').text('Ascending');
          resetFileName();
     });
-    
-    $('.alert').alert('open');
 });
   
