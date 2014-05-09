@@ -511,16 +511,13 @@ function initLoad(){
         success: function(d){
             row = d.split("|");
             points_array = new Array(row.length-1);
-            console.log("Begin : points_array size is " + points_array.length);
             for(var i=0;i<row.length-1;i++){
                 field = row[i].split(":");
-                console.log("Fields of row "+i+" are "+field.length+ " fields");
                 name.push(field[0]);
                 route_type.push(field[1]);
                 pick_route.push(field[2]);
                 date.push(field[3]);
                 points_array[i] = new Array(field.length-4);
-                console.log("Points_array "+ i+" has been created!");
                 for(var k=4;k<field.length;k++){
                     points_array[i][k-4] = field[k];
                 }
@@ -628,13 +625,14 @@ function initLoad(){
             });
             $("#t").keydown(function(e){
                 if(e.keyCode===13&&$("#selectable>a").hasClass('active')){
-                    var index = $(".active").index();
+                    var index = $('#selectable>a.active').index();
+//                    alert(index);
                     var number_of_points = points_array[index].length;
                     points = [];
                     for(var i=0;i<number_of_points;i++){
                         points[i] = points_array[index][i];
                     }
-                    $( "#dialog" ).dialog("close");
+                    $( "#doClose" ).trigger('click');
                     $('#selectable>a').removeClass('active');
                     $('#filename').text(name[index]);
                     if(route_type[index]===1)
@@ -648,7 +646,7 @@ function initLoad(){
                     return false;
                 }
                 else if(e.keyCode===13){
-                    $("#selectable>a:visible(:contains("+ $("#t").val() +"))").first().addClass('active');
+                    $("#selectable>a:visible(:contains("+ $("#t").val() +"))").first().addClass('active').siblings().removeClass('active');
                 }
             });
         }

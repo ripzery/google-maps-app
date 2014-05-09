@@ -130,7 +130,8 @@ and open the template in the editor.
 }
 
 .containbody{
-    height: 380px;
+    height: auto;
+    max-height: 380px;
     overflow: auto;
 }
 

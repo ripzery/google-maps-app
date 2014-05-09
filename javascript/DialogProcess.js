@@ -1,7 +1,6 @@
 $(function() {    
     $("#guide").click(function(){
-        $('#direction').modal({keyboard : false,draggable : true});
-//        $('#direction').modal({ keyboard: false });
+        $('#direction').modal({keyboard : true});
     });
     
     $('body').keyup(function(event){
@@ -12,15 +11,18 @@ $(function() {
     });
      
     $( "#opener" ).click(function() {
-            $('#load').modal({keyboard : false});                      // initialized with defaults
-//        $('#load').modal({ keyboard: false });   // initialized with no keyboard
+        $('#load').modal();   // initialized with no keyboard
     });
+    
     $("#doLoad").click(function(){
         Load();
         $('#load').modal('hide');
     });
+    
     $("#doClose").click(function(){
         $('#order').text('Ascending');
+        $('#t').val("");
+        $('#load').modal('hide');
          resetFileName();
     });
 });
