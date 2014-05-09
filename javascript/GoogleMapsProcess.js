@@ -255,6 +255,8 @@ function calcRoute() {
 
 function placeMarker(position,map){
     var image;
+    var start = $("#list>a:nth-child(2)");
+    var end = $("#list").find("a:last");
     if(count==0){
         image = "../marker-icon-number/start.png";
     }
@@ -284,7 +286,7 @@ function placeMarker(position,map){
         findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
                 startPlace = results[0].name +" "+ results[0].vicinity;
-                $("#list>a:nth-child(2)").text("Start : "+startPlace);
+                $(start).text("Start : "+startPlace);
             }
         });
     }
@@ -292,7 +294,7 @@ function placeMarker(position,map){
         findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
                 endPlace = results[0].name +" "+results[0].vicinity;
-                $("#list>a:last").text("End : "+endPlace);
+                $(end).text("End : "+endPlace);
             }
         });
     }
@@ -372,6 +374,7 @@ function placeMarker(position,map){
 function clearMap() {
     directionsDisplay.setMap(null);
     directionsDisplay.setPanel(null);
+    $('#suggestRoute').children().remove();
     points = [];
     isCalcRoute = false;
     count = 0;
@@ -463,6 +466,8 @@ function Save(){
 function Load(){
     var lat,lng;
     var points_temp = [];
+    var start = $("#list>a:nth-child(2)");
+    var end = $("#list>a:last");
     directionsDisplay.setPanel(null);
     for(var i=0;i<points.length;i++){
         //console.log(points[i]);
@@ -487,14 +492,14 @@ function Load(){
     findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
             startPlace = results[0].name +" "+ results[0].vicinity;
-            $("#list>a:nth-child(2)").text("Start : "+startPlace);
+            $(start).text("Start : "+startPlace);
         }
     });
     request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
     findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
             endPlace = results[0].name +" "+ results[0].vicinity;
-            $("#list>a:last").text("End: "+endPlace);
+            $(end).text("End: "+endPlace);
         }
     }); 
 }
@@ -503,6 +508,8 @@ function initLoad(){
     var field,row;
     var name=[],route_type=[],pick_route=[],date=[],points_array;
     var sort_list = $('.dropdown-menu').parent();
+    var t = $('#t');
+    var filename = $('#filename');
     //$('#combobox').val("Asc");
     
     $.ajax({
@@ -595,17 +602,17 @@ function initLoad(){
                     }
                 });
             });
-            var allMapsData = $("#selectable").find("a");
-            $("#t").keyup(function(){
+            var allMapsData = $("#selectable");
+            $(t).keyup(function(){
                 var len = allMapsData.length;
-                var string = $('#t').val();
-                $('#selectable>a:not(:contains(' + $('#t').val() + '))').hide();
-                $("#selectable>a:contains("+ string +")").show();
+                var string = $(t).val();
+                allMapsData.find('a:not(:contains(' + string + '))').hide();
+                allMapsData.find("a:contains("+ string +")").show();
             });
-            $("#selectable>a").click(function(){
+            $(allMapsData).find("a").click(function(){
                 $(this).addClass("active").siblings().removeClass("active");
             });
-            $("#selectable>a").click(function(){
+            $(allMapsData).find("a").click(function(){
                 $(this).addClass("active").siblings().removeClass("active");
                 var index = $(this).index();
                 var number_of_points = points_array[index].length;
@@ -613,7 +620,7 @@ function initLoad(){
                 for(var i=0;i<number_of_points;i++){
                     points[i] = points_array[index][i];
                 }
-                $('#filename').text(name[index]);
+                $(filename).text(name[index]);
                 if(route_type[index]===1)
                 {
                     isOptimize = true;
@@ -623,9 +630,9 @@ function initLoad(){
                 pickRouteIndex = pick_route[index];
                 
             });
-            $("#t").keydown(function(e){
-                if(e.keyCode===13&&$("#selectable>a").hasClass('active')){
-                    var index = $('#selectable>a.active').index();
+            $(t).keydown(function(e){
+                if(e.keyCode===13&&$(allMapsData).find('a').hasClass('active')){
+                    var index = $(allMapsData).find('a.active').index();
 //                    alert(index);
                     var number_of_points = points_array[index].length;
                     points = [];
@@ -633,8 +640,8 @@ function initLoad(){
                         points[i] = points_array[index][i];
                     }
                     $( "#doClose" ).trigger('click');
-                    $('#selectable>a').removeClass('active');
-                    $('#filename').text(name[index]);
+                    $(allMapsData).find('a').removeClass('active');
+                    $(filename).text(name[index]);
                     if(route_type[index]===1)
                     {
                         isOptimize = true;
@@ -646,7 +653,7 @@ function initLoad(){
                     return false;
                 }
                 else if(e.keyCode===13){
-                    $("#selectable>a:visible(:contains("+ $("#t").val() +"))").first().addClass('active').siblings().removeClass('active');
+                    $(allMapsData).find("a:visible(:contains("+ $("#t").val() +"))").first().addClass('active').siblings().removeClass('active');
                 }
             });
         }
