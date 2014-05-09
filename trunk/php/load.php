@@ -1,7 +1,7 @@
 <?php
     $query = "SELECT * 
     FROM  `google-maps`
-    ORDER BY `date` ASC";
+    ORDER BY `id` ASC";
     $sql = mysqli_connect("localhost", "root", "rabarip", "maps");
     $result = mysqli_query($sql, $query);
     $name = "";
