@@ -41,17 +41,17 @@ function initialize() {
        success : function(return_value){
            $('#filename').text(return_value);
            fileName = return_value;
-           $('#filename').editable({
-                showbuttons : false,
-                highlight : "#5D9CEC",
-                mode : "popup",
-                defaultValue : fileName,
-                placement : "bottom",
-                success : function(response,return_name){
-                    fileName = return_name;
-                }
-            });
        }
+    });
+    $('#filename').editable({
+        showbuttons : false,
+        highlight : "#5D9CEC",
+        mode : "popup",
+        defaultValue : fileName,
+        placement : "bottom",
+        success : function(response,return_name){
+            fileName = return_name;
+        }
     });
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบauto complete
@@ -768,7 +768,7 @@ function resetFileName(){
 //
 //// A jQuery event (I think), which is triggered after "onbeforeunload"
 //$(window).unload(function(){
-//    //I will call my method
+//
 //});
 
 google.maps.event.addDomListener(window, 'load', initialize);
