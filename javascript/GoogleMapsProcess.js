@@ -15,6 +15,7 @@ var polylineOptionsActual = {
     strokeOpacity: 0.5,
     strokeWeight: 5
 };
+var isLoad = false;
 /*
  * initialize() :  
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -141,7 +142,7 @@ function initialize() {
     }
     map.fitBounds(bounds);
   });
-    findPlace = new google.maps.places.PlacesService(map);  
+    findPlace = new google.maps.places.PlacesService(map);
     google.maps.event.addListener(map, 'click', function(event) {
       if(waypointMarkers.length<10)
       {
@@ -280,7 +281,7 @@ function placeMarker(position,map){
         rankBy : google.maps.places.RankBy.DISTANCE
     };
     //alert($("#list>li:nth-child(2)").text().indexOf(","));
-    if(count==1){
+    if(count==1&&!isLoad){
         findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
                 startPlace = results[0].name +" "+ results[0].vicinity;
@@ -288,7 +289,7 @@ function placeMarker(position,map){
             }
         });
     }
-    else if(count==2){
+    else if(count==2&&!isLoad){
         findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
                 endPlace = results[0].name +" "+results[0].vicinity;
@@ -464,6 +465,7 @@ function Save(){
 function Load(){
     var lat,lng;
     var points_temp = [];
+    isLoad = true;
     directionsDisplay.setPanel(null);
     for(var i=0;i<points.length;i++){
         //console.log(points[i]);
@@ -479,7 +481,6 @@ function Load(){
         addWaypointToList();
     }
     calcRoute();
-//    directionsDisplay.setRouteIndex(parseInt(pickRouteIndex));
     var request = {
         location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
         types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
@@ -635,7 +636,6 @@ function initLoad(){
                     for(var i=0;i<number_of_points;i++){
                         points[i] = points_array[index][i];
                     }
-                    $( "#doClose" ).trigger('click');
                     $(allMapsData).find('a').removeClass('active');
                     $(filename).text(name[index]);
                     if(route_type[index]===1)
@@ -646,6 +646,7 @@ function initLoad(){
                     }
                     pickRouteIndex = pick_route[index];
                     Load();
+                    $( "#doClose" ).trigger('click');
                     return false;
                 }
                 else if(e.keyCode===13){
