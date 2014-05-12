@@ -15,7 +15,6 @@ var polylineOptionsActual = {
     strokeOpacity: 0.5,
     strokeWeight: 5
 };
-
 /*
  * initialize() :  
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -42,18 +41,17 @@ function initialize() {
        success : function(return_value){
            $('#filename').text(return_value);
            fileName = return_value;
+           $('#filename').editable({
+                showbuttons : false,
+                highlight : "#5D9CEC",
+                mode : "popup",
+                defaultValue : fileName,
+                placement : "bottom",
+                success : function(response,return_name){
+                    fileName = return_name;
+                }
+            });
        }
-    });
-    $(document).ready(function() {
-        $('#filename').editable({
-            showbuttons : false,
-            highlight : "#5D9CEC",
-            mode : "popup",
-            placement : "bottom",
-            success : function(response,return_name){
-                fileName = return_name;
-            }
-        });
     });
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบauto complete
@@ -213,7 +211,7 @@ function calcRoute() {
             var li = document.createElement("li");
             var a = document.createElement("a");
             $(a).attr('href="#"');
-            $(a).append(response.routes[i].summary+" "+response.routes[i].legs[0].distance.text +" " +response.routes[1].legs[0].duration.text);
+            $(a).append(response.routes[i].summary+" "+response.routes[i].legs[0].distance.text +" " +response.routes[i].legs[0].duration.text);
             $(li).append(a);
             $('#suggestRoute').append(li);
         }
@@ -466,8 +464,6 @@ function Save(){
 function Load(){
     var lat,lng;
     var points_temp = [];
-    var start = $("#list>a:nth-child(2)");
-    var end = $("#list>a:last");
     directionsDisplay.setPanel(null);
     for(var i=0;i<points.length;i++){
         //console.log(points[i]);
@@ -492,14 +488,14 @@ function Load(){
     findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
             startPlace = results[0].name +" "+ results[0].vicinity;
-            $(start).text("Start : "+startPlace);
+            $("#list>a:nth-child(2)").text("Start : "+startPlace);
         }
     });
     request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
     findPlace.nearbySearch(request,function(results,status){
         if (status == google.maps.places.PlacesServiceStatus.OK){
             endPlace = results[0].name +" "+ results[0].vicinity;
-            $(end).text("End: "+endPlace);
+            $("#list>a:last").text("End : "+endPlace);
         }
     }); 
 }
@@ -718,15 +714,11 @@ function addTable(){
                 }else{
                     route = "Fast"
                 }
-//                else{
-//                    alert(route_type[i]);
-//                }
                 $(td_route).append(route);
                 td_route.setAttribute("style","width:150px;");
                 $(td_date).append(date[i]);
                 $(td_start).append(points_array[i][0]);
                 $(td_end).append(points_array[i][1]);
-//                $(tr).addClass("line");
                 $(tr).append(td_delete);
                 $(tr).append(td_name);
                 $(tr).append(td_route);
@@ -768,6 +760,7 @@ function addTable(){
 function resetFileName(){
     $('#filename').text(fileName);
 }
+
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
 //    return "Do you want to leave?"
