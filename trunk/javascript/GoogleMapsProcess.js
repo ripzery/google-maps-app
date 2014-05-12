@@ -280,7 +280,6 @@ function placeMarker(position,map){
         types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
         rankBy : google.maps.places.RankBy.DISTANCE
     };
-    //alert($("#list>li:nth-child(2)").text().indexOf(","));
     if(count==1&&!isLoad){
         findPlace.nearbySearch(request,function(results,status){
             if (status == google.maps.places.PlacesServiceStatus.OK){
@@ -342,7 +341,6 @@ function placeMarker(position,map){
     google.maps.event.addListener(marker,"rightclick",function(event){
         var index = points.indexOf(event.latLng.lat()+","+event.latLng.lng());
         var waypoint = $("#list").find("a");
-//        alert(waypoint.length);
         //เปลี่ยนลำดับ waypoint ใน tag li ที่ index>index+1 จนถึง < length
         if(index===0 || index===1){
             clearMap();
@@ -354,7 +352,6 @@ function placeMarker(position,map){
                 waypointMarkers[i].set("id",i-1);
                 waypointMarkers[i].setIcon(image);
             }
-//            alert(waypoint.eq(3).text());
             waypoint.eq(index).remove();
             points.splice(index,1);
             waypointMarkers[index].setMap(null);
@@ -362,7 +359,6 @@ function placeMarker(position,map){
             count--;
         }
         if(isCalcRoute){
-//            alert("CalcRoute again!");
             calcRoute();
         }
     });
@@ -431,7 +427,6 @@ function addWaypointToList(){
 function Save(){
     var route_type;
     pickRouteIndex = directionsDisplay.getRouteIndex();
-//    alert(pickRouteIndex);
     if(isOptimize){
         route_type = 1;
     }
@@ -448,7 +443,7 @@ function Save(){
         url : "../php/save.php",
         data: ({name : fileName,route_type : route_type,pick_route : pickRouteIndex,latlng: points}),
         success: function(){
-            alert("Send file to save.php successful.");
+            alert("Save file to database successfully.");
             addTable();
         },
         error: function(xhr, status, error) {
@@ -630,7 +625,6 @@ function initLoad(){
             $(t).keydown(function(e){
                 if(e.keyCode===13&&$(allMapsData).find('a').hasClass('active')){
                     var index = $(allMapsData).find('a.active').index();
-//                    alert(index);
                     var number_of_points = points_array[index].length;
                     points = [];
                     for(var i=0;i<number_of_points;i++){
@@ -645,8 +639,7 @@ function initLoad(){
                         isOptimize = false;
                     }
                     pickRouteIndex = pick_route[index];
-                    Load();
-                    $( "#doClose" ).trigger('click');
+                    $( "#doLoad" ).trigger('click');
                     return false;
                 }
                 else if(e.keyCode===13){
@@ -708,7 +701,6 @@ function addTable(){
                     },
                     url : "../php/editname.php"
                 });
-//                alert($(td_name).attr('class'));
                 if(route_type[i]==="0")
                 {
                     route = "A-Z"
