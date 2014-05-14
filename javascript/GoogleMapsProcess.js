@@ -409,7 +409,8 @@ function calcRoute() {
     if (status == google.maps.DirectionsStatus.OK) {
       $('#suggestRoute>li').remove();
       if(response.routes.length>1)
-      {
+      
+          {
         for(var i =0;i<response.routes.length;i++)
         {
             var li = document.createElement("li");
@@ -677,7 +678,6 @@ function Load(){
         points_temp.push(points[i]);
     }
     clearMap();
-    points = [];
     for(var i=0;i<points_temp.length;i++){
         points.push(points_temp[i]);
         lat = points[i].split(",")[0];
@@ -851,11 +851,19 @@ function addTable(){
         var td_date = document.createElement("td");
         var td_start = document.createElement("td");
         var td_end = document.createElement("td");
-        var button = document.createElement("button");
-        button.innerHTML = "X";
-        $(button).addClass("btn btn-danger btn-block");
-        button.setAttribute("style","width:30px;margin-left:auto;margin-right:auto;");
-        $(td_delete).append(button);
+        var button_x = document.createElement("button");
+        var button_view = document.createElement("button");
+        var td_view = document.createElement("td");
+        button_view.innerHTML = "View";
+        $(button_view).addClass("btn btn-primary btn-block");
+        button_view.setAttribute("style","width:45px;");
+        $(td_view).append(button_view);
+        button_x.innerHTML = "X";
+        $(button_x).addClass("btn btn-danger btn-block");
+        button_x.setAttribute("style","width:30px;");
+        button_x.setAttribute("id","delete");
+        $(td_delete).append(button_x);
+        td_name.setAttribute("style","width:150px;");
         $(td_name).append(map_name[i]);
         $(td_name).editable({
             type : "text",
@@ -870,15 +878,16 @@ function addTable(){
         });
         if(route_type[i]==="0")
         {
-            route = "A-Z"
+            route = "A-Z";
         }else{
-            route = "Fast"
+            route = "Fast";
         }
         $(td_route).append(route);
         td_route.setAttribute("style","width:150px;");
         $(td_date).append(date[i]);
         $(td_start).append(points_array[i][0]);
         $(td_end).append(points_array[i][1]);
+        $(tr).append(td_view);
         $(tr).append(td_delete);
         $(tr).append(td_name);
         $(tr).append(td_route);
@@ -886,19 +895,69 @@ function addTable(){
         $(tr).append(td_start);
         $(tr).append(td_end);
         $("#tablebody").append(tr);
-        var table_row = $(tr);
-        var b = $(table_row).find("td:first button");
-        $(b).click(function(){
+        $(button_x).click(function(){
             $.ajax({
                 type: "POST",
                 async: false,
                 url : "../php/delete.php",
-                data : {name : $(this).parent().parent().find("td").eq(1).text()},
+                data : {name : $(this).parent().parent().find("td").eq(2).text()},
                 success : function(return_name){
                     alert("delete "+return_name+" from database successfully.");
                 }
             });
               $(this).parent().parent().remove();
+        });
+        $(button_view).click(function(){
+            var name = $(this).parent().parent().find("td").eq(2).text();
+            for(var a=0;a<map_name.length;a++){
+//                alert("here is for");
+                if(map_name[a]===name){
+//                    alert("Find");
+//                    now is here
+                    var lat,lng;
+                    isLoad = true;
+                    directionsDisplay.setPanel(null);
+                    clearMap();
+                    for(var x=0;x<points_array[a].length;x++){
+                        points[x] = points_array[a][x];
+                        lat = points_array[a][x].split(",")[0];
+                        lng = points_array[a][x].split(",")[1];
+                        placeMarker(new google.maps.LatLng(lat,lng),map);
+                        addWaypointToList();
+                    }
+                    if(route_type[a]===1)
+                        isOptimize = true;
+                    else
+                        isOptimize = false;
+                    pickRouteIndex = pick_route[a];
+                    
+                    
+                }
+            }
+            $('#filename').text(name);
+            $('#myTab1 a:first').tab('show');
+            calcRoute();
+            var request = {
+                location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
+                types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
+                rankBy : google.maps.places.RankBy.DISTANCE
+            };
+            findPlace.nearbySearch(request,function(results,status){
+                if (status == google.maps.places.PlacesServiceStatus.OK){
+                    startPlace = results[0].name +" "+ results[0].vicinity;
+                    $("#list>a:nth-child(2)").text("Start : "+startPlace);
+                }
+            });
+            request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
+            findPlace.nearbySearch(request,function(results,status){
+                if (status == google.maps.places.PlacesServiceStatus.OK){
+                    endPlace = results[0].name +" "+ results[0].vicinity;
+                    $("#list>a:last").text("End : "+endPlace);
+                }
+            }); 
+//            map.setZoom(15);
+//            map.setCenter(new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]));
+//            calcRoute();
         });
     }
     $('#searchdb').keyup(function(){
@@ -918,7 +977,6 @@ function addTable(){
 function resetFileName(){
     $('#filename').text(fileName);
 }
-
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
 //    return "Are you sure to leave?"
