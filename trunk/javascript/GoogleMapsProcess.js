@@ -1,11 +1,11 @@
-var map; // เอาไว้ initilize map-canvas จาก google
+var map,map2; // เอาไว้ initilize map-canvas จาก google
 var count="0"; // เอาไว้นับ marker เพิ่มค่าเมื่อคลิกวาง marker บน map
 var directionsDisplay; // เอาไว้setDirection ที่คำนวนได้จาก directionsService
 var directionsService = new google.maps.DirectionsService(); //เอาไว้เรียก method route เพื่อหาเส้นทาง
 var points = new Array(); // เอาไว้เก็บตำแหน่งของพิกัดในของ marker
 var waypointMarkers = []; // เอาไว้เก็บobject Marker 
 var isOptimize = false; // เอาไว้เช็คว่าการคำนวณเส้นทางเป็นแบบไหน {true:หาเส้นที่เร็วที่สุด,false:หาตามลำดับ waypoint} 
-var fileName="UntitledMap";// เอาไว้รีเซ็ตชื่อไฟล์กับมาเป็นเหมือนเดิมโดยเรียก method resetFileName
+var fileName="UntitledMap";// เอาไว้รีเซ็ตชื่อไฟล์กลับมาเป็นเหมือนเดิมโดยเรียก method resetFileName
 var isCalcRoute = false; // เอาไว้เช็คว่าเรียกฟังก์ชั่น calcroute หรือยัง เอาไว้แยกเวลา เพิ่ม/เลื่อน/ลบ marker แล้ว คำนวณเส้นทางอัตโนมัติ
 var findPlace; //เอาไว้หาสถานที่ใกล้เคียงกับจุดที่เราคลิก
 var pickRouteIndex = 0; // เอาไว้เก็บว่าเราเลือกเส้นทางไหน ใน alternative route (ที่google แนะนำเพิ่มเติม)
@@ -16,6 +16,9 @@ var polylineOptionsActual = {
     strokeWeight: 5
 };
 var isLoad = false;
+var map_name = new Array();
+var route_type=[],pick_route=[],date=[],points_array="";
+var line = [],mapMarkers=[],activeIndexes = [];
 /*
  * initialize() :  
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -24,7 +27,7 @@ var isLoad = false;
  */
 
 function initialize() {
-    directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
+    directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual,suppressMarkers:true});
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
         zoom: 12,
@@ -34,7 +37,8 @@ function initialize() {
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
     markers = [];
-    addTable();
+    getValueFromDatabase();
+    prepareMultipleRoutes();
     $.ajax({
        type : "POST",
        url : "../php/check.php",
@@ -164,6 +168,205 @@ function initialize() {
  * Short Route จะคำนวณเส้นทางสั้นที่สุด
  * A-Z จะคำนวณตามลำดับของ waypoints
  */
+function prepareMultipleRoutes(){
+    var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
+    map2 = new google.maps.Map(document.getElementById('map-canvas-2'), {zoom: 12,center: BTSAri});
+    $("#loadMultiple").click(function(){
+        $('#md-select-route').modal();
+        loadMaptoPickRoute();
+    });
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        google.maps.event.trigger(map2,'resize');
+    });
+    $('#btn-remove-routes').click(function(){
+        for(var i=0;i<line.length;i++){
+            line[i].setMap(null);
+        }
+        $('#map-group>a:gt(0)').remove();
+        for(var i=0;i<mapMarkers.length;i++){
+            mapMarkers[i].setMap(null);
+        }
+        mapMarkers = [];
+        $('#list-select-route>a').removeClass('active');
+    });
+    $('#btn-pick-route').click(function(){
+        for(var i=0;i<mapMarkers.length;i++){
+            mapMarkers[i].setMap(null);
+        }
+//        for(var i=0;i<line.length;i++){
+//            line[i].setMap(null);
+//        }
+//        line = [];
+//        $('#map-group>a:gt(0)').remove();
+        var multipleRoute = $('#list-select-route>.active');
+        for(var i =0;i<multipleRoute.length;i++){
+            var index = $(multipleRoute[i]).index();
+            activeIndexes.push(index);
+            addMapToList(index);
+            var wps = [];
+            for(var j=2;j<points_array[index].length;j++){
+                wps.push({location:points_array[index][j],stopover:true});
+            }
+            if(route_type[index]===1){
+                isOptimize = true;
+            }else if(route_type[index]===0){
+                isOptimize = false;
+            }
+            
+            var request = {
+                origin:points_array[index][0],
+                destination:points_array[index][1],
+                waypoints:wps,
+                optimizeWaypoints:isOptimize,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            directionsService.route(request, function(response, status){
+                if(status == google.maps.DirectionsStatus.OK){
+                    var arr = new Array();
+                    for(var j=0;j<response.routes[0].legs.length;j++){
+                      for(var i=0;i<response.routes[0].legs[j].steps.length;i++){
+                          for(var k=0;k<response.routes[0].legs[j].steps[i].path.length;k++){
+                                arr.push(response.routes[0].legs[j].steps[i].path[k]);
+                          }
+                      }
+                    }
+                    var polyline = new google.maps.Polyline({path:arr,strokeOpacity:0.6});
+                    polyline.setMap(map2);
+                    line.push(polyline);
+                }
+                else{
+                    alert(status);
+                }
+            });
+        }
+    });
+}
+
+function addMapToList(index){
+    var list = document.getElementById("map-group");
+    var a = document.createElement("a");
+    var label = document.createElement("label");
+    var chk = document.createElement("input");
+    chk.setAttribute("type","checkbox");
+    label.appendChild(chk);
+    label.appendChild(document.createTextNode(" Hide"));
+    label.setAttribute("class","hide-route");
+    a.classList.add("list-group-item");
+    a.appendChild(document.createTextNode(map_name[index]));
+    a.appendChild(label);
+    list.appendChild(a);
+    $(chk).iCheck({
+        checkboxClass: 'icheckbox_minimal-blue',
+        increaseArea: '10%' // optional
+    });
+    $(chk).on('ifChecked', function(){
+        var id  = $(list).find("a").index($(chk).parent().parent().parent())-1;
+        line[id].setVisible(false);
+        for(var i=0;i<mapMarkers.length;i++){
+            mapMarkers[i].setVisible(false);
+        }
+    });
+    $(chk).on('ifUnchecked', function(){
+        var id  = $(list).find("a").index($(chk).parent().parent().parent())-1;
+        line[id].setVisible(true);
+        for(var i=0;i<mapMarkers.length;i++){
+            mapMarkers[i].setVisible(true);
+        }
+    });
+    a.addEventListener('click',function(){
+        var id = map_name.indexOf($(this).text().replace(" Hide",""));
+        var line_id  = $(list).find("a").index($(this))-1;
+        var lat = points_array[id][0].split(",")[0];
+        var lng = points_array[id][0].split(",")[1];
+        var position = new google.maps.LatLng(lat,lng);
+        map2.setCenter(position);
+        $(this).addClass('active').siblings(':gt(0)').removeClass('active');
+        for(var i =0;i<line.length;i++){
+            if(i!==line_id){
+                line[i].setOptions({strokeColor: "black",strokeOpacity:0.6});
+            }else{
+                line[i].setOptions({strokeColor: "blue",strokeOpacity:1.0});
+            }
+        }
+        for(var i =0;i<mapMarkers.length;i++){
+            mapMarkers[i].setMap(null);
+        }
+        mapMarkers = [];
+        var image = "../marker-icon-number/start.png";
+        while(mapMarkers.length<points_array[id].length){
+            var marker = new google.maps.Marker({
+                position : position,
+                map : map2,
+                icon : image,
+                animation : google.maps.Animation.DROP
+            });
+            mapMarkers.push(marker);
+            position = new google.maps.LatLng(points_array[id][mapMarkers.length].split(",")[0],points_array[id][mapMarkers.length].split(",")[1]);
+            if(mapMarkers.length===1){
+                image = "../marker-icon-number/end.png";
+            }
+            else{
+                image = "../marker-icon-number/number_"+(parseInt(mapMarkers.length)-1)+".png";
+            }
+            
+        }
+    });
+}
+
+function loadMaptoPickRoute(){
+    $('#list-select-route').find('a').remove();
+    for(var i=0;i<map_name.length;i++){
+        var li = document.createElement("a");
+        var route;
+        $(li).append(date[i]+" ");
+        if(route_type[i]==0)
+        {
+            route = "A-Z"
+            $(li).append(route+" ");
+        }else{
+            route = "Fast "
+            $(li).append(route);
+        }
+        $(li).append(map_name[i]);
+        li.setAttribute("class","list-group-item");
+        li.setAttribute("style","text-align: left;word-spacing: 20px;");
+        $("#list-select-route").append(li);
+//        for(var j=0;j<)
+    }
+    $('#list-select-route').find("a").click(function(){
+        if($('#list-select-route>.active').length<10){
+            $(this).addClass("active");
+        }else{
+            alert("Over query limit (10 routes/request)");
+        }
+    });
+}
+
+function getValueFromDatabase(){
+    map_name = [],route_type = [],pick_route = [],date = [],points_array = [];
+    $.ajax({
+        type :"POST",
+        url: "../php/load.php",
+        success: function(d){
+            var field,row;
+            row = d.split("|");
+            points_array = new Array(row.length-1);
+            for(var i=0;i<row.length-1;i++){
+                field = row[i].split(":");
+                map_name.push(field[0]);
+                route_type[i] = field[1];
+                pick_route[i] = field[2];
+                date[i] = field[3];
+                points_array[i] = new Array(field.length-4);
+                for(var k=4;k<field.length;k++){
+                    points_array[i][k-4] = field[k];
+                }
+            }
+            addTable();
+        }
+    });
+}
+
 function shRoute(){
   isOptimize = true; 
   calcRoute();
@@ -200,7 +403,7 @@ function calcRoute() {
       provideRouteAlternatives : true,
       optimizeWaypoints:isOptimize,
       travelMode: google.maps.TravelMode.DRIVING
-  };
+    };
   
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
@@ -232,15 +435,24 @@ function calcRoute() {
                 pickRouteIndex = 2;
             }
         });
-      }else{
+      }
+      else{
+          var test=0;
+//          var arr = new Array();
+//          for(var j=0;j<response.routes[0].legs.length;j++){
+//            for(var i=0;i<response.routes[0].legs[j].steps.length;i++){
+//                for(var k=0;k<response.routes[0].legs[j].steps[i].path.length;k++){
+////                    if(test%20==0)
+////                        testMarker(response.routes[0].legs[j].steps[i].path[k],map);
+////                    test++;
+//                      arr.push(response.routes[0].legs[j].steps[i].path[k]);
+//                }
+//            }
+//          }
+//          var polyline = new google.maps.Polyline({path:arr});
+//          polyline.setMap(map);
           directionsDisplay.setDirections(response);
       }
-//      var order = "Start > ";
-//      for(var i=0;i<response.routes[0].waypoint_order.length;i++){
-//          order = order + "Waypoint "+(response.routes[0].waypoint_order[i]+1)+" > ";
-//      }
-//      order = order + "End";
-      //alert(response.routes[0].waypoint_order);
     }
   });
 }
@@ -251,7 +463,6 @@ function calcRoute() {
  * เซ็ต eventlistener เมื่อ drag,right-click บนmarker (drag=edit position,right-click=remove marker)
  * 
  */
-
 function placeMarker(position,map){
     var image;
     var start = $("#list>a:nth-child(2)");
@@ -272,7 +483,7 @@ function placeMarker(position,map){
     marker.set("icon",image);
     marker.set("draggable",true);
     marker.setZIndex(parseInt(count));
-    //marker.set("animation",google.maps.Animation.DROP);
+    marker.set("animation",google.maps.Animation.DROP);
     waypointMarkers[marker.id] = marker;
     count++;
     var request = {
@@ -382,10 +593,11 @@ function clearMap() {
     for(var i=list.length-1,li;li=list.eq(i),i>0;i--){
         li.remove();
     }
-    directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual});
+    directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual,suppressMarkers:true});
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
 }
+
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
 function addWaypointToList(){
     var ul = document.getElementById("list");
@@ -393,9 +605,7 @@ function addWaypointToList(){
     var position = points[points.length-1];
     li.classList.add("list-group-item");
     li.addEventListener('click',function(){
-        var pos = this.innerHTML.split(" ");
         var nodes = $("#list").find("a");
-        var nodes_length = nodes.length;
         if(this===nodes[1])
         {
             map.setCenter(waypointMarkers[0].getPosition());
@@ -443,8 +653,8 @@ function Save(){
         url : "../php/save.php",
         data: ({name : fileName,route_type : route_type,pick_route : pickRouteIndex,latlng: points}),
         success: function(){
+            getValueFromDatabase();
             alert("Save file to database successfully.");
-            addTable();
         },
         error: function(xhr, status, error) {
             alert(xhr.responseText);
@@ -497,33 +707,35 @@ function Load(){
 }
 
 function initLoad(){
-    var field,row;
-    var name=[],route_type=[],pick_route=[],date=[],points_array;
     var sort_list = $('.dropdown-menu').parent();
     var t = $('#t');
     var filename = $('#filename');
-    //$('#combobox').val("Asc");
-    
-    $.ajax({
-        type :"POST",
-        url: "../php/load.php",
-        success: function(d){
-            row = d.split("|");
-            points_array = new Array(row.length-1);
-            for(var i=0;i<row.length-1;i++){
-                field = row[i].split(":");
-                name.push(field[0]);
-                route_type.push(field[1]);
-                pick_route.push(field[2]);
-                date.push(field[3]);
-                points_array[i] = new Array(field.length-4);
-                for(var k=4;k<field.length;k++){
-                    points_array[i][k-4] = field[k];
-                }
-            }
-            $('#selectable').find("a").remove();
-            for(var i=0;i<name.length;i++){
+    $('#selectable').find("a").remove();
+    for(var i=0;i<map_name.length;i++){
+        var li = document.createElement("a");
+        var route;
+        $(li).append(date[i]+" ");
+        if(route_type[i]==0)
+        {
+            route = "A-Z"
+            $(li).append(route+" ");
+        }else{
+            route = "Fast "
+            $(li).append(route);
+        }
+        $(li).append(map_name[i]);
+        li.setAttribute("class","list-group-item");
+        li.setAttribute("style","text-align: left;word-spacing: 20px;");
+        $("#selectable").append(li);
+    }
+    $(sort_list).on('show.bs.dropdown',function(e){
+        $('#Asc').on('click',function(){
+            $("#selectable").find('a').remove();
+            $('#order').text("Ascending");
+            for(var i=0;i<map_name.length;i++){
                 var li = document.createElement("a");
+                $(li).attr("href='#'");
+                $(li).addClass("list-group-item");
                 var route;
                 $(li).append(date[i]+" ");
                 if(route_type[i]==0)
@@ -534,118 +746,93 @@ function initLoad(){
                     route = "Fast "
                     $(li).append(route);
                 }
-                $(li).append(name[i]);
+                $(li).append(map_name[i]);
                 li.setAttribute("class","list-group-item");
                 li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                $(li).click(function(){
+                   $(this).addClass("active");
+                   $(this).siblings().removeClass("active");
+                });
                 $("#selectable").append(li);
             }
-            $(sort_list).on('show.bs.dropdown',function(e){
-                $('#Asc').on('click',function(){
-                    $("#selectable").find('a').remove();
-                    $('#order').text("Ascending");
-                    for(var i=0;i<name.length;i++){
-                        var li = document.createElement("a");
-                        $(li).attr("href='#'");
-                        $(li).addClass("list-group-item");
-                        var route;
-                        $(li).append(date[i]+" ");
-                        if(route_type[i]==0)
-                        {
-                            route = "A-Z"
-                            $(li).append(route+" ");
-                        }else{
-                            route = "Fast "
-                            $(li).append(route);
-                        }
-                        $(li).append(name[i]);
-                        li.setAttribute("class","list-group-item");
-                        li.setAttribute("style","text-align: left;word-spacing: 20px;");
-                        $(li).click(function(){
-                           $(this).addClass("active");
-                           $(this).siblings().removeClass("active");
-                        });
-                        $("#selectable").append(li);
-                    }
-                });
-                $('#Dsc').on('click',function(){
-                    $("#selectable").find('a').remove();
-                    $('#order').text("Descending");
-                    for(var i=name.length-1;i>=0;i--){
-                        var li = document.createElement("a");
-                        $(li).attr("href='#'");
-                        var route;
-                        $(li).append(date[i]+" ");
-                        if(route_type[i]==0)
-                        {
-                            route = "A-Z"
-                            $(li).append(route+" ");
-                        }else{
-                            route = "Fast "
-                            $(li).append(route);
-                        }
-                        $(li).append(name[i]);
-                        li.setAttribute("class","list-group-item");
-                        li.setAttribute("style","text-align: left;word-spacing: 20px;");
-                        $(li).click(function(){
-                           $(this).addClass("active");
-                           $(this).siblings().removeClass("active");
-                        });
-                        $("#selectable").append(li);
-                    }
-                });
-            });
-            var allMapsData = $("#selectable");
-            $(t).keyup(function(){
-                var len = allMapsData.length;
-                var string = $(t).val();
-                allMapsData.find('a:not(:contains(' + string + '))').hide();
-                allMapsData.find("a:contains("+ string +")").show();
-            });
-            $(allMapsData).find("a").click(function(){
-                $(this).addClass("active").siblings().removeClass("active");
-            });
-            $(allMapsData).find("a").click(function(){
-                $(this).addClass("active").siblings().removeClass("active");
-                var index = $(this).index();
-                var number_of_points = points_array[index].length;
-                points = [];
-                for(var i=0;i<number_of_points;i++){
-                    points[i] = points_array[index][i];
-                }
-                $(filename).text(name[index]);
-                if(route_type[index]===1)
+        });
+        $('#Dsc').on('click',function(){
+            $("#selectable").find('a').remove();
+            $('#order').text("Descending");
+            for(var i=map_name.length-1;i>=0;i--){
+                var li = document.createElement("a");
+                $(li).attr("href='#'");
+                var route;
+                $(li).append(date[i]+" ");
+                if(route_type[i]==0)
                 {
-                    isOptimize = true;
-                }else if(route_type[index]===0){
-                    isOptimize = false;
+                    route = "A-Z"
+                    $(li).append(route+" ");
+                }else{
+                    route = "Fast "
+                    $(li).append(route);
                 }
-                pickRouteIndex = pick_route[index];
-                
-            });
-            $(t).keydown(function(e){
-                if(e.keyCode===13&&$(allMapsData).find('a').hasClass('active')){
-                    var index = $(allMapsData).find('a.active').index();
-                    var number_of_points = points_array[index].length;
-                    points = [];
-                    for(var i=0;i<number_of_points;i++){
-                        points[i] = points_array[index][i];
-                    }
-                    $(allMapsData).find('a').removeClass('active');
-                    $(filename).text(name[index]);
-                    if(route_type[index]===1)
-                    {
-                        isOptimize = true;
-                    }else if(route_type[index]===0){
-                        isOptimize = false;
-                    }
-                    pickRouteIndex = pick_route[index];
-                    $( "#doLoad" ).trigger('click');
-                    return false;
-                }
-                else if(e.keyCode===13){
-                    $(allMapsData).find("a:visible(:contains("+ $("#t").val() +"))").first().addClass('active').siblings().removeClass('active');
-                }
-            });
+                $(li).append(map_name[i]);
+                li.setAttribute("class","list-group-item");
+                li.setAttribute("style","text-align: left;word-spacing: 20px;");
+                $(li).click(function(){
+                   $(this).addClass("active");
+                   $(this).siblings().removeClass("active");
+                });
+                $("#selectable").append(li);
+            }
+        });
+    });
+    var allMapsData = $("#selectable");
+    $(t).keyup(function(){
+        var len = allMapsData.length;
+        var string = $(t).val();
+        allMapsData.find('a:not(:contains(' + string + '))').hide();
+        allMapsData.find("a:contains("+ string +")").show();
+    });
+    $(allMapsData).find("a").click(function(){
+        $(this).addClass("active").siblings().removeClass("active");
+    });
+    $(allMapsData).find("a").click(function(){
+        $(this).addClass("active").siblings().removeClass("active");
+        var index = $(this).index();
+        var number_of_points = points_array[index].length;
+        points = [];
+        for(var i=0;i<number_of_points;i++){
+            points[i] = points_array[index][i];
+        }
+        $(filename).text(map_name[index]);
+        if(route_type[index]===1)
+        {
+            isOptimize = true;
+        }else if(route_type[index]===0){
+            isOptimize = false;
+        }
+        pickRouteIndex = pick_route[index];
+
+    });
+    $(t).keydown(function(e){
+        if(e.keyCode===13&&$(allMapsData).find('a').hasClass('active')){
+            var index = $(allMapsData).find('a.active').index();
+            var number_of_points = points_array[index].length;
+            points = [];
+            for(var i=0;i<number_of_points;i++){
+                points[i] = points_array[index][i];
+            }
+            $(allMapsData).find('a').removeClass('active');
+            $(filename).text(map_name[index]);
+            if(route_type[index]===1)
+            {
+                isOptimize = true;
+            }else if(route_type[index]===0){
+                isOptimize = false;
+            }
+            pickRouteIndex = pick_route[index];
+            $( "#doLoad" ).trigger('click');
+            return false;
+        }
+        else if(e.keyCode===13){
+            $(allMapsData).find("a:visible(:contains("+ $("#t").val() +"))").first().addClass('active').siblings().removeClass('active');
         }
     });
 }
@@ -655,87 +842,65 @@ function initLoad(){
  * เป็นการโหลดค่าจาก database มาลงตารางใน tabs2
  */
 function addTable(){
-    var field,row;
-    var name=[],route_type=[],date=[],points_array;
     $('#tablebody').find('tr').remove();
-    $.ajax({
-        type : "POST",
-        url: "../php/load.php",
-        success: function(d){
-            row = d.split("|");
-            points_array = new Array(row.length-1);
-            for(var i=0;i<row.length-1;i++){
-                field = row[i].split(":");
-                name.push(field[0]);
-                route_type.push(field[1]);
-                date.push(field[3]);
-                points_array[i] = new Array(2);
-                for(var k=4;k<6;k++){
-                    points_array[i][k-4] = field[k];
-                }
-            }
-            for(var i=0;i<name.length;i++){
-                var tr = document.createElement("tr");
-                var td_delete = document.createElement("td");
-                var td_name = document.createElement("td");
-                var td_route = document.createElement("td");
-                var td_date = document.createElement("td");
-                var td_start = document.createElement("td");
-                var td_end = document.createElement("td");
-                var button = document.createElement("button");
-                button.innerHTML = "X";
-                $(button).addClass("btn btn-danger btn-block");
-                button.setAttribute("style","width:30px;margin-left:auto;margin-right:auto;");
-                $(td_delete).append(button);
-//                td_delete.setAttribute("style","width=50px");
-                $(td_name).append(name[i]);
-                
-                $(td_name).editable({
-                    type : "text",
-                    showbuttons : false,
-                    mode : "inline",
-                    pk : {name : ""},
-                    params : function(params){
-                        params.origValue = $(this).text();
-                        return params;
-                    },
-                    url : "../php/editname.php"
-                });
-                if(route_type[i]==="0")
-                {
-                    route = "A-Z"
-                }else{
-                    route = "Fast"
-                }
-                $(td_route).append(route);
-                td_route.setAttribute("style","width:150px;");
-                $(td_date).append(date[i]);
-                $(td_start).append(points_array[i][0]);
-                $(td_end).append(points_array[i][1]);
-                $(tr).append(td_delete);
-                $(tr).append(td_name);
-                $(tr).append(td_route);
-                $(tr).append(td_date);
-                $(tr).append(td_start);
-                $(tr).append(td_end);
-                $("#tablebody").append(tr);
-                var table_row = $(tr);
-                var b = $(table_row).find("td:first button");
-                $(b).click(function(){
-                    $.ajax({
-                        type: "POST",
-                        async: false,
-                        url : "../php/delete.php",
-                        data : {name : $(this).parent().parent().find("td").eq(1).text()},
-                        success : function(return_name){
-                            alert("delete "+return_name+" from database successfully.");
-                        }
-                    });
-                      $(this).parent().parent().remove();
-                });
-            }
+    for(var i=0;i<map_name.length;i++){
+        var tr = document.createElement("tr");
+        var td_delete = document.createElement("td");
+        var td_name = document.createElement("td");
+        var td_route = document.createElement("td");
+        var td_date = document.createElement("td");
+        var td_start = document.createElement("td");
+        var td_end = document.createElement("td");
+        var button = document.createElement("button");
+        button.innerHTML = "X";
+        $(button).addClass("btn btn-danger btn-block");
+        button.setAttribute("style","width:30px;margin-left:auto;margin-right:auto;");
+        $(td_delete).append(button);
+        $(td_name).append(map_name[i]);
+        $(td_name).editable({
+            type : "text",
+            showbuttons : false,
+            mode : "inline",
+            pk : {name : ""},
+            params : function(params){
+                params.origValue = $(this).text();
+                return params;
+            },
+            url : "../php/editname.php"
+        });
+        if(route_type[i]==="0")
+        {
+            route = "A-Z"
+        }else{
+            route = "Fast"
         }
-    });
+        $(td_route).append(route);
+        td_route.setAttribute("style","width:150px;");
+        $(td_date).append(date[i]);
+        $(td_start).append(points_array[i][0]);
+        $(td_end).append(points_array[i][1]);
+        $(tr).append(td_delete);
+        $(tr).append(td_name);
+        $(tr).append(td_route);
+        $(tr).append(td_date);
+        $(tr).append(td_start);
+        $(tr).append(td_end);
+        $("#tablebody").append(tr);
+        var table_row = $(tr);
+        var b = $(table_row).find("td:first button");
+        $(b).click(function(){
+            $.ajax({
+                type: "POST",
+                async: false,
+                url : "../php/delete.php",
+                data : {name : $(this).parent().parent().find("td").eq(1).text()},
+                success : function(return_name){
+                    alert("delete "+return_name+" from database successfully.");
+                }
+            });
+              $(this).parent().parent().remove();
+        });
+    }
     $('#searchdb').keyup(function(){
         var row = $('#tablebody tr');
         for (var i=0;i<$(row).length;i++){
@@ -756,12 +921,11 @@ function resetFileName(){
 
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
-//    return "Do you want to leave?"
+//    return "Are you sure to leave?"
 //}
 //
 //// A jQuery event (I think), which is triggered after "onbeforeunload"
 //$(window).unload(function(){
 //
 //});
-
 google.maps.event.addDomListener(window, 'load', initialize);

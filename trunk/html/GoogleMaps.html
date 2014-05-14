@@ -23,12 +23,13 @@
          <div class="col-md-12">
              <div class="panel">
                  <ul id="myTab1" class="nav nav-tabs nav-justified">
-                     <li class="active"><a href="#maps" data-toggle="tab">Maps</a></li>
-                     <li><a href="#database" data-toggle="tab">Database</a></li>
+                     <li class="active"><a href="#tab-maps" data-toggle="tab">Maps</a></li>
+                     <li><a href="#tab-database" data-toggle="tab">Database</a></li>
+                     <li><a href="#tab-multiple-map" data-toggle="tab">Multi-Route Display</a></li>
                  </ul>
              </div>
              <div id="myTabContent" class="tab-content" style="background-color: #E6E9ED;">
-                 <div class="tab-pane fade active in" id="maps">
+                 <div class="tab-pane fade active in" id="tab-maps">
                      <div class="example">
                         <div class="row">
                            <div class="col-md-2" style="margin : 10px 0 0 30px;">
@@ -47,9 +48,11 @@
                                <div class="panel-heading">
                                  <h3 class="panel-title">Google Maps Panel</h3>
                                </div>
-                               <div class="panel-body">
-                                    <div id="map-canvas" style="border: 5px solid #5D9CEC;"></div>
-                                    <div class="row tooltip-demo" style="margin-top: 25px;">
+                                <div class="panel-body">
+                                     <div id="map-canvas" style="border: 5px solid #5D9CEC;"></div>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row tooltip-demo">
                                         <div class="col-md-2">
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">CALC ROUTE<span class="caret"></span></button>
@@ -85,7 +88,7 @@
                                             <label id="hide_marker"><input id="chk" type="checkbox" > Hide Marker</label>
                                         </div>
                                     </div>
-                               </div>
+                                </div>
                              </div>
                             </div>
                             <div class="col-md-4">
@@ -96,7 +99,7 @@
                         </div>
                      </div>
                  </div>
-                 <div class="tab-pane fade" id="database">
+                 <div class="tab-pane fade" id="tab-database">
                      <div class="example">
                          <div class="row">
                             <div class ="col-md-12">
@@ -115,16 +118,16 @@
                                         <table class="table">
                                             <tr>
                                                 <th style="text-align: center; width:60px;">X</th>
-                                                <th style="width:150px;">
+                                                <th style="width:160px;">
                                                 Name
                                                 </th>
                                                 <th style="width:150px;">
                                                 Route Type
                                                 </th>
-                                                <th style="width:150px;">
+                                                <th style="width:120px;">
                                                 Date
                                                 </th>
-                                                <th>
+                                                <th style="width:405px;">
                                                 Start
                                                 </th>
                                                 <th>
@@ -146,6 +149,37 @@
                          </div>
                      </div>
                  </div>
+                <div class="tab-pane fade" id="tab-multiple-map">
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-10" id="multiple-map-container">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Multiple Routes Display</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="map-canvas-2" style="border: 5px solid #5D9CEC;"></div>
+                                    </div>
+                                    <div class="panel-footer">
+                                        <div class="row tooltip-demo">
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-primary" id="loadMultiple">Load Multiple Route</button>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-primary" id="btn-remove-routes">Reset</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                           <div class="col-md-2">
+                               <div class="list-group" id="map-group">
+                                   <a href="#" class="list-group-item active" style="background-color: #3bafda">Maps</a>
+                               </div>
+                           </div>
+                       </div>
+                    </div>
+                </div>
              </div>
          </div>
      </div>
@@ -219,6 +253,30 @@
               <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
           </div>
+        </div>
+    </div>
+    <div class="modal fade" id="md-select-route">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="text-align: center;">Select route to display</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="containbody">
+                                    <div class="list-group" id="list-select-route"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btn-pick-route" data-dismiss="modal">Load</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
