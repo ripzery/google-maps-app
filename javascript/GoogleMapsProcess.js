@@ -677,31 +677,39 @@ function addWaypointToList(){
  * พร้อมกับ refresh ค่าในตาราง tab2
  */
 function Save(){
-    var route_type;
-    pickRouteIndex = directionsDisplay.getRouteIndex();
-    if(isOptimize){
-        route_type = 1;
+    var confirm_save = confirm("Do you want to save this map?");
+    if(confirm_save===true)
+    {
+        var route_type;
+        pickRouteIndex = directionsDisplay.getRouteIndex();
+        if(isOptimize){
+            route_type = 1;
+        }
+        else{
+            route_type = 0;
+        }
+        if(points.length<2){
+            alert("Please insert start-end point.");
+            return false;
+        }
+        fileName = $('#filename').text();
+        $.ajax({
+            type: "POST",
+            url : "../php/save.php",
+            data: ({name : fileName,route_type : route_type,pick_route : pickRouteIndex,latlng: points}),
+            success: function(){
+                setUpVarFromDatabase();
+                alert("Save file to database successfully.");
+            },
+            error: function(xhr, status, error) {
+                alert(xhr.responseText);
+                alert("Save file to database unsuccessfully.");
+           }
+        });
     }
     else{
-        route_type = 0;
+        alert("Cancle save process.");
     }
-    if(points.length<2){
-        alert("Please insert start-end point.");
-        return false;
-    }
-    fileName = $('#filename').text();
-    $.ajax({
-        type: "POST",
-        url : "../php/save.php",
-        data: ({name : fileName,route_type : route_type,pick_route : pickRouteIndex,latlng: points}),
-        success: function(){
-            setUpVarFromDatabase();
-            alert("Save file to database successfully.");
-        },
-        error: function(xhr, status, error) {
-            alert(xhr.responseText);
-       }
-    });
 }
 
 /*
@@ -713,7 +721,7 @@ function Load(){
     var lat,lng;
     var points_temp = [];
     isLoad = true;
-    directionsDisplay.setPanel(null);
+//    directionsDisplay.setPanel(null);
     for(var i=0;i<points.length;i++){
         //console.log(points[i]);
         points_temp.push(points[i]);
@@ -908,14 +916,17 @@ function addTable(){
         $(td_name).append(map_name[i]);
         $(td_name).editable({
             type : "text",
-            showbuttons : false,
-            mode : "inline",
+            showbuttons : true,
+            mode : "popup",
             pk : {name : ""},
             params : function(params){
                 params.origValue = $(this).text();
                 return params;
             },
-            url : "../php/editname.php"
+            url : "../php/editname.php",
+            success : function(){
+                alert("Edit name and save successfully.");
+            }
         });
         if(route_type[i]==="0")
         {
@@ -937,17 +948,27 @@ function addTable(){
         $(tr).append(td_end);
         $("#tablebody").append(tr);
         $(button_x).click(function(){
-            $.ajax({
-                type: "POST",
-                async: false,
-                url : "../php/delete.php",
-                data : {name : $(this).parent().parent().find("td").eq(2).text()},
-                success : function(return_name){
-                    alert("delete "+return_name+" from database successfully.");
-                    setUpVarFromDatabase();
-                }
-            });
-              $(this).parent().parent().remove();
+            var confirm_delete = confirm("Do you want to delete this map?");
+            if(confirm_delete===true)
+            {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url : "../php/delete.php",
+                    data : {name : $(this).parent().parent().find("td").eq(2).text()},
+                    success : function(return_name){
+                        alert("delete "+return_name+" from database successfully.");
+                        setUpVarFromDatabase();
+                    },
+                    error : function(){
+                        alert("delete map unsucessfully.")
+                    }
+                });
+                  $(this).parent().parent().remove();
+            }
+            else{
+                alert("Cancle delete process.");
+            }
         });
         $(button_view).click(function(){
             var name = $(this).parent().parent().find("td").eq(2).text();
@@ -955,7 +976,7 @@ function addTable(){
                 if(map_name[a]===name){
                     var lat,lng;
                     isLoad = true;
-                    directionsDisplay.setPanel(null);
+//                    directionsDisplay.setPanel(null);
                     clearMap();
                     for(var x=0;x<points_array[a].length;x++){
                         points[x] = points_array[a][x];
@@ -965,17 +986,19 @@ function addTable(){
                         addWaypointToList();
                     }
                     if(route_type[a]===1)
+                    {
                         isOptimize = true;
+                    }
                     else
+                    {
                         isOptimize = false;
+                    }
                     pickRouteIndex = pick_route[a];
-                    
-                    
                 }
             }
             $('#filename').text(name);
             $('#myTab1 a:first').tab('show');
-            calcRoute();
+        //            calcRoute();
             var request = {
                 location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
                 types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
@@ -994,11 +1017,12 @@ function addTable(){
                     $("#list>a:last").text("End : "+endPlace);
                 }
             }); 
-//            map.setZoom(15);
-//            map.setCenter(new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]));
-//            calcRoute();
+            calcRoute();
         });
+        
     }
+//    map.setZoom(15);
+//    map.setCenter(new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]));
     $('#searchdb').keyup(function(){
         var row = $('#tablebody tr');
         for (var i=0;i<$(row).length;i++){
