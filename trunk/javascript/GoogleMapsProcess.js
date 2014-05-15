@@ -252,6 +252,7 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a){
         $(this).addClass('active').siblings(':gt(0)').removeClass('active');
         polylines_array[polyline_id].setVisible(true);
 //        now is here
+        $(chk).iCheck('uncheck');
         for(var i=0;i<polylines_array.length;i++){
             if(i!==polyline_id)
             {
@@ -659,6 +660,7 @@ function clearMap() {
     directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual,suppressMarkers:true});
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
+    $('#chk').iCheck('uncheck');
 }
 
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
