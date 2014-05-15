@@ -150,5 +150,14 @@ and open the template in the editor.
     float : right;
     right: 0px;
 }
-
+.disabled {
+  color: #999999;
+}
+.disabled:hover,
+.disabled:focus {
+  color: #999999;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: not-allowed;
+}
 
