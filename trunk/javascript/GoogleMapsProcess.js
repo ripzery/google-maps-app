@@ -705,6 +705,7 @@ function clearMap() {
     directionsDisplay = new google.maps.DirectionsRenderer({polylineOptions: polylineOptionsActual,suppressMarkers:true});
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
+    $('#chk').iCheck('uncheck');
 }
 
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
