@@ -16,6 +16,8 @@
     <script src="../javascript/DialogProcess.js"></script>
     <script src="../bootflat/js/site.min.js"></script>
     <script src="../apis/icheck.js"></script>
+    <script src="../apis/jquery.bootpag.min.js"></script>
+    <script src="../javascript/toggleFullscreen.js"></script>
     <script src="../bootstrap_editable/js/bootstrap-editable.js"></script>
 </head>
 <body style="background-color: #E6E9ED;">
@@ -116,33 +118,50 @@
                                     </div>
                                     <div class="panel-body">
                                         <table class="table">
-                                            <tr>
-                                                <th style="width: 70px;"></th>
-                                                <th style="text-align: center; width:60px;">X</th>
-                                                <th style="width:160px;">
-                                                Name
-                                                </th>
-                                                <th style="width:150px;">
-                                                Route Type
-                                                </th>
-                                                <th style="width:120px;">
-                                                Date
-                                                </th>
-                                                <th style="width:405px;">
-                                                Start
-                                                </th>
-                                                <th>
-                                                End
-                                                </th>
-                                            </tr>
+                                            <thead>
+                                                <tr>
+                                                    <th>View</th>
+                                                    <th>X</th>
+                                                    <th>
+                                                    Name
+                                                    </th>
+                                                    <th>
+                                                    Route Type
+                                                    </th>
+                                                    <th>
+                                                    Date
+                                                    </th>
+                                                    <th>
+                                                    Start
+                                                    </th>
+                                                    <th>
+                                                    End
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tablebody">
+                                                
+                                            </tbody>
 <!--                                            <div class="containbody">
                                                 
-                                            </div>-->
+                                                </div>-->
                                         </table>
-                                        <div class="containbody" style="height: 350px;">
-                                            <table id="tablebody" class="table">
-                                                
-                                            </table>
+                                    </div>
+                                </div>
+                                <div class="example">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-4">
+
+                                            </div>
+                                            <div class="col-md-4">
+                                                <ul id="page" class="pagination">
+                                                    
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-4">
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
