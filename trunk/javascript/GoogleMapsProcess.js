@@ -259,7 +259,7 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a){
         for(var i=0;i<polylines_array.length;i++){
             if(i!==polyline_id)
             {
-                polylines_array[i].setOptions({strokeColor: "black",strokeOpacity:0.6});
+                polylines_array[i].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2});
             }else{
                 polylines_array[i].setOptions({strokeColor: "blue",strokeOpacity:0.6,strokeWeight:5});
             }
@@ -405,7 +405,7 @@ function addEventListener_Modal_MultipleMapsTab(){
                         latlng = string_path[j].split(",");
                         path.push(new google.maps.LatLng(latlng[0],latlng[1]));
                     }
-                    var polyline = new google.maps.Polyline({path:path,strokeOpacity:0.6});
+                    var polyline = new google.maps.Polyline({path:path,strokeOpacity:0.6,strokeWeight:2});
                     polyline.setMap(map2);
                     polylines_array.push(polyline);
                 }
@@ -529,6 +529,16 @@ function calcRoute() {
     };
   
   directionsService.route(request, function(response, status) {
+    var bound = new google.maps.LatLngBounds();
+    var lat,lng;
+      var latlng;
+      for(var i = 0;i<points.length;i++)
+      {
+        lat = points[i].split(",")[0];
+        lng = points[i].split(",")[1];
+        latlng = new google.maps.LatLng(lat,lng);
+        bound.extend(latlng);
+      }
     if (status == google.maps.DirectionsStatus.OK) {
       $('#suggestRoute>li').remove();
       if(response.routes.length>1)
@@ -562,7 +572,10 @@ function calcRoute() {
       else{
           directionsDisplay.setDirections(response);
       }
+      map.fitBounds(bound);
+    $('#myTab1 a:first').tab('show');
     }
+    
   });
 }
 
@@ -1054,6 +1067,7 @@ function addTable(){
             if(route_type[index]===1)
             {
                 isOptimize = true;
+                
             }
             else
             {
@@ -1061,6 +1075,7 @@ function addTable(){
             }
             pickRouteIndex = pick_route[index];
             $('#filename').text(map_name[index]);
+
             $('#myTab1 a:first').tab('show');
             var request = {
                 location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
