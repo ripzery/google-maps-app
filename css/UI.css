@@ -160,4 +160,7 @@ and open the template in the editor.
   background-color: transparent;
   cursor: not-allowed;
 }
+.badge-danger:hover{
+    cursor : pointer;
+}
 
