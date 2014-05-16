@@ -66,7 +66,7 @@
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SAVE/LOAD<span class="caret"></span></button>
                                                 <ul class="dropdown-menu" role="menu">
-                                                  <li><a href="#" onclick="Save()" id="save" data-toggle="tooltip" data-placement="right" title="Save filename, waypoint, start-end position, alternative route, and modified date into database.">SAVE</a></li>
+                                                  <li><a href="#" onclick="pushPath()" id="save" data-toggle="tooltip" data-placement="right" title="Save filename, waypoint, start-end position, alternative route, and modified date into database.">SAVE</a></li>
                                                   <li><a href="#" id="opener"  onclick="initLoad()" data-toggle="tooltip" data-placement="right" title="Load filename, waypoint, start-end position, alternative route, and last modified date.">LOAD</a></li>
                                                 </ul>
                                             </div>
@@ -153,7 +153,7 @@
                 <div class="tab-pane fade" id="tab-multiple-map">
                     <div class="example">
                         <div class="row">
-                            <div class="col-md-10" id="multiple-map-container">
+                            <div class="col-md-9" id="multiple-map-container">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Multiple Routes Display</h3>
@@ -164,16 +164,19 @@
                                     <div class="panel-footer">
                                         <div class="row tooltip-demo">
                                             <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary" id="btn-modal-maps">Load Multiple Route</button>
+                                                <button type="button" class="btn btn-primary" id="btn-modal-maps" data-toggle="tooltip" data-placement="bottom" title="Select many maps as you want.">Load Multiple Route</button>
                                             </div>
-                                            <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary" id="btn-reset-map2">Reset</button>
+                                            <div class="col-md-1" style="margin-left: 20px;">
+                                                <button type="button" class="btn btn-primary" id="btn-reset-map2" data-toggle="tooltip" data-placement="bottom" title="Remove all maps">Reset</button>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" class="btn btn-primary" id="btn-guide-map2" data-toggle="tooltip" data-placement="bottom" title="Look direction guide of selected map.">Guide</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                           <div class="col-md-2">
+                           <div class="col-md-3">
                                <div class="list-group" id="maps_list">
                                    <a href="#" class="list-group-item active" style="background-color: #3bafda">Maps</a>
                                </div>
@@ -184,6 +187,9 @@
              </div>
          </div>
      </div>
+    
+    <!--All Modals is following here-->
+    
     <div class="modal fade" id="load">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -260,7 +266,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" style="text-align: center;">Select route to display</h3>
+                    <h3 class="modal-title" style="text-align: center;">Select map to display</h3>
                 </div>
                 <div class="modal-body">
                     <div class="example">
@@ -274,11 +280,13 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="md-btn-load" data-dismiss="modal">Load</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="md-btn-load" data-dismiss="modal" ><span class="badge pull-right" id="badge-count" style="margin-left: 7px;margin-top: 2px;">0</span> Load</button>
+                    <button type="button" class="btn btn-primary" id="md-btn-select-all">All Load</button>
+                    <button type="button" class="btn btn-primary" id="md-btn-close" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+    
 </body>
 </html>
