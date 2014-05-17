@@ -25,6 +25,7 @@ var polylines_array = [],
     mapMarkers = [],
     activeIndexes = [],
     keep_path = [];
+var isClearMapList = true;
 /*
  * initialize() :
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -187,30 +188,62 @@ function setUpMultipleMapsTab() {
     addEventListener_Btn_MultipleMapsTab();
 }
 
-function addEventListener_Btn_MultipleMapsTab() {
-    $("#btn-modal-maps").click(function () {
+function addEventListener_Btn_MultipleMapsTab(){
+    //  เมื่อกด Load Multiple Routes จะเรียก dialog เพื่อ load หลายๆ route มาโชว์
+    $("#btn-modal-maps").click(function(){
         $('#md-select-route').modal();
         setUpModalMultipleMapsTab();
         addEventListener_Modal_MultipleMapsTab();
     });
-    $('#btn-reset-map2').click(function () {
-        for (var i = 0; i < polylines_array.length; i++) {
+    //  เมื่อกด Delete Some Routes จะเป็นการนำเส้นทาง / polylines เส่นที่เลือกไว้ออกจาก map list
+    $("#btn-delete-map2").click(function(){
+        //  วนหาว่ามี polylines เส้นไหนที่เลือกไว้บ้าง? ซึ่งเส้นที่เลือกจะเป็นเส้นสีแดง
+        for(var i=0;i<polylines_array.length;i++){
+            if(polylines_array[i].strokeColor == 'red'){
+                //  set polyline นั้นออกจาก map
+                polylines_array[i].setMap(null);
+                //  เอา map นั้นออกจาก list ที่เราโชว์ไว้
+                $('#maps_list>a').eq(i+1).remove();
+                //  set marker ออกจาก map
+                for(var j=0;j<mapMarkers.length;j++){
+                    mapMarkers[j].setMap(null);
+                }
+                //  ล้างค่า mapMarker
+                mapMarkers = [];
+                //  เอา polyline เส้นนั้นออกจาก polylines_array
+                polylines_array.splice(i,1);
+                //  เอาตำแหน่งของ polyline ที่ activeIndexes เก็บไว้ออก
+                activeIndexes.splice(i,1);
+                //  set ให้ i=-1 เพื่อให้กลับมาวนใหม่อีกรอบ เพราะเมื่อมีการ splice ค่าออกมาจะทำให้ตำแหน่งของค่า i เปลี่ยน จนต้องวนใหม่อีกรอบเพื่อจะให้ค่าที่เลือกไว้ออกทุกตัว
+                i = -1;
+            }
+        }
+    });
+    //  เมื่อกด Reset จะทำการล้างค่าทุกค่าใน map list และบน map
+    $('#btn-reset-map2').click(function(){
+        //  set ทุก polyline ออกจาก map
+        for(var i=0;i<polylines_array.length;i++){
             polylines_array[i].setMap(null);
         }
+        //  ล้างค่า map list ทั้งหมด
         $('#maps_list>a:gt(0)').remove();
-        for (var i = 0; i < mapMarkers.length; i++) {
+        //  set marker ออกจาก map
+        for(var i=0;i<mapMarkers.length;i++){
             mapMarkers[i].setMap(null);
         }
+        //  ล้างค่า mapMarker
         mapMarkers = [];
         $('#md-list-maps>a').removeClass('active');
+        //  ล้างค่าใน array activeIndexes และ polylines_array ออกทัง้หมด
         activeIndexes = [];
         polylines_array = [];
     });
-    $('#btn-guide-map2').click(function () {
-        $('#direction').modal({
-            keyboard: true
-        });
-        var id = map_name.indexOf($("#maps_list>.active:gt(0)").text().replace(" Hide", ""));
+    //  เมื่อกด Guide จะเป็นการแสดงการเดินทางในเส้นที่ได้เลือกไว้
+    $('#btn-guide-map2').click(function(){
+        $('#direction').modal({keyboard:true});
+        var text = $("#maps_list>a.active:gt(0)").text().replace(" Hide","");
+        text = text.replace(" ","");
+        var id = map_name.indexOf(text);
         var wps = [];
         for (var i = 2; i < points_array[id].length; i++) {
             wps.push({
@@ -241,107 +274,150 @@ function addEventListener_Btn_MultipleMapsTab() {
         });
     });
 }
-
+//  นำเส้นทางที่เลือกมาเก็บใน maplist
 function addMapToList(index) {
     var list = document.getElementById("maps_list");
     var a = document.createElement("a");
-    var label = document.createElement("label");
-    var chk = document.createElement("input");
-    chk.setAttribute("type", "checkbox");
+    var label = document.createElement("label");    //  สร้างเพื่อใส่ checkbox ในที่นี้คือ checkbox ของ hide
+    var label_x = document.createElement("label");  //  สร้างเพื่อใส่ checkbox ในที่นี้คือ checkbox ที่เอาไว้เลือกลบ map list นั้นๆ
+    //  checkbox ของ hide
+    var chk = document.createElement("input");  
+    chk.setAttribute("type","checkbox");
+    //  checkbox เพื่อเอาเส้นทางนั้นออกจาก map list
+    var chk_x = document.createElement("input");    
+    chk_x.setAttribute("type","checkbox");
+    //  ใส่ checkbox ลงใน label
     label.appendChild(chk);
-    label.appendChild(document.createTextNode(" Hide"));
-    label.setAttribute("class", "hide-route");
-    a.classList.add("list-group-item");
-    a.appendChild(document.createTextNode(map_name[index]));
+    label_x.appendChild(chk_x);
+    label.appendChild(document.createTextNode(" Hide"));    //  ใส่ text ลงใน label
+    label.setAttribute("class", "hide-route");  //  ใส่ class ให้ label
+    a.classList.add("list-group-item"); //  ใส่ class ให้ a
+    //  ใส่ชื่อของเส้นทางและ label ต่างๆลงใน a 
+    a.appendChild(label_x);
+    a.appendChild(document.createTextNode(" "+map_name[index]));
     a.appendChild(label);
+    //  ใส่ a ลงใน list
     list.appendChild(a);
-    addEventListener_MapList_MultipleMapsTab(list, chk, a);
+    //  เรียก function เพื่อเพิ่ม event ต่างๆให้ตัวแปรที่อยู่ใน map list
+    addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x);
 }
 
-function addEventListener_MapList_MultipleMapsTab(list, chk, a) {
-    var event_a = function () {
-        var bounds = new google.maps.LatLngBounds();
-        var id = map_name.indexOf($(this).text().replace(" Hide", ""));
-        var polyline_id = $(list).find("a").index($(this)) - 1;
-        //        alert("PolyID : "+polyline_id+",PolySize : "+polylines_array.length);
-        var lat = points_array[id][0].split(",")[0];
+//  เพิ่ม event ให้ตัวแปรที่อยู่ใน map list
+function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
+    //  ตัวแปรเก็บ event ของ a
+    var event_a = function(){  
+        var bounds = new google.maps.LatLngBounds();    //  เพื่อกำหนดขอบเขตของบริเวณเส้นทาองที่เราเลือก
+        //  ดึงชื่อที่อยุ่ใน a ออกมา
+        var text = $(this).text().replace(" ","");
+        text = text.replace(" Hide","");
+        var id = map_name.indexOf(text);    //  ให้ id เป็นตำแหน่งของชื่อเส้นทางที่เราเลือกจากเส้นทางทั้งหมดใน database
+        var polyline_id  = $(list).find("a").index($(this))-1;  //  เป็นตำแหน่งที่อยู่บน map list ซึ่งอาจไม่ตรงกับตำแหน่งที่อยู่ใน database
+        //  เก็บค่า latitude longitude ของจุด start ของเส้นทางที่เราเลือก
+        var lat = points_array[id][0].split(",")[0];    
         var lng = points_array[id][0].split(",")[1];
-        var position = new google.maps.LatLng(lat, lng);
-
+        //  แปลงค่า lat lng ที่เป็น string ให้อยู่ในรูปของตัวแปร LatLng
+        var position = new google.maps.LatLng(lat,lng);
+        //  set center ของเส้นทางที่เราเลือก โดยใช้จุด start ของเส้นทางนั้น
         map2.setCenter(position);
         $(this).addClass('active').siblings(':gt(0)').removeClass('active');
-        polylines_array[polyline_id].setVisible(true);
-        $(chk).iCheck('uncheck');
-        for (var i = 0; i < polylines_array.length; i++) {
-            if (i !== polyline_id) {
-                polylines_array[i].setOptions({
-                    strokeColor: "black",
-                    strokeOpacity: 0.6,
-                    strokeWeight: 2
-                });
-            } else {
-                polylines_array[i].setOptions({
-                    strokeColor: "blue",
-                    strokeOpacity: 0.6,
-                    strokeWeight: 5
-                });
+        polylines_array[polyline_id].setVisible(true);  //  ให้ polyline นั้นปรากฎขึ้นบน map
+        $(chk).iCheck('uncheck');   //  set ให้ uncheck ที่ checkbox ที่เอาไว้สำหรับ hide เส้นทางนั้นๆ
+        //  วนเพื่อกำหนดสีเส้นทางว่าเป็นเส้นทางที่เราคลิกเลือกเพื่อต้องการโชว์ให้เด่นหรือไม่?
+        for(var i=0;i<polylines_array.length;i++){
+            //  ถ้าเป็นเส้นทางที่ไม่ถูกเลือก
+            if(i!==polyline_id){
+                //  ถ้าเป็นเส้นทางที่ไม่ได้ถูก checkbox ให้เอาเส้นทางนั้นออกจาก map list ซึ่งเส้นนั้นจะเป็นเส้นสีแดง ให้คงเส้นทางนั้นเป็นสีดำปกติ
+                if(polylines_array[i].strokeColor != 'red')
+                    polylines_array[i].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2});
+            }
+            //  ถ้าเป็นเส้นทางที่ user ต้องการโชว์ให้เด่น เส้นนั้นจะถูกเปลี่ยนเป็นสีน้ำเงิน และ clear ให้ checkbox ของการเอาเส้นทางนั้นออกจาก map list เป็น uncheck
+            else{
+                polylines_array[i].setOptions({strokeColor: "blue",strokeOpacity:0.6,strokeWeight:5});
+                $(chk_x).iCheck('uncheck');
             }
         }
-        for (var i = 0; i < mapMarkers.length; i++) {
+        //  นำ mapMarker ออกจาก map
+        for(var i =0;i<mapMarkers.length;i++){
             mapMarkers[i].setMap(null);
         }
-        mapMarkers = [];
+        mapMarkers = [];    //  clear ใน mapMaker ออก
+        //  ทำการสร้าง mapMarker ลงบน map ใหม่ตามเส้นทางที่เราเลือก
         var image = "../marker-icon-number/start.png";
-        while (mapMarkers.length < points_array[id].length) {
-            position = new google.maps.LatLng(points_array[id][mapMarkers.length].split(",")[0], points_array[id][mapMarkers.length].split(",")[1]);
+        while(mapMarkers.length<points_array[id].length){
+            position = new google.maps.LatLng(points_array[id][mapMarkers.length].split(",")[0],points_array[id][mapMarkers.length].split(",")[1]);
             bounds.extend(position);
             var marker = new google.maps.Marker({
-                position: position,
-                map: map2,
-                icon: image,
-                animation: google.maps.Animation.DROP
+                position : position,
+                map : map2,
+                icon : image,
+                animation : google.maps.Animation.DROP
             });
             mapMarkers.push(marker);
-            if (mapMarkers.length === 1) {
+            if(mapMarkers.length===1){
                 image = "../marker-icon-number/end.png";
-            } else {
-                image = "../marker-icon-number/number_" + (parseInt(mapMarkers.length) - 1) + ".png";
+            }
+            else{
+                image = "../marker-icon-number/number_"+(parseInt(mapMarkers.length)-1)+".png";
             }
         }
+        //  กำหนดของเขตของเส้นทางที่เราเลือกให้อยู่ในระยะและขนาดที่พอดีกับ map
         map2.fitBounds(bounds);
     };
+    //  กำหนด class และขนาดให้ checkbox ที่จะเอาเส้นทาองออกจาก map list
+    $(chk_x).iCheck({
+        checkboxClass: 'icheckbox_minimal-blue',
+        increaseArea: '10%' // optional
+    });
+    //  ถ้า checkbox ที่จะเอาเส้นทาองออกจาก map list เป็น check
+    $(chk_x).on('ifChecked', function(){
+        var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1;   //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
+        //  ถ้าไม่เป็น class active หรือไม่ใช่เส้นสีฟ้า ให้ set polyline เป็นเส้นสีแดง
+        if(!$(this).parent().parent().parent().hasClass('active')){
+            polylines_array[id].setOptions({strokeColor: "red",strokeOpacity:0.6,strokeWeight:4});
+        }
+        //  ถ้าเป็น class active จะเอา class active ออก พร้อมเอา mapMarker ออกจาก map และค่อยเปลี่ยนเส้นเป็น polyline จากสีฟ้าเป็นแดง
+        else{
+            $(this).parent().parent().parent().removeClass('active');
+            polylines_array[id].setOptions({strokeColor: "red",strokeOpacity:0.6,strokeWeight:4});
+            for(var i=0;i<mapMarkers.length;i++){
+                mapMarkers[i].setVisible(false);
+            }
+        }
+    });
+    //  ถ้า checkbox ที่จะเอาเส้นทาองออกจาก map list เป็น uncheck
+    $(chk_x).on('ifUnchecked', function(){
+        var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา uncheck
+        polylines_array[id].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2}); // เปลี่ยน polyline กลับเป็นสีดำเหมือนเดิม
+    });
+    //  กำหนด class และขนาดให้ checkbox ที่จะให้ polyline นั้น hide
     $(chk).iCheck({
         checkboxClass: 'icheckbox_minimal-blue',
         increaseArea: '10%' // optional
     });
+    //  ถ้า checkbox ที่จะ hide เส้นทางนั้นเป็น check
     $(chk).on('ifChecked', function () {
-        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1;
-        polylines_array[id].setVisible(false);
+        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1;    //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
+        polylines_array[id].setVisible(false);  //  set ให้ polyline หายจาก map
+        //  ถ้าเป็น class active ก็จะให้ mapMarker หายจาก map ด้วย 
         if ($(this).parent().parent().parent().hasClass('active')) {
             for (var i = 0; i < mapMarkers.length; i++) {
                 mapMarkers[i].setVisible(false);
             }
         }
     });
+    //  ถ้า checkbox ที่จะ hide เส้นทางนั้นเป็น uncheck
     $(chk).on('ifUnchecked', function () {
-        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1;
-        polylines_array[id].setVisible(true);
+        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1;    //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
+        polylines_array[id].setVisible(true);   //  set ให้ polyline ปรากฎบน map
+        //  ถ้าเป็น class active ก็จะให้ mapMarker ปรากฎบน map ด้วย 
         if ($(this).parent().parent().parent().hasClass('active')) {
             for (var i = 0; i < mapMarkers.length; i++) {
                 mapMarkers[i].setVisible(true);
             }
         }
-    });
-    //    $(btn).click(function(){
-    //        var a_remove_target = $(this).parent().parent();
-    //        var maps_list = $("#maps_list");
-    //        var index = $("#maps_list").find("a:gt(0)").index(a_remove_target);
-    //        alert(index);
-    //        $(maps_list).remove(a_remove_target);
-    //        polylines_array.splice(index,1);
-    //    });
-
-    a.addEventListener('click', event_a);
+    });   
+    //  โดย event ที่เพิ่มให้ a จะต้องมีการ click ที่ a ก่อน
+    a.addEventListener('click',event_a);
 }
 
 function setUpModalMultipleMapsTab() {

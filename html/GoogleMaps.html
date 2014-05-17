@@ -183,14 +183,18 @@
                                     <div class="panel-footer">
                                         <div class="row tooltip-demo">
                                             <div class="col-md-2">
-                                                <button type="button" class="btn btn-primary" id="btn-modal-maps" data-toggle="tooltip" data-placement="bottom" title="Select many maps as you want.">Load Multiple Route</button>
+                                                <button type="button" class="btn btn-primary" id="btn-modal-maps" data-toggle="tooltip" data-placement="bottom" title="Select many maps as you want.">Load Multiple Routes</button>
                                             </div>
                                             <div class="col-md-1" style="margin-left: 20px;">
-                                                <button type="button" class="btn btn-primary" id="btn-reset-map2" data-toggle="tooltip" data-placement="bottom" title="Remove all maps">Reset</button>
-                                            </div>
-                                            <div class="col-md-1">
                                                 <button type="button" class="btn btn-primary" id="btn-guide-map2" data-toggle="tooltip" data-placement="bottom" title="Look direction guide of selected map.">Guide</button>
                                             </div>
+                                            <div class="col-md-3" style="margin-left: 10px;">
+                                                <button type="button" class="btn btn-primary" id="btn-delete-map2" data-toggle="tooltip" data-placement="bottom" title="Remove Routes in map list that you want.">Remove Some Routes From Map List</button>
+                                            </div>
+                                            <div class="col-md-1" style="margin-left: 40px;">
+                                                <button type="button" class="btn btn-primary" id="btn-reset-map2" data-toggle="tooltip" data-placement="bottom" title="Remove all maps">Reset</button>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -299,8 +303,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="md-btn-load" data-dismiss="modal" ><span class="badge pull-right" id="badge-count" style="margin-left: 7px;margin-top: 2px;">0</span> Load</button>
                     <button type="button" class="btn btn-primary" id="md-btn-select-all">All Load</button>
+                    <button type="button" class="btn btn-primary" id="md-btn-load" data-dismiss="modal" ><span class="badge pull-right" id="badge-count" style="margin-left: 7px;margin-top: 2px;">0</span> Load</button>
                     <button type="button" class="btn btn-primary" id="md-btn-close" data-dismiss="modal">Close</button>
                 </div>
             </div>
