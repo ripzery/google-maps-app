@@ -36,7 +36,8 @@ var isClearMapList = true;
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer({
         polylineOptions: polylineOptionsActual,
-        suppressMarkers: true
+        suppressMarkers: true,
+        hideRouteList : true
     });
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
@@ -178,6 +179,7 @@ function initialize() {
  */
 function setUpMultipleMapsTab() {
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
+    
     map2 = new google.maps.Map(document.getElementById('map-canvas-2'), {
         zoom: 12,
         center: BTSAri
@@ -185,6 +187,9 @@ function setUpMultipleMapsTab() {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         google.maps.event.trigger(map2, 'resize');
     });
+    $('#btn-guide-map2').addClass('disabled');
+    $('#btn-delete-map2').addClass('disabled');
+    $('#btn-reset-map2').addClass('disabled');
     addEventListener_Btn_MultipleMapsTab();
 }
 
@@ -198,6 +203,7 @@ function addEventListener_Btn_MultipleMapsTab(){
     //  เมื่อกด Delete Some Routes จะเป็นการนำเส้นทาง / polylines เส่นที่เลือกไว้ออกจาก map list
     $("#btn-delete-map2").click(function(){
         //  วนหาว่ามี polylines เส้นไหนที่เลือกไว้บ้าง? ซึ่งเส้นที่เลือกจะเป็นเส้นสีแดง
+        $("#btn-delete-map2").addClass("disabled");
         for(var i=0;i<polylines_array.length;i++){
             if(polylines_array[i].strokeColor == 'red'){
                 //  set polyline นั้นออกจาก map
@@ -221,6 +227,8 @@ function addEventListener_Btn_MultipleMapsTab(){
     });
     //  เมื่อกด Reset จะทำการล้างค่าทุกค่าใน map list และบน map
     $('#btn-reset-map2').click(function(){
+        $('#btn-guide-map2').addClass('disabled');
+        $('#btn-reset-map2').addClass('disabled');
         //  set ทุก polyline ออกจาก map
         for(var i=0;i<polylines_array.length;i++){
             polylines_array[i].setMap(null);
@@ -240,38 +248,40 @@ function addEventListener_Btn_MultipleMapsTab(){
     });
     //  เมื่อกด Guide จะเป็นการแสดงการเดินทางในเส้นที่ได้เลือกไว้
     $('#btn-guide-map2').click(function(){
-        $('#direction').modal({keyboard:true});
-        var text = $("#maps_list>a.active:gt(0)").text().replace(" Hide","");
-        text = text.replace(" ","");
-        var id = map_name.indexOf(text);
-        var wps = [];
-        for (var i = 2; i < points_array[id].length; i++) {
-            wps.push({
-                location: points_array[id][i],
-                stopover: true
+        if($('#maps_list>.active').length>1){
+            $('#direction').modal({keyboard:true});
+            var text = $("#maps_list>a.active:gt(0)").text().replace(" Hide","");
+            text = text.replace(" ","");
+            var id = map_name.indexOf(text);
+            var wps = [];
+            for (var i = 2; i < points_array[id].length; i++) {
+                wps.push({
+                    location: points_array[id][i],
+                    stopover: true
+                });
+            }
+            var request = {
+                origin: points_array[id][0],
+                destination: points_array[id][1],
+                waypoints: wps,
+                provideRouteAlternatives: true,
+                optimizeWaypoints: isOptimize,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            if (route_type[id] === 1) {
+                isOptimize = true;
+            } else if (route_type[id] === 0) {
+                isOptimize = false;
+            }
+            directionsDisplay.setPanel(null);
+            directionsDisplay.setPanel(document.getElementById('directions-panel'));
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                    directionsDisplay.setRouteIndex(parseInt(pick_route[id]));
+                }
             });
         }
-        var request = {
-            origin: points_array[id][0],
-            destination: points_array[id][1],
-            waypoints: wps,
-            provideRouteAlternatives: true,
-            optimizeWaypoints: isOptimize,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-        if (route_type[id] === 1) {
-            isOptimize = true;
-        } else if (route_type[id] === 0) {
-            isOptimize = false;
-        }
-        var directionsDisplay = new google.maps.DirectionsRenderer();
-        directionsDisplay.setPanel(document.getElementById('directions-panel'));
-        directionsService.route(request, function (response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-                directionsDisplay.setDirections(response);
-                directionsDisplay.setRouteIndex(parseInt(pick_route[id]));
-            }
-        });
     });
 }
 //  นำเส้นทางที่เลือกมาเก็บใน maplist
@@ -305,7 +315,8 @@ function addMapToList(index) {
 //  เพิ่ม event ให้ตัวแปรที่อยู่ใน map list
 function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
     //  ตัวแปรเก็บ event ของ a
-    var event_a = function(){  
+    var event_a = function(){
+        $('#btn-guide-map2').removeClass('disabled');
         var bounds = new google.maps.LatLngBounds();    //  เพื่อกำหนดขอบเขตของบริเวณเส้นทาองที่เราเลือก
         //  ดึงชื่อที่อยุ่ใน a ออกมา
         var text = $(this).text().replace(" ","");
@@ -368,8 +379,10 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
         checkboxClass: 'icheckbox_minimal-blue',
         increaseArea: '10%' // optional
     });
-    //  ถ้า checkbox ที่จะเอาเส้นทาองออกจาก map list เป็น check
+    //  ถ้า checkbox ที่จะเอาเส้นทางออกจาก map list เป็น check
     $(chk_x).on('ifChecked', function(){
+        if($('#btn-delete-map2').hasClass('disabled'))
+            $('#btn-delete-map2').removeClass('disabled');
         var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1;   //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
         //  ถ้าไม่เป็น class active หรือไม่ใช่เส้นสีฟ้า ให้ set polyline เป็นเส้นสีแดง
         if(!$(this).parent().parent().parent().hasClass('active')){
@@ -378,14 +391,27 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
         //  ถ้าเป็น class active จะเอา class active ออก พร้อมเอา mapMarker ออกจาก map และค่อยเปลี่ยนเส้นเป็น polyline จากสีฟ้าเป็นแดง
         else{
             $(this).parent().parent().parent().removeClass('active');
+            if($('#maps_list>.active').length===1)
+                $('#btn-guide-map2').addClass('disabled');
             polylines_array[id].setOptions({strokeColor: "red",strokeOpacity:0.6,strokeWeight:4});
             for(var i=0;i<mapMarkers.length;i++){
                 mapMarkers[i].setVisible(false);
             }
         }
     });
-    //  ถ้า checkbox ที่จะเอาเส้นทาองออกจาก map list เป็น uncheck
+    //  ถ้า checkbox ที่จะเอาเส้นทางออกจาก map list เป็น uncheck
     $(chk_x).on('ifUnchecked', function(){
+        var count = 0;
+        var a = $('#maps_list>a');
+        for(var i=0;i<a.length;i++)
+            if($(a[i]).find('input:first').is(":checked")){
+                count++;
+                break;
+            }
+        
+        if(!$('#btn-delete-map2').hasClass('disabled')&&count===0)
+            $('#btn-delete-map2').addClass('disabled');
+            
         var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา uncheck
         polylines_array[id].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2}); // เปลี่ยน polyline กลับเป็นสีดำเหมือนเดิม
     });
@@ -415,9 +441,17 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
                 mapMarkers[i].setVisible(true);
             }
         }
-    });   
+    });
+    //    $(btn).click(function(){
+    //        var a_remove_target = $(this).parent().parent();
+    //        var maps_list = $("#maps_list");
+    //        var index = $("#maps_list").find("a:gt(0)").index(a_remove_target);
+    //        alert(index);
+    //        $(maps_list).remove(a_remove_target);
+    //        polylines_array.splice(index,1);
+    //    });
     //  โดย event ที่เพิ่มให้ a จะต้องมีการ click ที่ a ก่อน
-    a.addEventListener('click',event_a);
+    $(a).click(event_a);
 }
 
 function setUpModalMultipleMapsTab() {
@@ -510,9 +544,71 @@ function addEventListener_Modal_MultipleMapsTab() {
                     polylines_array.push(polyline);
                 }
                 console.log("Finished load .....");
+                var event_select_maps_list = function(event){
+                        console.log("event appear!");
+                    event.preventDefault();
+                    if(event.keyCode === 219)
+                    {// [
+                        var currentMap = $('#maps_list>.active:gt(0)');
+                        var allMapsList = $('#maps_list>a:gt(0)');
+                        var index = $(allMapsList).index(currentMap);
+                        if(index === -1){//Didn't select yet
+                            alert("Didn't selected");
+                        }else{//Already selected
+                            if($(currentMap).prev() != $('#maps_list>.active:first')){
+                                var target = $(currentMap).prev();
+                                $(target).trigger('click');
+                            }
+                        }
+                    }else if(event.keyCode === 221)
+                    {// ]
+                        var currentMap = $('#maps_list>.active:gt(0)');
+                        var allMapsList = $('#maps_list>a:gt(0)');
+                        var index = $(allMapsList).index(currentMap);
+                        if(index === -1){//Didn't select yet
+                            alert("Didn't selected");
+                        }else{//Already selected
+                            if($(allMapsList).index($(currentMap).next()) !== -1){
+                                var target = $(currentMap).next();
+                                $(target).trigger('click');
+                            }
+
+                        }
+                    }else if(event.keyCode === 72){// H
+                        var currentMap = $('#maps_list>.active:gt(0)');
+                        var targetChk = $(currentMap).find("input:last");
+                        $(targetChk).iCheck('toggle');
+                    } 
+                 };
+                $('body').unbind('keyup').keyup(event_select_maps_list);
+                var event_arrow = function (event){
+                    event.preventDefault();
+                   if(event.keyCode === 37){//Arrow Left
+                       var currentTab = $('#myTab1>.active');
+                       var index = $('#myTab1>li').index(currentTab);
+                       if(index===0){
+                           $('#myTab1>li:last').find("a").trigger("click");
+                       }else if(index === 1){
+                           $('#myTab1>li:first').find("a").trigger("click");
+                       }else{
+                           $('#myTab1>li').eq(1).find("a").trigger("click");
+                       }
+                   }else if(event.keyCode === 39){//Arrow Right
+                       var currentTab = $('#myTab1>.active');
+                       var index = $('#myTab1>li').index(currentTab);
+                       if(index===0){
+                           $('#myTab1>li').eq(1).find("a").trigger("click");
+                       }else if(index === 1){
+                           $('#myTab1>li:last').find("a").trigger("click");
+                       }else{
+                           $('#myTab1>li:first').find("a").trigger("click");
+                       }
+                   } 
+                };
+                $('body').keyup(event_arrow);
+                $('#btn-reset-map2').removeClass('disabled');
             }
         });
-
     };
     var event_btn_all_load = function () {
         var list_maps = $('#md-list-maps').find("a");
@@ -817,7 +913,8 @@ function clearMap() {
     }
     directionsDisplay = new google.maps.DirectionsRenderer({
         polylineOptions: polylineOptionsActual,
-        suppressMarkers: true
+        suppressMarkers: true,
+        hideRouteList : true
     });
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
@@ -1232,10 +1329,6 @@ function addTable() {
         }
     });
 }
-
-
-
-
 
 /*
  * resetFileName()
