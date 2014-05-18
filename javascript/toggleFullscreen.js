@@ -27,7 +27,7 @@ function toggleFullScreen() {
 
 // keydown event handler
 document.addEventListener('keydown', function(e) {
-  if (e.keyCode == 17) { // CTRL
+  if (e.keyCode == 90) { // CTRL
       if (!$('#address').is(':focus') && !$('#t').is(':focus') && !$('#searchdb').is(':focus')) {
             toggleFullScreen();
         }
