@@ -274,6 +274,7 @@ function addEventListener_Btn_MultipleMapsTab(){
             } else if (route_type[id] === 0) {
                 isOptimize = false;
             }
+            directionsDisplay.setMap(null);
             directionsDisplay.setPanel(null);
             directionsDisplay.setPanel(document.getElementById('directions-panel'));
             directionsService.route(request, function (response, status) {
