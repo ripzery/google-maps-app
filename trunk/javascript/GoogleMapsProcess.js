@@ -228,6 +228,7 @@ function addEventListener_Btn_MultipleMapsTab(){
     //  เมื่อกด Reset จะทำการล้างค่าทุกค่าใน map list และบน map
     $('#btn-reset-map2').click(function(){
         $('#btn-guide-map2').addClass('disabled');
+        $('#btn-delete-map2').addClass('disabled');
         $('#btn-reset-map2').addClass('disabled');
         //  set ทุก polyline ออกจาก map
         for(var i=0;i<polylines_array.length;i++){
@@ -1324,8 +1325,8 @@ function addTable() {
     $('#searchdb').keyup(function () {
         var row = $('#tablebody tr');
         for (var i = 0; i < $(row).length; i++) {
-            $(row[i]).find(':not(:contains(' + $("#searchdb").val() + ')):gt(1)').parent().hide();
-            $(row[i]).find(':contains(' + $("#searchdb").val() + ')').parent().show();
+            $(row[i]).find('td:gt(1):lt(3):not(:contains(' + $("#searchdb").val() + '))').parent().hide();
+            $(row[i]).find('td:gt(1):lt(3):contains(' + $("#searchdb").val() + ')').parent().show();
         }
     });
 }

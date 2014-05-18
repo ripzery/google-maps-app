@@ -22,7 +22,7 @@
 </head>
 <body style="background-color: #E6E9ED;">
      <div class="row">
-         <div class="col-lg-12">
+         <div class="col-md-12">
              <div class="panel">
                  <ul id="myTab1" class="nav nav-tabs nav-justified">
                      <li class="active"><a href="#tab-maps" data-toggle="tab">Maps</a></li>
@@ -34,10 +34,10 @@
                  <div class="tab-pane fade active in" id="tab-maps">
                      <div class="example">
                         <div class="row">
-                           <div class="col-lg-2" style="margin : 10px 0 0 30px;">
+                           <div class="col-md-2" style="margin : 10px 0 0 30px;">
                                <a href="#" id="filename" data-type="text" data-url="/post" data-title="Enter map's name"></a>
                            </div>
-                           <div class="col-lg-9" style ="margin-left: 0px">
+                           <div class="col-md-9" style ="margin-left: 0px">
                                <input id="address" class="Text" type="text" placeholder="Search Location">
                            </div>
                         </div>
@@ -45,7 +45,7 @@
 
                      <div class="example">
                         <div class="row">
-                           <div class="col-lg-8" id="map-container">
+                           <div class="col-md-8" id="map-container">
                             <div class="panel panel-primary">
                                <div class="panel-heading">
                                  <h3 class="panel-title">Google Maps Panel</h3>
@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="panel-footer">
                                     <div class="row tooltip-demo">
-                                        <div class="col-lg-2">
+                                        <div class="col-md-2">
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">CALC ROUTE<span class="caret"></span></button>
                                                 <ul class="dropdown-menu" role="menu">
@@ -64,7 +64,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-md-2">
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SAVE/LOAD<span class="caret"></span></button>
                                                 <ul class="dropdown-menu" role="menu">
@@ -73,27 +73,27 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2" style="margin-left: -20px;margin-right: 20px;">
+                                        <div class="col-md-2" style="margin-left: -20px;margin-right: 20px;">
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SUGGEST ROUTE<span class="caret"></span></button>
                                                 <ul class="dropdown-menu" id="suggestRoute" role="menu">
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-md-2">
                                             <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Show direction informations." id="guide">GUIDE</button>
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-md-2">
                                             <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Reset to initial state." id="reset" onclick="clearMap()">RESET</button>
                                         </div>
-                                        <div class="col-lg-2" style="margin: 5px 0 0 0px;font-size: 15px;">
+                                        <div class="col-md-2" style="margin: 5px 0 0 0px;font-size: 15px;">
                                             <label id="hide_marker"><input id="chk" type="checkbox" > Hide Marker</label>
                                         </div>
                                     </div>
                                 </div>
                              </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-md-4">
                                 <div class="list-group" id="list">
                                     <a href="#" class="list-group-item active" style="background-color: #3bafda">Position (Latitude, Longitude)</a>
                                 </div>
@@ -104,20 +104,20 @@
                  <div class="tab-pane fade" id="tab-database">
                      <div class="example">
                          <div class="row">
-                            <div class ="col-lg-12">
+                            <div class ="col-md-12">
                                 <input class="Text3" id = "searchdb" type="text" placeholder="Search Map">
                             </div>
                          </div>
                      </div>
-                     <div class="container-fluid">
+                     <div class="example">
                          <div class="row">
-                            <div class ="col-lg-12">
+                            <div class ="col-md-12">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
                                       <h3 class="panel-title">Google Maps Database</h3>
                                     </div>
                                     <div class="panel-body">
-                                        <table class="table table-hover">
+                                        <table class="table">
                                             <thead>
                                                 <tr>
                                                     <th>View</th>
@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="example">
                                     <div class="row">
-                                        <div class="col-lg-12">
+                                        <div class="col-md-12">
                                             <ul id="page" class="pagination">
 
                                             </ul>
@@ -164,7 +164,7 @@
                 <div class="tab-pane fade" id="tab-multiple-map">
                     <div class="example">
                         <div class="row">
-                            <div class="col-lg-9" id="multiple-map-container">
+                            <div class="col-md-9" id="multiple-map-container">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
                                         <h3 class="panel-title">Multiple Routes Display</h3>
@@ -174,16 +174,16 @@
                                     </div>
                                     <div class="panel-footer">
                                         <div class="row tooltip-demo">
-                                            <div class="col-lg-2">
+                                            <div class="col-md-2">
                                                 <button type="button" class="btn btn-primary" id="btn-modal-maps" data-toggle="tooltip" data-placement="bottom" title="Select many maps as you want.">Load Multiple Routes</button>
                                             </div>
-                                            <div class="col-lg-1" style="margin-left: 20px;">
+                                            <div class="col-md-1" style="margin-left: 20px;">
                                                 <button type="button" class="btn btn-primary" id="btn-guide-map2" data-toggle="tooltip" data-placement="bottom" title="Look direction guide of selected map.">Guide</button>
                                             </div>
-                                            <div class="col-lg-3" style="margin-left: 10px;">
+                                            <div class="col-md-3" style="margin-left: 10px;">
                                                 <button type="button" class="btn btn-primary" id="btn-delete-map2" data-toggle="tooltip" data-placement="bottom" title="Remove Routes in map list that you want.">Remove Some Routes From Map List</button>
                                             </div>
-                                            <div class="col-lg-1" style="margin-left: 40px;">
+                                            <div class="col-md-1" style="margin-left: 40px;">
                                                 <button type="button" class="btn btn-primary" id="btn-reset-map2" data-toggle="tooltip" data-placement="bottom" title="Remove all maps">Reset</button>
                                             </div>
                                             
@@ -191,7 +191,7 @@
                                     </div>
                                 </div>
                             </div>
-                           <div class="col-lg-3">
+                           <div class="col-md-3">
                                <div class="list-group" id="maps_list">
                                    <a href="#" class="list-group-item active" style="background-color: #3bafda">Maps</a>
                                </div>
@@ -232,7 +232,7 @@
                 </div>
                 <div class="example">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-md-12">
                             <div class="containbody">
                                 <div class="list-group" id="selectable"></div>
                             </div>
@@ -241,7 +241,7 @@
                 </div>
                 <div class="example">
                     <div class="row">
-                      <div class="col-lg-12">
+                      <div class="col-md-12">
                           <div id="search">
                               <input id="t" type="text"  placeholder="Search File" autofocus>
                           </div>
@@ -265,7 +265,7 @@
             <div class="modal-body">
                 <div class="example">
                     <div class="row">
-                        <div class ="col-lg-12">
+                        <div class ="col-md-12">
                             <div class="containbody" id="directions-panel"></div>
                         </div>
                     </div>
@@ -286,7 +286,7 @@
                 <div class="modal-body">
                     <div class="example">
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-md-12">
                                 <div class="containbody">
                                     <div class="list-group" id="md-list-maps"></div>
                                 </div>
