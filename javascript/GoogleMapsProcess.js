@@ -26,19 +26,20 @@ var polylines_array = [],
     activeIndexes = [],
     keep_path = [];
 var isClearMapList = true;
+
 /*
  * initialize() :
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
  * DirectionService, map, directionsDisplay, findPlace
  * และกำหนด eventlistener เมื่อ click บน map, check/uncheck checkbox, ค้นหา searchbox
  */
-
 function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer({
         polylineOptions: polylineOptionsActual,
         suppressMarkers: true,
         hideRouteList: true
     });
+    //  set ให้ center ของ map อยุ่ที่ BTS อารีย์
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
         zoom: 12,
@@ -48,8 +49,8 @@ function initialize() {
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
     markers = [];
-    setUpVarFromDatabase();
-    setUpMultipleMapsTab();
+    setUpVarFromDatabase(); //  โหลดค่าจาก database มาเก็บในตัวแปรต่างๆ
+    setUpMultipleMapsTab(); //  set ค่าให้ปุ่มต่างๆที่อยู่ในหน้า multi-route
     $.ajax({
         type: "POST",
         url: "../php/check.php",
@@ -72,45 +73,50 @@ function initialize() {
         }
     });
     var input = document.getElementById('address');
-    var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบauto complete
+    var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบ auto complete
+    //  checkbox ของ hide marker 
     $('#chk').iCheck({
         checkboxClass: 'icheckbox_minimal-blue',
         increaseArea: '20%' // optional
     });
+    //  ถ้า check คือ hide marker
     $('#chk').on('ifChecked', function (event) {
         for (var i = 0; i < waypointMarkers.length; i++) {
             waypointMarkers[i].setVisible(false);
         }
     });
+    //  ถ้า uncheck ก็จะ set ให้ marker กลับมาโชว์เหมือนเดิม
     $('#chk').on('ifUnchecked', function (event) {
         for (var i = 0; i < waypointMarkers.length; i++) {
             waypointMarkers[i].setVisible(true);
         }
     });
+    //  set hotkey 
     var hotkey = function (event) {
+        //  โดยจะใช้ปุ่มลัดได้จะต้องไม่เป็นตอนที่ textbox อยุ่ในสถานะ focus
         if (!$('#address').is(':focus') && !$('#t').is(':focus') && !$('#searchdb').is(':focus')) {
-            if (event.which === 102) { // f
+            if (event.which === 102) { // กด f เพื่อสร้างเส้นทางที่สั้นที่สุด
                 $('#shRoute').trigger('click');
-            } else if (event.which === 97) { // a
+            } else if (event.which === 97) { // กด a เพื่อสร้างเส้นทางตามลำดับ waypoints
                 $('#azRoute').trigger('click');
-            } else if (event.which === 115) { // s
+            } else if (event.which === 115) { // กด s เพื่อบันทึกเส้นทางที่สร้าง
                 $('#save').trigger('click');
-            } else if (event.which === 108) { // l
+            } else if (event.which === 108) { // กด l เพื่อเรียก dialog โหลดเส้นทางที่จะโชว์
                 $('#opener').trigger('click');
-            } else if (event.which === 49) { // 1
+            } else if (event.which === 49) { // ในกรณีที่มีเส้นทางให้เลือก กด 1 เพื่อเรียกเส้นทางแรก 
                 $('#suggestRoute>li').eq(0).trigger('click');
-            } else if (event.which === 50) { // 2
+            } else if (event.which === 50) { // ในกรณีที่มีเส้นทางให้เลือก กด 2 เพื่อเรียกเส้นทางแรก 
                 $('#suggestRoute>li').eq(1).trigger('click');
-            } else if (event.which === 51) { // 3
+            } else if (event.which === 51) { // ในกรณีที่มีเส้นทางให้เลือก กด 3 เพื่อเรียกเส้นทางแรก 
                 $('#suggestRoute>li').eq(2).trigger('click');
-            } else if (event.which === 103) { // G
+            } else if (event.which === 103) { // กด G เพื่อดูว่าเส้นทางนี้ต้องเดินทางอย่างไร
                 $('#guide').trigger('click');
-            } else if (event.which === 114) { // R
+            } else if (event.which === 114) { // กด R เพื่อ reset ค่าในหน้านั้นทิ้ง
                 $('#reset').trigger('click');
             }
         }
     };
-    $('body').keypress(hotkey);
+    $('body').keypress(hotkey); //  add event ของ hitkey ลงใน body
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
         if ($(e.target).text() === "Database" || $(e.target).text() === "Multi-Route Display") {
             $('body').unbind('keypress', hotkey);
@@ -172,14 +178,9 @@ function initialize() {
     });
 }
 
-/*
- * shRoute,azRoute เอาไว้เรียกเมื่อกดปุ่ม Short Route,A-Z Route ตามลำดับ ซึ่งจะมีวิธีการคำนวณเส้นทางต่างกันคือ
- * Short Route จะคำนวณเส้นทางสั้นที่สุด
- * A-Z จะคำนวณตามลำดับของ waypoints
- */
 function setUpMultipleMapsTab() {
+    //  ให้ center ของ map ในหน้า Multi-Route อยู่ที่ Bts อารีย์
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
-
     map2 = new google.maps.Map(document.getElementById('map-canvas-2'), {
         zoom: 12,
         center: BTSAri
@@ -187,9 +188,11 @@ function setUpMultipleMapsTab() {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         google.maps.event.trigger(map2, 'resize');
     });
+    //  set ค่าให้ปุ่ม guide , remove some routes from map list และ reset เป็น disable
     $('#btn-guide-map2').addClass('disabled');
     $('#btn-delete-map2').addClass('disabled');
     $('#btn-reset-map2').addClass('disabled');
+    //  เรียก function เพื่อ add event ให้กับปุ่มต่างๆ
     addEventListener_Btn_MultipleMapsTab();
 }
 
@@ -210,12 +213,6 @@ function addEventListener_Btn_MultipleMapsTab() {
                 polylines_array[i].setMap(null);
                 //  เอา map นั้นออกจาก list ที่เราโชว์ไว้
                 $('#maps_list>a').eq(i + 1).remove();
-                //  set marker ออกจาก map
-                for (var j = 0; j < mapMarkers.length; j++) {
-                    mapMarkers[j].setMap(null);
-                }
-                //  ล้างค่า mapMarker
-                mapMarkers = [];
                 //  เอา polyline เส้นนั้นออกจาก polylines_array
                 polylines_array.splice(i, 1);
                 //  เอาตำแหน่งของ polyline ที่ activeIndexes เก็บไว้ออก
@@ -427,16 +424,11 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
                 count++;
                 break;
             }
-
-        if (!$('#btn-delete-map2').hasClass('disabled') && count === 0)
-            $('#btn-delete-map2').addClass('disabled');
-
-        var id = $(list).find("a").index($(chk_x).parent().parent().parent()) - 1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา uncheck
-        polylines_array[id].setOptions({
-            strokeColor: "black",
-            strokeOpacity: 0.6,
-            strokeWeight: 2
-        }); // เปลี่ยน polyline กลับเป็นสีดำเหมือนเดิม
+        //  ถ้าไม่มีการเลือก checkbox ที่จะเอาเส้นทางนั้นออกจาก map list จะ set ปุ่ม remove เป็น disable
+        if(!$('#btn-delete-map2').hasClass('disabled')&&count===0)
+            $('#btn-delete-map2').addClass('disabled');   
+        var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา uncheck
+        polylines_array[id].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2}); // เปลี่ยน polyline กลับเป็นสีดำเหมือนเดิม
     });
     //  กำหนด class และขนาดให้ checkbox ที่จะให้ polyline นั้น hide
     $(chk).iCheck({
@@ -465,18 +457,10 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
             }
         }
     });
-    //    $(btn).click(function(){
-    //        var a_remove_target = $(this).parent().parent();
-    //        var maps_list = $("#maps_list");
-    //        var index = $("#maps_list").find("a:gt(0)").index(a_remove_target);
-    //        alert(index);
-    //        $(maps_list).remove(a_remove_target);
-    //        polylines_array.splice(index,1);
-    //    });
-    //  โดย event ที่เพิ่มให้ a จะต้องมีการ click ที่ a ก่อน
+    //  add event ให้ a เมื่อมีการคลิก
     $(a).click(event_a);
 }
-
+//  ใส่ชื่อและรายละเอียดของเส้นทางลงใน dialog เพื่อโหลดเส้นทางหลายๆเส้นมาโชว์
 function setUpModalMultipleMapsTab() {
     $('#md-list-maps').find('a').remove();
     for (var i = 0; i < map_name.length; i++) {
@@ -501,7 +485,9 @@ function setUpModalMultipleMapsTab() {
     }
 }
 
+//  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Route
 function addEventListener_Modal_MultipleMapsTab() {
+    //  เมื่อกดเลือกเส้นทาง จะทำการนับและแสดงผลตรงปุ่มโหลดว่าตอนนี้เลือกมากี่เส้นทางแล้ว
     var event_list_maps = function () {
         var count;
         var badge_count = $('#badge-count');
@@ -515,11 +501,9 @@ function addEventListener_Modal_MultipleMapsTab() {
             $(badge_count).text(count);
         }
     };
+    //  เมื่อกดปุ่ม load ก้โหลดเส้นทางนั้นลงบน map และแสดงชื่อเส้นทางลง map list
     var event_btn_load = function () {
         $('#badge-count').text("0");
-        for (var i = 0; i < mapMarkers.length; i++) {
-            mapMarkers[i].setMap(null);
-        }
         var multipleRoute = $('#md-list-maps>.active');
         var strings_array = [];
         console.log("Begin load .....");
@@ -670,6 +654,12 @@ function setUpVarFromDatabase() {
         }
     });
 }
+
+/*
+ * shRoute,azRoute เอาไว้เรียกเมื่อกดปุ่ม Short Route,A-Z Route ตามลำดับ ซึ่งจะมีวิธีการคำนวณเส้นทางต่างกันคือ
+ * Short Route จะคำนวณเส้นทางสั้นที่สุด
+ * A-Z จะคำนวณตามลำดับของ waypoints
+ */
 
 function shRoute() {
     isOptimize = true;
