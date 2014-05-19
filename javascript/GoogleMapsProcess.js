@@ -3,8 +3,8 @@ var count = "0"; // เอาไว้นับ marker เพิ่มค่า�
 var directionsDisplay; // เอาไว้setDirection ที่คำนวนได้จาก directionsService
 var directionsService = new google.maps.DirectionsService(); //เอาไว้เรียก method route เพื่อหาเส้นทาง
 var points = new Array(); // เอาไว้เก็บตำแหน่งของพิกัดในของ marker
-var waypointMarkers = []; // เอาไว้เก็บobject Marker 
-var isOptimize = false; // เอาไว้เช็คว่าการคำนวณเส้นทางเป็นแบบไหน {true:หาเส้นที่เร็วที่สุด,false:หาตามลำดับ waypoint} 
+var waypointMarkers = []; // เอาไว้เก็บobject Marker
+var isOptimize = false; // เอาไว้เช็คว่าการคำนวณเส้นทางเป็นแบบไหน {true:หาเส้นที่เร็วที่สุด,false:หาตามลำดับ waypoint}
 var fileName = "UntitledMap"; // เอาไว้รีเซ็ตชื่อไฟล์กลับมาเป็นเหมือนเดิมโดยเรียก method resetFileName
 var isCalcRoute = false; // เอาไว้เช็คว่าเรียกฟังก์ชั่น calcroute หรือยัง เอาไว้แยกเวลา เพิ่ม/เลื่อน/ลบ marker แล้ว คำนวณเส้นทางอัตโนมัติ
 var findPlace; //เอาไว้หาสถานที่ใกล้เคียงกับจุดที่เราคลิก
@@ -74,7 +74,7 @@ function initialize() {
     });
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบ auto complete
-    //  checkbox ของ hide marker 
+    //  checkbox ของ hide marker
     $('#chk').iCheck({
         checkboxClass: 'icheckbox_minimal-blue',
         increaseArea: '20%' // optional
@@ -91,7 +91,7 @@ function initialize() {
             waypointMarkers[i].setVisible(true);
         }
     });
-    //  set hotkey 
+    //  set hotkey
     var hotkey = function (event) {
         //  โดยจะใช้ปุ่มลัดได้จะต้องไม่เป็นตอนที่ textbox อยุ่ในสถานะ focus
         if (!$('#address').is(':focus') && !$('#t').is(':focus') && !$('#searchdb').is(':focus')) {
@@ -103,11 +103,11 @@ function initialize() {
                 $('#save').trigger('click');
             } else if (event.which === 108) { // กด l เพื่อเรียก dialog โหลดเส้นทางที่จะโชว์
                 $('#opener').trigger('click');
-            } else if (event.which === 49) { // ในกรณีที่มีเส้นทางให้เลือก กด 1 เพื่อเรียกเส้นทางแรก 
+            } else if (event.which === 49) { // ในกรณีที่มีเส้นทางให้เลือก กด 1 เพื่อเรียกเส้นทางแรก
                 $('#suggestRoute>li').eq(0).trigger('click');
-            } else if (event.which === 50) { // ในกรณีที่มีเส้นทางให้เลือก กด 2 เพื่อเรียกเส้นทางแรก 
+            } else if (event.which === 50) { // ในกรณีที่มีเส้นทางให้เลือก กด 2 เพื่อเรียกเส้นทางแรก
                 $('#suggestRoute>li').eq(1).trigger('click');
-            } else if (event.which === 51) { // ในกรณีที่มีเส้นทางให้เลือก กด 3 เพื่อเรียกเส้นทางแรก 
+            } else if (event.which === 51) { // ในกรณีที่มีเส้นทางให้เลือก กด 3 เพื่อเรียกเส้นทางแรก
                 $('#suggestRoute>li').eq(2).trigger('click');
             } else if (event.which === 103) { // กด G เพื่อดูว่าเส้นทางนี้ต้องเดินทางอย่างไร
                 $('#guide').trigger('click');
@@ -138,7 +138,7 @@ function initialize() {
             marker.setMap(null);
         }
 
-        // For each place, get the icon, place name, and location. 
+        // For each place, get the icon, place name, and location.
         var bounds = new google.maps.LatLngBounds();
         for (var i = 0, place; place = places[i]; i++) {
             var image = {
@@ -178,6 +178,11 @@ function initialize() {
     });
 }
 
+/*
+ * - setUpMultisetUpMultipleMapsTab
+ *  สร้าง map2 มาบน tab ใหม่และset eventlistener 
+ *  ให้กับปุ่มต่างๆ
+ */
 function setUpMultipleMapsTab() {
     //  ให้ center ของ map ในหน้า Multi-Route อยู่ที่ Bts อารีย์
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
@@ -196,6 +201,14 @@ function setUpMultipleMapsTab() {
     addEventListener_Btn_MultipleMapsTab();
 }
 
+/*
+ * - addEventListener_Btn_MultipleMapsTab()
+ * set event ให้กับปุ่มต่างๆดังนี้
+ *  - ปุ่ม Load Multiple Routes
+ *  - ปุ่ม Delete Some Routes 
+ *  - ปุ่ม Reset
+ *  - ปุ่ม Guide
+ */
 function addEventListener_Btn_MultipleMapsTab() {
     //  เมื่อกด Load Multiple Routes จะเรียก dialog เพื่อ load หลายๆ route มาโชว์
     $("#btn-modal-maps").click(function () {
@@ -285,7 +298,13 @@ function addEventListener_Btn_MultipleMapsTab() {
         }
     });
 }
-//  นำเส้นทางที่เลือกมาเก็บใน maplist
+/*
+ *  - addMapToList
+ *  เอาไว้ add map เข้าไปใน map_list ทีละ map    
+ * @param {number} index
+ *  - index : คือตำแหน่งของชื่อ map ที่อยู่ใน array map_name ที่จะ add เข้าไปในlist 
+ * @returns {undefined}
+ */
 function addMapToList(index) {
     var list = document.getElementById("maps_list");
     var a = document.createElement("a");
@@ -303,7 +322,7 @@ function addMapToList(index) {
     label.appendChild(document.createTextNode(" Hide")); //  ใส่ text ลงใน label
     label.setAttribute("class", "hide-route"); //  ใส่ class ให้ label
     a.classList.add("list-group-item"); //  ใส่ class ให้ a
-    //  ใส่ชื่อของเส้นทางและ label ต่างๆลงใน a 
+    //  ใส่ชื่อของเส้นทางและ label ต่างๆลงใน a
     a.appendChild(label_x);
     a.appendChild(document.createTextNode(" " + map_name[index]));
     a.appendChild(label);
@@ -313,7 +332,15 @@ function addMapToList(index) {
     addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x);
 }
 
-//  เพิ่ม event ให้ตัวแปรที่อยู่ใน map list
+/*
+ * - addEventListener_MapList_MultipleMapsTab()
+ *  เอาไว้ addlistener ให้กับ list แสดง map ต่างๆที่โหลดมาแสดงผล
+ * @param {Node:"List"} list : เป็นlist ที่เก็บ map
+ * @param {Node:"input type=checkbox"} : เป็น checkbox ทีเอาไว้ซ่อน map จากแผนที่
+ * @param {Node:"a"} a : เป็น element tag a ที่กำหนดแต่ละแถวในlist
+ * @param {Node:"input type=checkbox"} chk_x : เป็น checkbox ที่เอาไว้ลบแต่ละmapออกจากlist
+ * @returns {undefined}
+ */
 function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
     //  ตัวแปรเก็บ event ของ a
     var event_a = function () {
@@ -426,7 +453,7 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
             }
         //  ถ้าไม่มีการเลือก checkbox ที่จะเอาเส้นทางนั้นออกจาก map list จะ set ปุ่ม remove เป็น disable
         if(!$('#btn-delete-map2').hasClass('disabled')&&count===0)
-            $('#btn-delete-map2').addClass('disabled');   
+            $('#btn-delete-map2').addClass('disabled');
         var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา uncheck
         polylines_array[id].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2}); // เปลี่ยน polyline กลับเป็นสีดำเหมือนเดิม
     });
@@ -439,7 +466,7 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
     $(chk).on('ifChecked', function () {
         var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
         polylines_array[id].setVisible(false); //  set ให้ polyline หายจาก map
-        //  ถ้าเป็น class active ก็จะให้ mapMarker หายจาก map ด้วย 
+        //  ถ้าเป็น class active ก็จะให้ mapMarker หายจาก map ด้วย
         if ($(this).parent().parent().parent().hasClass('active')) {
             for (var i = 0; i < mapMarkers.length; i++) {
                 mapMarkers[i].setVisible(false);
@@ -450,7 +477,7 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
     $(chk).on('ifUnchecked', function () {
         var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
         polylines_array[id].setVisible(true); //  set ให้ polyline ปรากฎบน map
-        //  ถ้าเป็น class active ก็จะให้ mapMarker ปรากฎบน map ด้วย 
+        //  ถ้าเป็น class active ก็จะให้ mapMarker ปรากฎบน map ด้วย
         if ($(this).parent().parent().parent().hasClass('active')) {
             for (var i = 0; i < mapMarkers.length; i++) {
                 mapMarkers[i].setVisible(true);
@@ -460,7 +487,13 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
     //  add event ให้ a เมื่อมีการคลิก
     $(a).click(event_a);
 }
-//  ใส่ชื่อและรายละเอียดของเส้นทางลงใน dialog เพื่อโหลดเส้นทางหลายๆเส้นมาโชว์
+
+/*
+ *  - setUpModalMultipleMapsTab ()
+ *      ใส่ชื่อmapและรายละเอียดของเส้นทางลงใน modal-dialog เพื่อโหลดเส้นทางหลายๆเส้นมาโชว์
+ * @returns {undefined}
+ */
+
 function setUpModalMultipleMapsTab() {
     $('#md-list-maps').find('a').remove();
     for (var i = 0; i < map_name.length; i++) {
@@ -485,6 +518,15 @@ function setUpModalMultipleMapsTab() {
     }
 }
 
+/*
+ *  - addEventListener_Modal_MultipleMapsTab()
+ * เอาไว้ add event ให้กับปุ่มต่างๆในหน้า modal ที่เอาไว้โหลด maps จากใน database มาโชว์
+ *  - ปุ่ม Load
+ *  - ปุ่ม All load
+ *  - ปุ่ม Close
+ *  
+ * @returns {undefined}
+ */
 //  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Route
 function addEventListener_Modal_MultipleMapsTab() {
     //  เมื่อกดเลือกเส้นทาง จะทำการนับและแสดงผลตรงปุ่มโหลดว่าตอนนี้เลือกมากี่เส้นทางแล้ว
@@ -629,6 +671,21 @@ function addEventListener_Modal_MultipleMapsTab() {
     $('#md-btn-close').unbind("click").click(event_btn_close);
 }
 
+
+/*
+ * - setUpVarFromDatabase ()
+ * เอาไว้ set ค่าให้กับตัวแปรต่างๆดังนี้
+ *  - points_array<String> : เก็บพิกัดของจุดทั้งหมดของแผนที่นั้นทั้ง origin,destination, และ waypoint
+ *  - map_name<String> : เก็บ string ชื่อของแผนที่ทั้งหมด
+ *  - route_type<number> : เก็บตัวเลขว่าโหลดแบบ optimizeWaypoint เป็น true หรือ false 
+ *  ถ้าเป็น true จะเก็บ 1 แต่ถ้าเป็น  false จะเก็บ 0
+ *  - pick_route<number> : เก็บว่าเลือกเส้นทางไหน (ถ้ามีเส้นทางแนะนำให้เลือก) 
+ *      โดย 0 คือเส้นทางที่ 1
+ *          1 คือเส้นทางที่ 2
+ *          2 คือเส้นทางที่ 3
+ *  - date<String> : เก็บ day/month/year ว่า update ข้อมูลล่าสุดวันไหน
+
+ */
 function setUpVarFromDatabase() {
     map_name = [], route_type = [], pick_route = [], date = [], points_array = [];
     $.ajax({
@@ -841,7 +898,7 @@ function placeMarker(position, map) {
             calcRoute();
         }
     });
-    //      หลังจาก drag marker เสร็จจะอัพเดตพิกัดของ waypoint ใน listbox 
+    //      หลังจาก drag marker เสร็จจะอัพเดตพิกัดของ waypoint ใน listbox
     //      พร้อมอัพเดตค่าที่เก็บไว้ใน array points ด้วย
     google.maps.event.addListener(marker, 'dragend', function (event) {
         request.location = event.latLng;
