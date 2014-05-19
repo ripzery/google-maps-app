@@ -4,6 +4,7 @@ var directionsDisplay; // เอาไว้setDirection ที่คำนว�
 var directionsService = new google.maps.DirectionsService(); //เอาไว้เรียก method route เพื่อหาเส้นทาง
 var points = new Array(); // เอาไว้เก็บตำแหน่งของพิกัดในของ marker
 var waypointMarkers = []; // เอาไว้เก็บobject Marker
+var markers = [] // เอาไว้เก็บmarkerของสัญลักษณ์ของสถานที่ต่างๆ (ไม่ค่อยจำเป็นเท่าไร)
 var isOptimize = false; // เอาไว้เช็คว่าการคำนวณเส้นทางเป็นแบบไหน {true:หาเส้นที่เร็วที่สุด,false:หาตามลำดับ waypoint}
 var fileName = "UntitledMap"; // เอาไว้รีเซ็ตชื่อไฟล์กลับมาเป็นเหมือนเดิมโดยเรียก method resetFileName
 var isCalcRoute = false; // เอาไว้เช็คว่าเรียกฟังก์ชั่น calcroute หรือยัง เอาไว้แยกเวลา เพิ่ม/เลื่อน/ลบ marker แล้ว คำนวณเส้นทางอัตโนมัติ
@@ -34,6 +35,9 @@ var isClearMapList = true;
  * และกำหนด eventlistener เมื่อ click บน map, check/uncheck checkbox, ค้นหา searchbox
  */
 function initialize() {
+    $('#reset').addClass('disabled');
+    $('#hide_marker').hide("fade");
+    $('#chk').iCheck('disable');
     $('#guide').addClass('disabled');
     $('#suggest').addClass('disabled');
     $('#calcroute').addClass('disabled');
@@ -51,7 +55,6 @@ function initialize() {
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
-    markers = [];
     setUpVarFromDatabase(); //  โหลดค่าจาก database มาเก็บในตัวแปรต่างๆ
     setUpMultipleMapsTab(); //  set ค่าให้ปุ่มต่างๆที่อยู่ในหน้า multi-route
     $.ajax({
@@ -136,7 +139,8 @@ function initialize() {
 
     google.maps.event.addListener(searchBox, 'places_changed', function () { // เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
         var places = searchBox.getPlaces();
-
+        if($('#reset').hasClass('disabled'))
+            $('#reset').removeClass('disabled');
         for (var i = 0, marker; marker = markers[i]; i++) {
             marker.setMap(null);
         }
@@ -855,6 +859,8 @@ function calcRoute() {
             }
             map.fitBounds(bound);
             $('#myTab1 a:first').tab('show');
+            $('#hide_marker').show("fade");
+            $('#chk').iCheck('enable');
         }
     });
 }
@@ -866,6 +872,7 @@ function calcRoute() {
  *
  */
 function placeMarker(position, map) {
+    $('#reset').removeClass('disabled');
     var image;
     var start = $("#list>a:nth-child(2)");
     var end = $("#list").find("a:last");
@@ -976,6 +983,9 @@ function placeMarker(position, map) {
 //, ลบmarker ออกจากแผนที่ให้หมด
 //และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
 function clearMap() {
+    $('#reset').addClass('disabled');
+    $('#hide_marker').hide("fade");
+    $('#chk').iCheck('disable');
     directionsDisplay.setMap(null);
     directionsDisplay.setPanel(null);
     $('#suggestRoute').children().remove();
@@ -986,6 +996,15 @@ function clearMap() {
     for (var i = 0; i < waypointMarkers.length; i++) {
         waypointMarkers[i].setMap(null);
     }
+    for(var i = 0; i < markers.length ; i++){
+        markers[i].setMap(null);
+    }
+    var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
+    var mapOptions = {
+        zoom: 12,
+        center: BTSAri
+    };
+    map.setOptions(mapOptions);
     waypointMarkers = [];
     var list = $("#list").find("a");
     for (var i = list.length - 1, li; li = list.eq(i), i > 0; i--) {
@@ -1062,9 +1081,9 @@ function Save(path) {
                 latlng: points,
                 path: path
             }),
-            success: function () {
+            success: function (return_message) {
                 setUpVarFromDatabase();
-                alert("Save file to database successfully.");
+                alert(return_message);
             },
             error: function (xhr, status, error) {
                 alert(xhr.responseText);
@@ -1418,11 +1437,11 @@ function resetFileName() {
     $('#filename').text(fileName);
 }
 // This default onbeforeunload event
-window.onbeforeunload = function(){
-    return "Are you sure to leave?"
-}
-
-$(window).unload(function(){
-
-});
+//window.onbeforeunload = function(){
+//    return "Are you sure to leave?"
+//}
+//
+//$(window).unload(function(){
+//
+//});
 google.maps.event.addDomListener(window, 'load', initialize);
