@@ -775,39 +775,49 @@ function pushPath() {
         alert("Please enter start and end points.");
         return false;
     }
-    var request = {
-        origin: points[0],
-        destination: points[1],
-        waypoints: wps,
-        optimizeWaypoints: isOptimize,
-        travelMode: google.maps.TravelMode.DRIVING
-    };
-    directionsService.route(request, function (response, status) {
-        var count=0;
-        if (status == google.maps.DirectionsStatus.OK) {
-            for (var j = 0; j < response.routes[0].legs.length; j++) {
-                for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
-                    for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
-                        temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
-                        temp = temp.replace("(", "");
-                        temp = temp.replace(")", "");
-                        path = path + temp + "|";
-                        count++;
+    else{
+        var wps = [],
+            path = "";
+        var temp = "";
+        var count = 0;
+        for (var j = 2; j < points.length; j++) {
+            wps.push({
+                location: points[j],
+                stopover: true
+            });
+        }
+        var request = {
+            origin: points[0],
+            destination: points[1],
+            waypoints: wps,
+            optimizeWaypoints: isOptimize,
+            travelMode: google.maps.TravelMode.DRIVING
+        };
+        directionsService.route(request, function (response, status) {
+            if (status == google.maps.DirectionsStatus.OK) 
+            {
+                var arr = new Array();
+                for (var j = 0; j < response.routes[0].legs.length; j++) {
+                    for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
+                        for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
+                            temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
+                            temp = temp.replace("(", "");
+                            temp = temp.replace(")", "");
+                            path = path + temp + "|";
+                            count++;
+                        }
                     }
                 }
+                alert("Path : "+count);
                 path = path.substring(0, path.length - 1);
-                //            console.log("path in pushPath : "+path);
                 Save(path);
             }
-            alert("Path : "+count);
-            path = path.substring(0, path.length - 1);
-            Save(path);
-        } else {
-            alert(status);
-        }
-    });
+            else {
+                alert(status);
+            }   
+        });
+    }
 }
-
 /*
  * calcRoute()
  * เอาไว้ส่ง start,end,waypoint ทั้งหมดให้ google render เส้นทางออกมาให้
