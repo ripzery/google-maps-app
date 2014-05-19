@@ -150,8 +150,3 @@ and open the template in the editor.
     float : right;
     right: 0px;
 }
-
-.col-centered{
-    float: none;
-    margin: 0 auto;
-}
