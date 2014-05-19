@@ -224,28 +224,12 @@ function addEventListener_Btn_MultipleMapsTab(){
                 i = -1;
             }
         }
-        var maps_per_page = 12;
-        var total_page;
-        if(activeIndexes.length%maps_per_page===0){
-            total_page = activeIndexes.length/maps_per_page;
-        }else{
-            total_page = activeIndexes.length/maps_per_page+1;
-        }
-        if($('#maps_list>a:gt(0)').length === 0){
-            $('#maps-list-page').trigger('page',total_page-1);
-        }
-        $('#maps-list-page').bootpag({
-            total : total_page
-        });
     });
     //  เมื่อกด Reset จะทำการล้างค่าทุกค่าใน map list และบน map
     $('#btn-reset-map2').click(function(){
         $('#btn-guide-map2').addClass('disabled');
         $('#btn-delete-map2').addClass('disabled');
         $('#btn-reset-map2').addClass('disabled');
-        
-        $('#maps-list-page').hide("slow");
-        
         //  set ทุก polyline ออกจาก map
         for(var i=0;i<polylines_array.length;i++){
             polylines_array[i].setMap(null);
@@ -517,17 +501,6 @@ function addEventListener_Modal_MultipleMapsTab() {
         }
         var multipleRoute = $('#md-list-maps>.active');
         var strings_array = [];
-        var maps_per_page = 12;
-        var current_number_of_maps = $('#maps_list>a:gt(0)').length;
-        var number_of_load;// ใช้กำหนดว่าจะโหลดมากี่ map ในหน้าแรก
-        if(multipleRoute.length<=maps_per_page){
-            number_of_load = multipleRoute.length;
-        }else{
-            number_of_load = maps_per_page;
-        }
-        if(number_of_load+current_number_of_maps > maps_per_page){
-            number_of_load = maps_per_page - current_number_of_maps;
-        }
         console.log("Begin load .....");
         for(var i =0;i<multipleRoute.length;i++){
             var string_map_name = "";
@@ -544,33 +517,8 @@ function addEventListener_Modal_MultipleMapsTab() {
             strings_array.push(string_map_name);
             var index = map_name.indexOf(string_map_name);
             activeIndexes.push(index);
-        }
-        for (var i = current_number_of_maps; i < number_of_load+current_number_of_maps; i++) {
             addMapToList(activeIndexes[i]);
         }
-        var total_page;
-        if(activeIndexes.length%maps_per_page===0){
-            total_page = activeIndexes.length/maps_per_page;
-        }else{
-            total_page = activeIndexes.length/maps_per_page+1;
-        }
-        $('#maps-list-page').bootpag({
-           total : total_page,
-           maxVisible : maps_per_page
-        }).on('page',function(event,num){
-            $('#maps_list>a:gt(0)').remove();
-            var start = (num-1) * maps_per_page;
-            var end;
-            if(activeIndexes.length<num*maps_per_page){
-                end = activeIndexes.length;
-            }else{
-                end = num * maps_per_page;
-            }
-           for(var i = start;i<end;i++){
-               addMapToList(activeIndexes[i]);
-           }
-        });
-        $('#maps-list-page').show("slow");
         $.ajax({
             type: "POST",
             data: ({
@@ -700,12 +648,6 @@ function setUpVarFromDatabase() {
             }
             console.log("setUpVar complete");
             addTable();
-//            if(map_name.length%5!==0){
-//                number_of_pages = map_name.length/5+1;
-//            }else{
-//                number_of_pages = map_name.length/5;
-//            }
-//            $('#page').bootpag({total: number_of_pages});
         }
     });
 }
@@ -1215,58 +1157,66 @@ function initLoad() {
     });
 }
 
-
-function insert5Rows(startID,endID){
+/*
+ * addTable()
+ * เป็นการโหลดค่าจาก database มาลงตารางใน tabs2
+ */
+function addTable() {
     $('#tablebody').find('tr').remove();
-    for (var i = startID; i < endID; i++) {
+    for(var i=0;i<map_name.length;i++){
         var tr = document.createElement("tr");
+        var td_view = document.createElement("td");
         var td_delete = document.createElement("td");
         var td_name = document.createElement("td");
         var td_route = document.createElement("td");
         var td_date = document.createElement("td");
         var td_start = document.createElement("td");
         var td_end = document.createElement("td");
-        var button_x = document.createElement("button");
         var button_view = document.createElement("button");
-        var td_view = document.createElement("td");
+        var button_x = document.createElement("button");
         button_view.innerHTML = "View";
         $(button_view).addClass("btn btn-primary btn-block");
-        button_view.setAttribute("style", "width:45px;");
+        button_view.setAttribute("style","width:45px;");
+        $(td_view).addClass('col-md-1');
         $(td_view).append(button_view);
         button_x.innerHTML = "X";
         $(button_x).addClass("btn btn-danger btn-block");
-        button_x.setAttribute("style", "width:30px;");
-        button_x.setAttribute("id", "delete");
+        button_x.setAttribute("style","width:30px;");
+        button_x.setAttribute("id","delete");
         $(td_delete).append(button_x);
-        td_name.setAttribute("style", "width:150px;");
+        $(td_delete).addClass('col-md-1');
+        td_name.setAttribute("style","width:150px;");
         $(td_name).append(map_name[i]);
+        $(td_name).addClass('col-md-2');
         $(td_name).editable({
-            type: "text",
-            showbuttons: true,
-            mode: "popup",
-            pk: {
-                name: ""
-            },
-            params: function (params) {
+            type : "text",
+            showbuttons : true,
+            mode : "popup",
+            pk : {name : ""},
+            params : function(params){
                 params.origValue = $(this).text();
                 return params;
             },
-            url: "../php/editname.php",
-            success: function () {
+            url : "../php/editname.php",
+            success : function(){
                 alert("Edit name and save successfully.");
                 setUpVarFromDatabase();
             }
         });
-        if (route_type[i] === "0") {
+        if(route_type[i]==="0")
+        {
             route = "A-Z";
-        } else {
+        }else{
             route = "Fast";
         }
         $(td_route).append(route);
-        td_route.setAttribute("style", "width:150px;");
+        $(td_route).addClass('col-md-1');
         $(td_date).append(date[i]);
+        $(td_date).addClass('col-md-1');
         $(td_start).append(points_array[i][0]);
+        $(td_start).addClass('col-md-3');
         $(td_end).append(points_array[i][1]);
+        $(td_end).addClass('col-md-3');
         $(tr).append(td_view);
         $(tr).append(td_delete);
         $(tr).append(td_name);
@@ -1275,44 +1225,48 @@ function insert5Rows(startID,endID){
         $(tr).append(td_start);
         $(tr).append(td_end);
         $("#tablebody").append(tr);
-        $(button_x).click(function () {
+        $(button_x).click(function(){
             var confirm_delete = confirm("Do you want to delete this map?");
-            if (confirm_delete === true) {
+            if(confirm_delete===true)
+            {
                 $.ajax({
                     type: "POST",
                     async: false,
-                    url: "../php/delete.php",
-                    data: {
-                        name: $(this).parent().parent().find("td").eq(2).text()
-                    },
-                    success: function (return_name) {
-                        alert("delete " + return_name + " from database successfully.");
+                    url : "../php/delete.php",
+                    data : {name : $(this).parent().parent().find("td").eq(2).text()},
+                    success : function(return_name){
+                        alert("delete "+return_name+" from database successfully.");
                         setUpVarFromDatabase();
                     },
-                    error: function () {
+                    error : function(){
                         alert("delete map unsucessfully.")
                     }
                 });
-                $(this).parent().parent().remove();
-            } else {
+                  $(this).parent().parent().remove();
+            }
+            else{
                 alert("Cancle delete process.");
             }
         });
-        $(button_view).click(function () {
+        $(button_view).click(function(){
             var index = map_name.indexOf($(this).parent().parent().find("td").eq(2).text());
-            var lat, lng;
+            var lat,lng;
             isLoad = true;
             clearMap();
-            for (var x = 0; x < points_array[index].length; x++) {
+            for(var x=0;x<points_array[index].length;x++){
                 points[x] = points_array[index][x];
                 lat = points_array[index][x].split(",")[0];
                 lng = points_array[index][x].split(",")[1];
-                placeMarker(new google.maps.LatLng(lat, lng), map);
+                placeMarker(new google.maps.LatLng(lat,lng),map);
                 addWaypointToList();
             }
-            if (route_type[index] === 1) {
+            if(route_type[index]===1)
+            {
                 isOptimize = true;
-            } else {
+                
+            }
+            else
+            {
                 isOptimize = false;
             }
             pickRouteIndex = pick_route[index];
@@ -1320,73 +1274,29 @@ function insert5Rows(startID,endID){
 
             $('#myTab1 a:first').tab('show');
             var request = {
-                location: new google.maps.LatLng(points[0].split(",")[0], points[0].split(",")[1]),
-                types: ['establishment', 'gas_station', 'car_dealer', 'car_rental', 'car_repair', 'car_wash', 'department_store', 'shopping_mall', 'storage', 'parking'],
-                rankBy: google.maps.places.RankBy.DISTANCE
+                location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
+                types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
+                rankBy : google.maps.places.RankBy.DISTANCE
             };
-            findPlace.nearbySearch(request, function (results, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    startPlace = results[0].name + " " + results[0].vicinity;
-                    $("#list>a:nth-child(2)").text("Start : " + startPlace);
+            findPlace.nearbySearch(request,function(results,status){
+                if (status == google.maps.places.PlacesServiceStatus.OK){
+                    startPlace = results[0].name +" "+ results[0].vicinity;
+                    $("#list>a:nth-child(2)").text("Start : "+startPlace);
                 }
             });
-            request.location = new google.maps.LatLng(points[points.length - 1].split(",")[0], points[points.length - 1].split(",")[1]);
-            findPlace.nearbySearch(request, function (results, status) {
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    endPlace = results[0].name + " " + results[0].vicinity;
-                    $("#list>a:last").text("End : " + endPlace);
+            request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
+            findPlace.nearbySearch(request,function(results,status){
+                if (status == google.maps.places.PlacesServiceStatus.OK){
+                    endPlace = results[0].name +" "+ results[0].vicinity;
+                    $("#list>a:last").text("End : "+endPlace);
                 }
             });
-            setTimeout(function () {
+            setTimeout(function(){
                 calcRoute();
-            }, 200);
+            },200); 
         });
+        
     }
-}
-
-/*
- * addTable()
- * เป็นการโหลดค่าจาก database มาลงตารางใน tabs2
- */
-function addTable() {
-    var number_of_pages = 0;
-    if(map_name.length%5!==0){
-        number_of_pages = map_name.length/5+1;
-    }else{
-        number_of_pages = map_name.length/5;
-    }
-    
-    if(map_name.length<5){
-        insert5Rows(0,map_name.length);
-    }else{
-        insert5Rows(0,5);
-    }
-    var current_page;
-    if($('#tablebody>tr').length>0){
-        var text = $('#page>.bootpag>li:gt(0):lt(2)>.disabled').text();
-        alert("if : "+text);
-        current_page = parseInt(text);
-    }else{
-        var text = $('#page>.bootpag>li:gt(0):lt('+number_of_pages+')').find('.disabled').text();
-        alert("else : "+text);
-        current_page = parseInt(text)-1;
-    }
-    if(isNaN(current_page)){
-        current_page = 1;
-    }
-    alert("current : "+current_page);
-    $('#page').bootpag({
-        total : parseInt(number_of_pages),
-        maxvisible : 5,
-        page : current_page,
-        leaps : true
-    }).unbind('page').on("page",function(event,num){
-        if(map_name.length<5*num){
-            insert5Rows((num-1)*5,map_name.length);
-        }else{
-            insert5Rows((num-1)*5,num*5);
-        }
-    });
 
     $('#searchdb').keyup(function () {
         var row = $('#tablebody tr');
