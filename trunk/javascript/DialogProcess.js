@@ -27,8 +27,13 @@ $(function () {
     });
 
     $("#opener").click(function () {
-        $(load).modal(); // initialized with no keyboard
-        $(t).focus();
+        if(map_name.length===0){
+            alert("Sorry, no data in your database.");
+        }
+        else{
+            $(load).modal(); // initialized with no keyboard
+            $(t).focus();
+        }
     });
 
     $("#doLoad").click(function () {
