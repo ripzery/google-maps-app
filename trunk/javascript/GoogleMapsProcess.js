@@ -775,46 +775,37 @@ function pushPath() {
         alert("Please enter start and end points.");
         return false;
     }
-    else{
-        var wps = [],
-            path = "";
-        var temp = "";
-        for (var j = 2; j < points.length; j++) {
-            wps.push({
-                location: points[j],
-                stopover: true
-            });
-        }
-        var request = {
-            origin: points[0],
-            destination: points[1],
-            waypoints: wps,
-            optimizeWaypoints: isOptimize,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-        directionsService.route(request, function (response, status) {
-            if (status == google.maps.DirectionsStatus.OK) 
-            {
-                var arr = new Array();
-                for (var j = 0; j < response.routes[0].legs.length; j++) {
-                    for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
-                        for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
-                            temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
-                            temp = temp.replace("(", "");
-                            temp = temp.replace(")", "");
-                            path = path + temp + "|";
-                        }
+    var request = {
+        origin: points[0],
+        destination: points[1],
+        waypoints: wps,
+        optimizeWaypoints: isOptimize,
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+    directionsService.route(request, function (response, status) {
+        var count=0;
+        if (status == google.maps.DirectionsStatus.OK) {
+            for (var j = 0; j < response.routes[0].legs.length; j++) {
+                for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
+                    for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
+                        temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
+                        temp = temp.replace("(", "");
+                        temp = temp.replace(")", "");
+                        path = path + temp + "|";
+                        count++;
                     }
                 }
                 path = path.substring(0, path.length - 1);
                 //            console.log("path in pushPath : "+path);
                 Save(path);
             }
-            else {
-                alert(status);
-            }
-        });
-    }
+            alert("Path : "+count);
+            path = path.substring(0, path.length - 1);
+            Save(path);
+        } else {
+            alert(status);
+        }
+    });
 }
 
 /*
@@ -886,6 +877,18 @@ function calcRoute() {
             $('#myTab1 a:first').tab('show');
             $('#hide_marker').show("fade");
             $('#chk').iCheck('enable');
+        }else if(status == google.maps.DirectionsStatus.ZERO_RESULTS){
+            alert("No route could be found between the origin and destination.");
+        }else if(status == google.maps.DirectionsStatus.NOT_FOUND){
+            alert("At least one of the origin, destination, or waypoints could not be geocoded.");
+        }else if(status == google.maps.DirectionsStatus.UNKNOWN_ERROR){
+            alert("A directions request could not be processed due to a server error. The request may succeed if you try again.");
+        }else if(status == google.maps.DirectionsStatus.REQUEST_DENIED){
+            alert("The webpage is not allowed to use the directions service.");
+        }else if(status == google.maps.DirectionsStatus.INVALID_REQUEST){
+            alert("The DirectionsRequest provided was invalid.");
+        }else if(status == google.maps.DirectionsStatus.UNKNOWN_ERROR){
+            alert("A directions request could not be processed due to a server error. The request may succeed if you try again.");
         }
     });
 }
@@ -945,9 +948,6 @@ function placeMarker(position, map) {
     //      ค่อยเปลี่ยนพิกัดนั้นเป็นพิกัดใหม่หลังจาก drag เสร็จ
     google.maps.event.addListener(marker, 'mousedown', function (event) {
         index = points.indexOf(event.latLng.lat() + "," + event.latLng.lng());
-        if (isCalcRoute) {
-            calcRoute();
-        }
     });
     //      หลังจาก drag marker เสร็จจะอัพเดตพิกัดของ waypoint ใน listbox
     //      พร้อมอัพเดตค่าที่เก็บไว้ใน array points ด้วย
