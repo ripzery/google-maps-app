@@ -925,7 +925,7 @@ function clearMap() {
     $('#chk').iCheck('uncheck');
 }
 
-//เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน textbox
+//เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน list ของ position
 function addWaypointToList() {
     var ul = document.getElementById("list");
     var li = document.createElement("a");
@@ -998,9 +998,8 @@ function Save(path) {
 }
 
 /*
- * InitLoad() -> Load() (InitLoad จะต้องเรียกก่อน Load เสมอ)
- * เรียก modal dialog ที่สามารถ search ข้อมูลไฟล์ที่ต้องการจะโหลดได้ เมื่อคลิก/ใส่ข้อความใน searchbox เพื่อเลือก
- * ก้จะโหลด filename,route_type,date,start,end มาเก็บไว้ในตัวแปรเพื่อเตรียมนำมาแสดงผลบนหน้าจอ
+ * Load() จะถูกเรียกจาก InitLoad()
+ * มีหน้าที่แสดงเส้นทางที่เลือกพร้อมคำนวนเส้นทางลงบน map
  */
 function Load() {
     var lat, lng;
@@ -1037,7 +1036,12 @@ function Load() {
         }
     });
 }
-
+/*
+ * InitLoad() -> Load() (InitLoad จะต้องเรียกก่อน Load เสมอ)
+ * โดย InitLoad() จะถูกเรียกเมื่อกดปุ่ม load หรือกด l ในหน้าของ Maps
+ * เรียก modal dialog ที่สามารถ search ข้อมูลไฟล์ที่ต้องการจะโหลดได้ เมื่อคลิก/ใส่ข้อความใน searchbox เพื่อเลือก
+ * ก้จะโหลด filename,route_type,date,start,end มาเก็บไว้ในตัวแปรเพื่อเตรียมนำมาแสดงผลบนหน้าจอ
+ */
 function initLoad() {
     var sort_list = $('.dropdown-menu').parent();
     var t = $('#t');
@@ -1168,32 +1172,36 @@ function initLoad() {
  * เป็นการโหลดค่าจาก database มาลงตารางใน tabs2
  */
 function addTable() {
-    $('#tablebody').find('tr').remove();
+    $('#tablebody').find('tr').remove();    //  หา element ของ html tr เพื่อ clear ค่าเก่าทิ้งก่อน
+    //  วนตามจำนวนเส้นทางที่ดึงมาจาก database เพื่อโชว์ข้อมูล
     for (var i = 0; i < map_name.length; i++) {
-        var tr = document.createElement("tr");
-        var td_view = document.createElement("td");
-        var td_delete = document.createElement("td");
-        var td_name = document.createElement("td");
-        var td_route = document.createElement("td");
-        var td_date = document.createElement("td");
-        var td_start = document.createElement("td");
-        var td_end = document.createElement("td");
-        var button_view = document.createElement("button");
-        var button_x = document.createElement("button");
+        var tr = document.createElement("tr");  //  สร้าง element tr ขึ้นมาเพื่อเอาไว้เก็บรายละเอียดของเส้นทางที่จะใช้ในการแสดงผลของ html
+        var td_view = document.createElement("td"); //  สร้าง td เพื่อเก็บปุ่ม view
+        var td_delete = document.createElement("td");   //  สร้าง td เพื่อเก็บปุ่ม delete
+        var td_name = document.createElement("td"); //  สร้าง td เพื่อเก็บชื่อเส้นทาง
+        var td_route = document.createElement("td");    //  สร้าง td เพื่อเก็บชนิดของเส้นทาง
+        var td_date = document.createElement("td"); //  สร้าง td เพื่อเก็บวันเวลาที่ update เส้นทางนั้นๆ
+        var td_start = document.createElement("td");    //  สร้าง td เพื่อเก็บจุดเริ่มต้นของเส้นทางนั้น
+        var td_end = document.createElement("td");  //  สร้าง td เพื่อเก็บจุดสิ้นสุดของเส้นทางนั้น
+        var button_view = document.createElement("button"); //  สร้างปุ่ม view
+        var button_x = document.createElement("button");    //  สร้างปุ่ม x เพื่อ delete เส้นทางนั้นออกจาก database
+        //  set ค่าให้กับปุ่ม View
         button_view.innerHTML = "View";
         $(button_view).addClass("btn btn-primary btn-block");
         button_view.setAttribute("style", "width:45px;");
-        $(td_view).addClass('col-md-1');
-        $(td_view).append(button_view);
+        $(td_view).addClass('col-md-1');    //  add class ให้กับ td ที่เก็บปุ่ม view
+        $(td_view).append(button_view); //  ใส่ปุ่ม view ลงใน td_view
+        //  set ค่าให้กับปุ่ม X
         button_x.innerHTML = "X";
         $(button_x).addClass("btn btn-danger btn-block");
         button_x.setAttribute("style", "width:30px;");
-        button_x.setAttribute("id", "delete");
-        $(td_delete).append(button_x);
-        $(td_delete).addClass('col-md-1');
+        $(td_delete).append(button_x);  //  add class ให้กับ td ที่เก็บปุ่ม X
+        $(td_delete).addClass('col-md-1');  //  ใส่ปุ่ม X ลงใน td_delete
+        //  set ค่าให้ td ที่เก็บชื่อ
         td_name.setAttribute("style", "width:150px;");
         $(td_name).append(map_name[i]);
         $(td_name).addClass('col-md-2');
+        //  เมื่อกดที่ชื่อจะมี textbox ขึ้นมาซึ่งสามารถแก้ไขชื่อเส้นทางและบันทึกชื่อนั้นลง database ได้ทันที
         $(td_name).editable({
             type: "text",
             showbuttons: true,
@@ -1211,19 +1219,26 @@ function addTable() {
                 setUpVarFromDatabase();
             }
         });
-        if (route_type[i] === "0") {
+        //  เนื่องจากการสร้างเส้นทางแบบตามลำดับ waypoint (A-Z route) หรือสร้างเส้นทางที่สั้นที่สุด (shot route) จะถูกเก็บในรูป 0 / 1 
+        if (route_type[i] === "0") {    // โดย 0 จะเป็นการสร้างเส้นทางเป็นลำดับ
             route = "A-Z";
-        } else {
+        } 
+        else {  //  และ 1 เป็นการสร้างเส้นทางที่สั้นที่สุด
             route = "Fast";
         }
+        //  set ค่าให้ td ที่เก็บ route
         $(td_route).append(route);
         $(td_route).addClass('col-md-1');
+        //  set ค่าให้ td ที่เก็บ date
         $(td_date).append(date[i]);
         $(td_date).addClass('col-md-1');
+        //  set ค่าให้ td ที่เก็บจุดเริ่มต้น
         $(td_start).append(points_array[i][0]);
         $(td_start).addClass('col-md-3');
+        //  set ค่าให้ td ที่เก็บจุดสิ้นสุด
         $(td_end).append(points_array[i][1]);
         $(td_end).addClass('col-md-3');
+        //  add แต่ละ td ลงใน tr
         $(tr).append(td_view);
         $(tr).append(td_delete);
         $(tr).append(td_name);
@@ -1231,10 +1246,12 @@ function addTable() {
         $(tr).append(td_date);
         $(tr).append(td_start);
         $(tr).append(td_end);
+        //  add tr ลงใน ตารางที่มี id เป็น tablebody
         $("#tablebody").append(tr);
+        //  เมื่อมีการกดปุ่ม X
         $(button_x).click(function () {
-            var confirm_delete = confirm("Do you want to delete this map?");
-            if (confirm_delete === true) {
+            var confirm_delete = confirm("Do you want to delete this map?");    //  confirm message เพื่อยืยยันว่าต้องการลบจริงหรือไม่
+            if (confirm_delete === true) {  //  ถ้าต้องการลบเส้นทางนี้จริง
                 $.ajax({
                     type: "POST",
                     async: false,
@@ -1242,6 +1259,7 @@ function addTable() {
                     data: {
                         name: $(this).parent().parent().find("td").eq(2).text()
                     },
+                    //  เมื่อลบเส้นทางสำเร็จก็ให้เรียก setUpVarFromDatabase(); ใหม่เพื่อดึงข้อมูลที่ update แล้วจาก database 
                     success: function (return_name) {
                         alert("delete " + return_name + " from database successfully.");
                         setUpVarFromDatabase();
@@ -1251,10 +1269,12 @@ function addTable() {
                     }
                 });
                 $(this).parent().parent().remove();
-            } else {
+            } 
+            else {  
                 alert("Cancle delete process.");
             }
         });
+       //  เมื่อกดที่ปุ่ม view ให้โชว์เส้นทางที่เลือกลงบน map , add waypoint ลง list ของ position พร้อมคำนวนเส้นทางลงในหน้า maps
         $(button_view).click(function () {
             var index = map_name.indexOf($(this).parent().parent().find("td").eq(2).text());
             var lat, lng;
@@ -1301,7 +1321,7 @@ function addTable() {
         });
 
     }
-
+    //  textbox ที่เอาไว้ search หา เส้นทาง โดยจะ search จาก ชื่อเส้นทาง , ชนิดของเส้นทาง และ วันที่ update เส้นทาง
     $('#searchdb').keyup(function () {
         var row = $('#tablebody tr');
         for (var i = 0; i < $(row).length; i++) {
@@ -1314,18 +1334,16 @@ function addTable() {
 /*
  * resetFileName()
  * เป็นการ reset ชื่อไฟล์กลับไปเป็นค่าเดิม
- *
  */
 function resetFileName() {
     $('#filename').text(fileName);
 }
 // This default onbeforeunload event
-//window.onbeforeunload = function(){
-//    return "Are you sure to leave?"
-//}
-//
-//// A jQuery event (I think), which is triggered after "onbeforeunload"
-//$(window).unload(function(){
-//
-//});
+window.onbeforeunload = function(){
+    return "Are you sure to leave?"
+}
+
+$(window).unload(function(){
+
+});
 google.maps.event.addDomListener(window, 'load', initialize);
