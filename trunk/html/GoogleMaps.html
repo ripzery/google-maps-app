@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
- <head>
+
+<head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta charset="utf-8">
     <title>Maps Direction</title>
@@ -20,78 +21,90 @@
     <script src="../javascript/toggleFullscreen.js"></script>
     <script src="../plugins/bootstrap_editable/js/bootstrap-editable.js"></script>
 </head>
-<body style="background-color: #E6E9ED;">
-     <div class="row">
-         <div class="col-md-12">
-             <div class="panel">
-                 <ul id="myTab1" class="nav nav-tabs nav-justified">
-                     <li class="active"><a href="#tab-maps" data-toggle="tab">Maps</a></li>
-                     <li><a href="#tab-database" data-toggle="tab">Database</a></li>
-                     <li><a href="#tab-multiple-map" data-toggle="tab">Multi-Route Display</a></li>
-                 </ul>
-             </div>
-             <div id="myTabContent" class="tab-content" style="background-color: #E6E9ED;">
-                 <div class="tab-pane fade active in" id="tab-maps">
-                     <div class="example">
-                        <div class="row">
-                           <div class="col-md-2" style="margin : 10px 0 0 30px;">
-                               <a href="#" id="filename" data-type="text" data-url="/post" data-title="Enter map's name"></a>
-                           </div>
-                           <div class="col-md-9" style ="margin-left: 0px">
-                               <input id="address" class="Text" type="text" placeholder="Search Location">
-                           </div>
-                        </div>
-                     </div>
 
-                     <div class="example">
+<body style="background-color: #E6E9ED;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <ul id="myTab1" class="nav nav-tabs nav-justified">
+                    <li class="active"><a href="#tab-maps" data-toggle="tab">Maps</a>
+                    </li>
+                    <li><a href="#tab-database" data-toggle="tab">Database</a>
+                    </li>
+                    <li><a href="#tab-multiple-map" data-toggle="tab">Multi-Route Display</a>
+                    </li>
+                </ul>
+            </div>
+            <div id="myTabContent" class="tab-content" style="background-color: #E6E9ED;">
+                <div class="tab-pane fade active in" id="tab-maps">
+                    <div class="example">
                         <div class="row">
-                           <div class="col-md-8" id="map-container">
-                            <div class="panel panel-primary">
-                               <div class="panel-heading">
-                                 <h3 class="panel-title">Google Maps Panel</h3>
-                               </div>
-                                <div class="panel-body">
-                                     <div id="map-canvas" style="border: 5px solid #5D9CEC;"></div>
-                                </div>
-                                <div class="panel-footer">
-                                    <div class="row tooltip-demo">
-                                        <div class="col-md-2">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">CALC ROUTE<span class="caret"></span></button>
-                                                <ul class="dropdown-menu" role="menu">
-                                                  <li><a href="#" onclick="shRoute()" id="shRoute" data-toggle="tooltip" data-placement="right" title="Find a shortest route without waypoints order consideration.">SHORT ROUTE</a></li>
-                                                  <li><a href="#" onclick="azRoute()" id="azRoute" data-toggle="tooltip" data-placement="right" title="Find a route with waypoints order consideration.">A-Z ROUTE</a></li>
-                                                </ul>
+                            <div class="col-md-2" style="margin : 10px 0 0 30px;">
+                                <a href="#" id="filename" data-type="text" data-url="/post" data-title="Enter map's name"></a>
+                            </div>
+                            <div class="col-md-9" style="margin-left: 0px">
+                                <input id="address" class="Text" type="text" placeholder="Search Location">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-8" id="map-container">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Google Maps Panel</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div id="map-canvas" style="border: 5px solid #5D9CEC;"></div>
+                                    </div>
+                                    <div class="panel-footer">
+                                        <div class="row tooltip-demo">
+                                            <div class="col-md-2">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">CALC ROUTE<span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#" onclick="shRoute()" id="shRoute" data-toggle="tooltip" data-placement="right" title="Find a shortest route without waypoints order consideration.">SHORT ROUTE</a>
+                                                        </li>
+                                                        <li><a href="#" onclick="azRoute()" id="azRoute" data-toggle="tooltip" data-placement="right" title="Find a route with waypoints order consideration.">A-Z ROUTE</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SAVE/LOAD<span class="caret"></span></button>
-                                                <ul class="dropdown-menu" role="menu">
-                                                  <li><a href="#" onclick="pushPath()" id="save" data-toggle="tooltip" data-placement="right" title="Save filename, waypoint, start-end position, alternative route, and modified date into database.">SAVE</a></li>
-                                                  <li><a href="#" id="opener"  onclick="initLoad()" data-toggle="tooltip" data-placement="right" title="Load filename, waypoint, start-end position, alternative route, and last modified date.">LOAD</a></li>
-                                                </ul>
+                                            <div class="col-md-2">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SAVE/LOAD<span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#" onclick="pushPath()" id="save" data-toggle="tooltip" data-placement="right" title="Save filename, waypoint, start-end position, alternative route, and modified date into database.">SAVE</a>
+                                                        </li>
+                                                        <li><a href="#" id="opener" onclick="initLoad()" data-toggle="tooltip" data-placement="right" title="Load filename, waypoint, start-end position, alternative route, and last modified date.">LOAD</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-2" style="margin-left: -20px;margin-right: 20px;">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SUGGEST ROUTE<span class="caret"></span></button>
-                                                <ul class="dropdown-menu" id="suggestRoute" role="menu">
-                                                </ul>
+                                            <div class="col-md-2" style="margin-left: -20px;margin-right: 20px;">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">SUGGEST ROUTE<span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" id="suggestRoute" role="menu">
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Show direction informations." id="guide">GUIDE</button>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Reset to initial state." id="reset" onclick="clearMap()">RESET</button>
-                                        </div>
-                                        <div class="col-md-2" style="margin: 5px 0 0 0px;font-size: 15px;">
-                                            <label id="hide_marker"><input id="chk" type="checkbox" > Hide Marker</label>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Show direction informations." id="guide">GUIDE</button>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-primary btn-block" data-toggle="tooltip" data-placement="bottom" title="Reset to initial state." id="reset" onclick="clearMap()">RESET</button>
+                                            </div>
+                                            <div class="col-md-2" style="margin: 5px 0 0 0px;font-size: 15px;">
+                                                <label id="hide_marker">
+                                                    <input id="chk" type="checkbox">Hide Marker</label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                             </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="list-group" id="list">
@@ -99,22 +112,22 @@
                                 </div>
                             </div>
                         </div>
-                     </div>
-                 </div>
-                 <div class="tab-pane fade" id="tab-database">
-                     <div class="example">
-                         <div class="row">
-                            <div class ="col-md-12">
-                                <input class="Text3" id = "searchdb" type="text" placeholder="Search Map">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-database">
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input class="Text3" id="searchdb" type="text" placeholder="Search Map">
                             </div>
-                         </div>
-                     </div>
-                     <div class="example">
-                         <div class="row">
-                            <div class ="col-md-12">
+                        </div>
+                    </div>
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
-                                      <h3 class="panel-title">Google Maps Database</h3>
+                                        <h3 class="panel-title">Google Maps Database</h3>
                                     </div>
                                     <div class="panel-body">
                                         <table class="table">
@@ -122,33 +135,33 @@
                                                 <th class="col-md-1">View</th>
                                                 <th class="col-md-1">X</th>
                                                 <th class="col-md-2">
-                                                Name
+                                                    Name
                                                 </th>
                                                 <th class="col-md-1">
-                                                Route Type
+                                                    Route Type
                                                 </th>
                                                 <th class="col-md-1">
-                                                Date
+                                                    Date
                                                 </th>
                                                 <th class="col-md-3">
-                                                Start
+                                                    Start
                                                 </th>
                                                 <th class="col-md-3">
-                                                End
+                                                    End
                                                 </th>
                                             </tr>
                                         </table>
                                         <div class="containbody" style="height: 350px;">
                                             <table id="tablebody" class="table">
-                                                
+
                                             </table>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                         </div>
-                     </div>
-                 </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="tab-multiple-map">
                     <div class="example">
                         <div class="row">
@@ -178,90 +191,93 @@
                                     </div>
                                 </div>
                             </div>
-                           <div class="col-md-3">
-                               <div class="list-group containbody" id="maps_list" style="max-height: 600px !important;">
-                                   <a href="#" id="a-maps" class="list-group-item active" style="background-color: #3bafda;">Maps</a>
-                               </div>
-                           </div>
-                       </div>
+                            <div class="col-md-3">
+                                <div class="list-group containbody" id="maps_list" style="max-height: 600px !important;">
+                                    <a href="#" id="a-maps" class="list-group-item active" style="background-color: #3bafda;">Maps</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-             </div>
-         </div>
-     </div>
-    
+            </div>
+        </div>
+    </div>
+
     <!--All Modals is following here-->
-    
+
     <div class="modal fade" id="load">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-              <h4 class="modal-title">Load map from database</h4>
-            </div>
-            <div class="modal-body">
-                <div class="example">
-                    <div class="row">
-                        <div class ="col-xs-4">
-                            <h5 class="modal-title">Date sort by : </h5>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Load map from database</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <h5 class="modal-title">Date sort by : </h5>
+                            </div>
+                            <div class="col-xs-2" style="margin-left : -65px;margin-top: -5px;">
+                                <div class="blank"></div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="order">Ascending<span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#" id="Asc">Ascending</a>
+                                        </li>
+                                        <li><a href="#" id="Dsc">Descending</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                        <div class = "col-xs-2" style="margin-left : -65px;margin-top: -5px;">
-                            <div class="blank"></div>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="order">Ascending<span class="caret"></span></button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#" id="Asc">Ascending</a></li>
-                                    <li><a href="#" id="Dsc">Descending</a></li>
-                                </ul>
+                    </div>
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="containbody">
+                                    <div class="list-group" id="selectable"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="search">
+                                    <input id="t" type="text" placeholder="Search File" autofocus>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="example">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="containbody">
-                                <div class="list-group" id="selectable"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="example">
-                    <div class="row">
-                      <div class="col-md-12">
-                          <div id="search">
-                              <input id="t" type="text"  placeholder="Search File" autofocus>
-                          </div>
-                      </div>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="doClose" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="doLoad">Load</button>
                 </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" id="doClose" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" id="doLoad">Load</button>
-            </div>
-          </div>
         </div>
     </div>
     <div class="modal fade" id="direction">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" style="text-align: center;">Direction Information</h3>
-            </div>
-            <div class="modal-body">
-                <div class="example">
-                    <div class="row">
-                        <div class ="col-md-12">
-                            <div class="containbody" id="directions-panel"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="text-align: center;">Direction Information</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="example">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="containbody" id="directions-panel"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
-          </div>
         </div>
     </div>
     <div class="modal fade" id="md-select-route">
@@ -283,12 +299,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="md-btn-select-all">All Load</button>
-                    <button type="button" class="btn btn-primary" id="md-btn-load" data-dismiss="modal" ><span class="badge pull-right" id="badge-count" style="margin-left: 7px;margin-top: 2px;">0</span> Load</button>
+                    <button type="button" class="btn btn-primary" id="md-btn-load" data-dismiss="modal"><span class="badge pull-right" id="badge-count" style="margin-left: 7px;margin-top: 2px;">0</span> Load</button>
                     <button type="button" class="btn btn-primary" id="md-btn-close" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
 </body>
+
 </html>

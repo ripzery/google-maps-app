@@ -37,7 +37,7 @@ function initialize() {
     directionsDisplay = new google.maps.DirectionsRenderer({
         polylineOptions: polylineOptionsActual,
         suppressMarkers: true,
-        hideRouteList : true
+        hideRouteList: true
     });
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
     var mapOptions = {
@@ -179,7 +179,7 @@ function initialize() {
  */
 function setUpMultipleMapsTab() {
     var BTSAri = new google.maps.LatLng(13.779898, 100.544686);
-    
+
     map2 = new google.maps.Map(document.getElementById('map-canvas-2'), {
         zoom: 12,
         center: BTSAri
@@ -193,51 +193,51 @@ function setUpMultipleMapsTab() {
     addEventListener_Btn_MultipleMapsTab();
 }
 
-function addEventListener_Btn_MultipleMapsTab(){
+function addEventListener_Btn_MultipleMapsTab() {
     //  เมื่อกด Load Multiple Routes จะเรียก dialog เพื่อ load หลายๆ route มาโชว์
-    $("#btn-modal-maps").click(function(){
+    $("#btn-modal-maps").click(function () {
         $('#md-select-route').modal();
         setUpModalMultipleMapsTab();
         addEventListener_Modal_MultipleMapsTab();
     });
     //  เมื่อกด Delete Some Routes จะเป็นการนำเส้นทาง / polylines เส่นที่เลือกไว้ออกจาก map list
-    $("#btn-delete-map2").click(function(){
+    $("#btn-delete-map2").click(function () {
         //  วนหาว่ามี polylines เส้นไหนที่เลือกไว้บ้าง? ซึ่งเส้นที่เลือกจะเป็นเส้นสีแดง
         $("#btn-delete-map2").addClass("disabled");
-        for(var i=0;i<polylines_array.length;i++){
-            if(polylines_array[i].strokeColor == 'red'){
+        for (var i = 0; i < polylines_array.length; i++) {
+            if (polylines_array[i].strokeColor == 'red') {
                 //  set polyline นั้นออกจาก map
                 polylines_array[i].setMap(null);
                 //  เอา map นั้นออกจาก list ที่เราโชว์ไว้
-                $('#maps_list>a').eq(i+1).remove();
+                $('#maps_list>a').eq(i + 1).remove();
                 //  set marker ออกจาก map
-                for(var j=0;j<mapMarkers.length;j++){
+                for (var j = 0; j < mapMarkers.length; j++) {
                     mapMarkers[j].setMap(null);
                 }
                 //  ล้างค่า mapMarker
                 mapMarkers = [];
                 //  เอา polyline เส้นนั้นออกจาก polylines_array
-                polylines_array.splice(i,1);
+                polylines_array.splice(i, 1);
                 //  เอาตำแหน่งของ polyline ที่ activeIndexes เก็บไว้ออก
-                activeIndexes.splice(i,1);
+                activeIndexes.splice(i, 1);
                 //  set ให้ i=-1 เพื่อให้กลับมาวนใหม่อีกรอบ เพราะเมื่อมีการ splice ค่าออกมาจะทำให้ตำแหน่งของค่า i เปลี่ยน จนต้องวนใหม่อีกรอบเพื่อจะให้ค่าที่เลือกไว้ออกทุกตัว
                 i = -1;
             }
         }
     });
     //  เมื่อกด Reset จะทำการล้างค่าทุกค่าใน map list และบน map
-    $('#btn-reset-map2').click(function(){
+    $('#btn-reset-map2').click(function () {
         $('#btn-guide-map2').addClass('disabled');
         $('#btn-delete-map2').addClass('disabled');
         $('#btn-reset-map2').addClass('disabled');
         //  set ทุก polyline ออกจาก map
-        for(var i=0;i<polylines_array.length;i++){
+        for (var i = 0; i < polylines_array.length; i++) {
             polylines_array[i].setMap(null);
         }
         //  ล้างค่า map list ทั้งหมด
         $('#maps_list>a:gt(0)').remove();
         //  set marker ออกจาก map
-        for(var i=0;i<mapMarkers.length;i++){
+        for (var i = 0; i < mapMarkers.length; i++) {
             mapMarkers[i].setMap(null);
         }
         //  ล้างค่า mapMarker
@@ -248,11 +248,13 @@ function addEventListener_Btn_MultipleMapsTab(){
         polylines_array = [];
     });
     //  เมื่อกด Guide จะเป็นการแสดงการเดินทางในเส้นที่ได้เลือกไว้
-    $('#btn-guide-map2').click(function(){
-        if($('#maps_list>.active').length>1){
-            $('#direction').modal({keyboard:true});
-            var text = $("#maps_list>a.active:gt(0)").text().replace(" Hide","");
-            text = text.replace(" ","");
+    $('#btn-guide-map2').click(function () {
+        if ($('#maps_list>.active').length > 1) {
+            $('#direction').modal({
+                keyboard: true
+            });
+            var text = $("#maps_list>a.active:gt(0)").text().replace(" Hide", "");
+            text = text.replace(" ", "");
             var id = map_name.indexOf(text);
             var wps = [];
             for (var i = 2; i < points_array[id].length; i++) {
@@ -290,87 +292,94 @@ function addEventListener_Btn_MultipleMapsTab(){
 function addMapToList(index) {
     var list = document.getElementById("maps_list");
     var a = document.createElement("a");
-    var label = document.createElement("label");    //  สร้างเพื่อใส่ checkbox ในที่นี้คือ checkbox ของ hide
-    var label_x = document.createElement("label");  //  สร้างเพื่อใส่ checkbox ในที่นี้คือ checkbox ที่เอาไว้เลือกลบ map list นั้นๆ
+    var label = document.createElement("label"); //  สร้างเพื่อใส่ checkbox ในที่นี้คือ checkbox ของ hide
+    var label_x = document.createElement("label"); //  สร้างเพื่อใส่ checkbox ในที่นี้คือ checkbox ที่เอาไว้เลือกลบ map list นั้นๆ
     //  checkbox ของ hide
-    var chk = document.createElement("input");  
-    chk.setAttribute("type","checkbox");
+    var chk = document.createElement("input");
+    chk.setAttribute("type", "checkbox");
     //  checkbox เพื่อเอาเส้นทางนั้นออกจาก map list
-    var chk_x = document.createElement("input");    
-    chk_x.setAttribute("type","checkbox");
+    var chk_x = document.createElement("input");
+    chk_x.setAttribute("type", "checkbox");
     //  ใส่ checkbox ลงใน label
     label.appendChild(chk);
     label_x.appendChild(chk_x);
-    label.appendChild(document.createTextNode(" Hide"));    //  ใส่ text ลงใน label
-    label.setAttribute("class", "hide-route");  //  ใส่ class ให้ label
+    label.appendChild(document.createTextNode(" Hide")); //  ใส่ text ลงใน label
+    label.setAttribute("class", "hide-route"); //  ใส่ class ให้ label
     a.classList.add("list-group-item"); //  ใส่ class ให้ a
     //  ใส่ชื่อของเส้นทางและ label ต่างๆลงใน a 
     a.appendChild(label_x);
-    a.appendChild(document.createTextNode(" "+map_name[index]));
+    a.appendChild(document.createTextNode(" " + map_name[index]));
     a.appendChild(label);
     //  ใส่ a ลงใน list
     list.appendChild(a);
     //  เรียก function เพื่อเพิ่ม event ต่างๆให้ตัวแปรที่อยู่ใน map list
-    addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x);
+    addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x);
 }
 
 //  เพิ่ม event ให้ตัวแปรที่อยู่ใน map list
-function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
+function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
     //  ตัวแปรเก็บ event ของ a
-    var event_a = function(){
+    var event_a = function () {
         $('#btn-guide-map2').removeClass('disabled');
-        var bounds = new google.maps.LatLngBounds();    //  เพื่อกำหนดขอบเขตของบริเวณเส้นทาองที่เราเลือก
+        var bounds = new google.maps.LatLngBounds(); //  เพื่อกำหนดขอบเขตของบริเวณเส้นทาองที่เราเลือก
         //  ดึงชื่อที่อยุ่ใน a ออกมา
-        var text = $(this).text().replace(" ","");
-        text = text.replace(" Hide","");
-        var id = map_name.indexOf(text);    //  ให้ id เป็นตำแหน่งของชื่อเส้นทางที่เราเลือกจากเส้นทางทั้งหมดใน database
-        var polyline_id  = activeIndexes.indexOf(id);  //  เก็บค่า index ของ polyline ที่สัมพันธ์กับช่องที่คลิก
+        var text = $(this).text().replace(" ", "");
+        text = text.replace(" Hide", "");
+        var id = map_name.indexOf(text); //  ให้ id เป็นตำแหน่งของชื่อเส้นทางที่เราเลือกจากเส้นทางทั้งหมดใน database
+        var polyline_id = activeIndexes.indexOf(id); //  เก็บค่า index ของ polyline ที่สัมพันธ์กับช่องที่คลิก
         //  เก็บค่า latitude longitude ของจุด start ของเส้นทางที่เราเลือก
-        var lat = points_array[id][0].split(",")[0];    
+        var lat = points_array[id][0].split(",")[0];
         var lng = points_array[id][0].split(",")[1];
         //  แปลงค่า lat lng ที่เป็น string ให้อยู่ในรูปของตัวแปร LatLng
-        var position = new google.maps.LatLng(lat,lng);
+        var position = new google.maps.LatLng(lat, lng);
         //  set center ของเส้นทางที่เราเลือก โดยใช้จุด start ของเส้นทางนั้น
         map2.setCenter(position);
         $(this).addClass('active').siblings(':gt(0)').removeClass('active');
-        polylines_array[polyline_id].setVisible(true);  //  ให้ polyline นั้นปรากฎขึ้นบน map
-        $(chk).iCheck('uncheck');   //  set ให้ uncheck ที่ checkbox ที่เอาไว้สำหรับ hide เส้นทางนั้นๆ
+        polylines_array[polyline_id].setVisible(true); //  ให้ polyline นั้นปรากฎขึ้นบน map
+        $(chk).iCheck('uncheck'); //  set ให้ uncheck ที่ checkbox ที่เอาไว้สำหรับ hide เส้นทางนั้นๆ
         //  วนเพื่อกำหนดสีเส้นทางว่าเป็นเส้นทางที่เราคลิกเลือกเพื่อต้องการโชว์ให้เด่นหรือไม่?
-        for(var i=0;i<polylines_array.length;i++){
+        for (var i = 0; i < polylines_array.length; i++) {
             //  ถ้าเป็นเส้นทางที่ไม่ถูกเลือก
-            if(i!==polyline_id){
+            if (i !== polyline_id) {
                 //  ถ้าเป็นเส้นทางที่ไม่ได้ถูก checkbox ให้เอาเส้นทางนั้นออกจาก map list ซึ่งเส้นนั้นจะเป็นเส้นสีแดง ให้คงเส้นทางนั้นเป็นสีดำปกติ
-                if(polylines_array[i].strokeColor != 'red')
-                    polylines_array[i].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2});
+                if (polylines_array[i].strokeColor != 'red')
+                    polylines_array[i].setOptions({
+                        strokeColor: "black",
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2
+                    });
             }
             //  ถ้าเป็นเส้นทางที่ user ต้องการโชว์ให้เด่น เส้นนั้นจะถูกเปลี่ยนเป็นสีน้ำเงิน และ clear ให้ checkbox ของการเอาเส้นทางนั้นออกจาก map list เป็น uncheck
-            else{
-                polylines_array[i].setOptions({strokeColor: "blue",strokeOpacity:0.6,strokeWeight:5});
+            else {
+                polylines_array[i].setOptions({
+                    strokeColor: "blue",
+                    strokeOpacity: 0.6,
+                    strokeWeight: 5
+                });
                 $(chk_x).iCheck('uncheck');
             }
         }
         //  นำ mapMarker ออกจาก map
-        for(var i =0;i<mapMarkers.length;i++){
+        for (var i = 0; i < mapMarkers.length; i++) {
             mapMarkers[i].setMap(null);
         }
-        mapMarkers = [];    //  clear ใน mapMaker ออก
+        mapMarkers = []; //  clear ใน mapMaker ออก
         //  ทำการสร้าง mapMarker ลงบน map ใหม่ตามเส้นทางที่เราเลือก
         var image = "../marker-icon-number/start.png";
-        while(mapMarkers.length<points_array[id].length){
-            position = new google.maps.LatLng(points_array[id][mapMarkers.length].split(",")[0],points_array[id][mapMarkers.length].split(",")[1]);
+        while (mapMarkers.length < points_array[id].length) {
+            position = new google.maps.LatLng(points_array[id][mapMarkers.length].split(",")[0], points_array[id][mapMarkers.length].split(",")[1]);
             bounds.extend(position);
             var marker = new google.maps.Marker({
-                position : position,
-                map : map2,
-                icon : image,
-                animation : google.maps.Animation.DROP
+                position: position,
+                map: map2,
+                icon: image,
+                animation: google.maps.Animation.DROP
             });
             mapMarkers.push(marker);
-            if(mapMarkers.length===1){
+            if (mapMarkers.length === 1) {
                 image = "../marker-icon-number/end.png";
-            }
-            else{
-                image = "../marker-icon-number/number_"+(parseInt(mapMarkers.length)-1)+".png";
+            } else {
+                image = "../marker-icon-number/number_" + (parseInt(mapMarkers.length) - 1) + ".png";
             }
         }
         //  กำหนดของเขตของเส้นทางที่เราเลือกให้อยู่ในระยะและขนาดที่พอดีกับ map
@@ -382,40 +391,52 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
         increaseArea: '10%' // optional
     });
     //  ถ้า checkbox ที่จะเอาเส้นทางออกจาก map list เป็น check
-    $(chk_x).on('ifChecked', function(){
-        if($('#btn-delete-map2').hasClass('disabled'))
+    $(chk_x).on('ifChecked', function () {
+        if ($('#btn-delete-map2').hasClass('disabled'))
             $('#btn-delete-map2').removeClass('disabled');
-        var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1;   //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
+        var id = $(list).find("a").index($(chk_x).parent().parent().parent()) - 1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
         //  ถ้าไม่เป็น class active หรือไม่ใช่เส้นสีฟ้า ให้ set polyline เป็นเส้นสีแดง
-        if(!$(this).parent().parent().parent().hasClass('active')){
-            polylines_array[id].setOptions({strokeColor: "red",strokeOpacity:0.6,strokeWeight:4});
+        if (!$(this).parent().parent().parent().hasClass('active')) {
+            polylines_array[id].setOptions({
+                strokeColor: "red",
+                strokeOpacity: 0.6,
+                strokeWeight: 4
+            });
         }
         //  ถ้าเป็น class active จะเอา class active ออก พร้อมเอา mapMarker ออกจาก map และค่อยเปลี่ยนเส้นเป็น polyline จากสีฟ้าเป็นแดง
-        else{
+        else {
             $(this).parent().parent().parent().removeClass('active');
-            if($('#maps_list>.active').length===1)
+            if ($('#maps_list>.active').length === 1)
                 $('#btn-guide-map2').addClass('disabled');
-            polylines_array[id].setOptions({strokeColor: "red",strokeOpacity:0.6,strokeWeight:4});
-            for(var i=0;i<mapMarkers.length;i++){
+            polylines_array[id].setOptions({
+                strokeColor: "red",
+                strokeOpacity: 0.6,
+                strokeWeight: 4
+            });
+            for (var i = 0; i < mapMarkers.length; i++) {
                 mapMarkers[i].setVisible(false);
             }
         }
     });
     //  ถ้า checkbox ที่จะเอาเส้นทางออกจาก map list เป็น uncheck
-    $(chk_x).on('ifUnchecked', function(){
+    $(chk_x).on('ifUnchecked', function () {
         var count = 0;
         var a = $('#maps_list>a');
-        for(var i=0;i<a.length;i++)
-            if($(a[i]).find('input:first').is(":checked")){
+        for (var i = 0; i < a.length; i++)
+            if ($(a[i]).find('input:first').is(":checked")) {
                 count++;
                 break;
             }
-        
-        if(!$('#btn-delete-map2').hasClass('disabled')&&count===0)
+
+        if (!$('#btn-delete-map2').hasClass('disabled') && count === 0)
             $('#btn-delete-map2').addClass('disabled');
-            
-        var id  = $(list).find("a").index($(chk_x).parent().parent().parent())-1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา uncheck
-        polylines_array[id].setOptions({strokeColor: "black",strokeOpacity:0.6,strokeWeight:2}); // เปลี่ยน polyline กลับเป็นสีดำเหมือนเดิม
+
+        var id = $(list).find("a").index($(chk_x).parent().parent().parent()) - 1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา uncheck
+        polylines_array[id].setOptions({
+            strokeColor: "black",
+            strokeOpacity: 0.6,
+            strokeWeight: 2
+        }); // เปลี่ยน polyline กลับเป็นสีดำเหมือนเดิม
     });
     //  กำหนด class และขนาดให้ checkbox ที่จะให้ polyline นั้น hide
     $(chk).iCheck({
@@ -424,8 +445,8 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
     });
     //  ถ้า checkbox ที่จะ hide เส้นทางนั้นเป็น check
     $(chk).on('ifChecked', function () {
-        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1;    //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
-        polylines_array[id].setVisible(false);  //  set ให้ polyline หายจาก map
+        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
+        polylines_array[id].setVisible(false); //  set ให้ polyline หายจาก map
         //  ถ้าเป็น class active ก็จะให้ mapMarker หายจาก map ด้วย 
         if ($(this).parent().parent().parent().hasClass('active')) {
             for (var i = 0; i < mapMarkers.length; i++) {
@@ -435,8 +456,8 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
     });
     //  ถ้า checkbox ที่จะ hide เส้นทางนั้นเป็น uncheck
     $(chk).on('ifUnchecked', function () {
-        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1;    //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
-        polylines_array[id].setVisible(true);   //  set ให้ polyline ปรากฎบน map
+        var id = $(list).find("a").index($(chk).parent().parent().parent()) - 1; //  ตำแหน่งของเส้นทางที่เราเลือกอยู่บน map list ที่เรา check
+        polylines_array[id].setVisible(true); //  set ให้ polyline ปรากฎบน map
         //  ถ้าเป็น class active ก็จะให้ mapMarker ปรากฎบน map ด้วย 
         if ($(this).parent().parent().parent().hasClass('active')) {
             for (var i = 0; i < mapMarkers.length; i++) {
@@ -502,7 +523,7 @@ function addEventListener_Modal_MultipleMapsTab() {
         var multipleRoute = $('#md-list-maps>.active');
         var strings_array = [];
         console.log("Begin load .....");
-        for(var i =0;i<multipleRoute.length;i++){
+        for (var i = 0; i < multipleRoute.length; i++) {
             var string_map_name = "";
             var split_size = $(multipleRoute[i]).text().split(" ").length;
             if (split_size > 3) {
@@ -543,69 +564,67 @@ function addEventListener_Modal_MultipleMapsTab() {
                     });
                     polyline.setMap(map2);
                     polylines_array.push(polyline);
-                    
+
                 }
                 console.log("Finished load .....");
-                var event_select_maps_list = function(event){
-                        console.log("event appear!");
+                var event_select_maps_list = function (event) {
+                    console.log("event appear!");
                     event.preventDefault();
-                    if(event.keyCode === 219)
-                    {// [
+                    if (event.keyCode === 219) { // [
                         var currentMap = $('#maps_list>.active:gt(0)');
                         var allMapsList = $('#maps_list>a:gt(0)');
                         var index = $(allMapsList).index(currentMap);
-                        if(index === -1){//Didn't select yet
+                        if (index === -1) { //Didn't select yet
                             alert("Didn't selected");
-                        }else{//Already selected
-                            if($(currentMap).prev() != $('#maps_list>.active:first')){
+                        } else { //Already selected
+                            if ($(currentMap).prev() != $('#maps_list>.active:first')) {
                                 var target = $(currentMap).prev();
                                 $(target).trigger('click');
                             }
                         }
-                    }else if(event.keyCode === 221)
-                    {// ]
+                    } else if (event.keyCode === 221) { // ]
                         var currentMap = $('#maps_list>.active:gt(0)');
                         var allMapsList = $('#maps_list>a:gt(0)');
                         var index = $(allMapsList).index(currentMap);
-                        if(index === -1){//Didn't select yet
+                        if (index === -1) { //Didn't select yet
                             alert("Didn't selected");
-                        }else{//Already selected
-                            if($(allMapsList).index($(currentMap).next()) !== -1){
+                        } else { //Already selected
+                            if ($(allMapsList).index($(currentMap).next()) !== -1) {
                                 var target = $(currentMap).next();
                                 $(target).trigger('click');
                             }
 
                         }
-                    }else if(event.keyCode === 72){// H
+                    } else if (event.keyCode === 72) { // H
                         var currentMap = $('#maps_list>.active:gt(0)');
                         var targetChk = $(currentMap).find("input:last");
                         $(targetChk).iCheck('toggle');
-                    } 
-                 };
+                    }
+                };
                 $('body').unbind('keyup').keyup(event_select_maps_list);
-                var event_arrow = function (event){
+                var event_arrow = function (event) {
                     event.preventDefault();
-                   if(event.keyCode === 37){//Arrow Left
-                       var currentTab = $('#myTab1>.active');
-                       var index = $('#myTab1>li').index(currentTab);
-                       if(index===0){
-                           $('#myTab1>li:last').find("a").trigger("click");
-                       }else if(index === 1){
-                           $('#myTab1>li:first').find("a").trigger("click");
-                       }else{
-                           $('#myTab1>li').eq(1).find("a").trigger("click");
-                       }
-                   }else if(event.keyCode === 39){//Arrow Right
-                       var currentTab = $('#myTab1>.active');
-                       var index = $('#myTab1>li').index(currentTab);
-                       if(index===0){
-                           $('#myTab1>li').eq(1).find("a").trigger("click");
-                       }else if(index === 1){
-                           $('#myTab1>li:last').find("a").trigger("click");
-                       }else{
-                           $('#myTab1>li:first').find("a").trigger("click");
-                       }
-                   } 
+                    if (event.keyCode === 37) { //Arrow Left
+                        var currentTab = $('#myTab1>.active');
+                        var index = $('#myTab1>li').index(currentTab);
+                        if (index === 0) {
+                            $('#myTab1>li:last').find("a").trigger("click");
+                        } else if (index === 1) {
+                            $('#myTab1>li:first').find("a").trigger("click");
+                        } else {
+                            $('#myTab1>li').eq(1).find("a").trigger("click");
+                        }
+                    } else if (event.keyCode === 39) { //Arrow Right
+                        var currentTab = $('#myTab1>.active');
+                        var index = $('#myTab1>li').index(currentTab);
+                        if (index === 0) {
+                            $('#myTab1>li').eq(1).find("a").trigger("click");
+                        } else if (index === 1) {
+                            $('#myTab1>li:last').find("a").trigger("click");
+                        } else {
+                            $('#myTab1>li:first').find("a").trigger("click");
+                        }
+                    }
                 };
                 $('body').keyup(event_arrow);
                 $('#btn-reset-map2').removeClass('disabled');
@@ -909,7 +928,7 @@ function clearMap() {
     directionsDisplay = new google.maps.DirectionsRenderer({
         polylineOptions: polylineOptionsActual,
         suppressMarkers: true,
-        hideRouteList : true
+        hideRouteList: true
     });
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
@@ -951,8 +970,7 @@ function addWaypointToList() {
  */
 function Save(path) {
     var confirm_save = confirm("Do you want to save this map?");
-    if (confirm_save === true) 
-    {
+    if (confirm_save === true) {
         var route_type;
         pickRouteIndex = directionsDisplay.getRouteIndex();
         if (isOptimize) {
@@ -998,9 +1016,7 @@ function Load() {
     var lat, lng;
     var points_temp = [];
     isLoad = true;
-    //    directionsDisplay.setPanel(null);
     for (var i = 0; i < points.length; i++) {
-        //console.log(points[i]);
         points_temp.push(points[i]);
     }
     clearMap();
@@ -1163,7 +1179,7 @@ function initLoad() {
  */
 function addTable() {
     $('#tablebody').find('tr').remove();
-    for(var i=0;i<map_name.length;i++){
+    for (var i = 0; i < map_name.length; i++) {
         var tr = document.createElement("tr");
         var td_view = document.createElement("td");
         var td_delete = document.createElement("td");
@@ -1176,37 +1192,38 @@ function addTable() {
         var button_x = document.createElement("button");
         button_view.innerHTML = "View";
         $(button_view).addClass("btn btn-primary btn-block");
-        button_view.setAttribute("style","width:45px;");
+        button_view.setAttribute("style", "width:45px;");
         $(td_view).addClass('col-md-1');
         $(td_view).append(button_view);
         button_x.innerHTML = "X";
         $(button_x).addClass("btn btn-danger btn-block");
-        button_x.setAttribute("style","width:30px;");
-        button_x.setAttribute("id","delete");
+        button_x.setAttribute("style", "width:30px;");
+        button_x.setAttribute("id", "delete");
         $(td_delete).append(button_x);
         $(td_delete).addClass('col-md-1');
-        td_name.setAttribute("style","width:150px;");
+        td_name.setAttribute("style", "width:150px;");
         $(td_name).append(map_name[i]);
         $(td_name).addClass('col-md-2');
         $(td_name).editable({
-            type : "text",
-            showbuttons : true,
-            mode : "popup",
-            pk : {name : ""},
-            params : function(params){
+            type: "text",
+            showbuttons: true,
+            mode: "popup",
+            pk: {
+                name: ""
+            },
+            params: function (params) {
                 params.origValue = $(this).text();
                 return params;
             },
-            url : "../php/editname.php",
-            success : function(){
+            url: "../php/editname.php",
+            success: function () {
                 alert("Edit name and save successfully.");
                 setUpVarFromDatabase();
             }
         });
-        if(route_type[i]==="0")
-        {
+        if (route_type[i] === "0") {
             route = "A-Z";
-        }else{
+        } else {
             route = "Fast";
         }
         $(td_route).append(route);
@@ -1225,48 +1242,45 @@ function addTable() {
         $(tr).append(td_start);
         $(tr).append(td_end);
         $("#tablebody").append(tr);
-        $(button_x).click(function(){
+        $(button_x).click(function () {
             var confirm_delete = confirm("Do you want to delete this map?");
-            if(confirm_delete===true)
-            {
+            if (confirm_delete === true) {
                 $.ajax({
                     type: "POST",
                     async: false,
-                    url : "../php/delete.php",
-                    data : {name : $(this).parent().parent().find("td").eq(2).text()},
-                    success : function(return_name){
-                        alert("delete "+return_name+" from database successfully.");
+                    url: "../php/delete.php",
+                    data: {
+                        name: $(this).parent().parent().find("td").eq(2).text()
+                    },
+                    success: function (return_name) {
+                        alert("delete " + return_name + " from database successfully.");
                         setUpVarFromDatabase();
                     },
-                    error : function(){
+                    error: function () {
                         alert("delete map unsucessfully.")
                     }
                 });
-                  $(this).parent().parent().remove();
-            }
-            else{
+                $(this).parent().parent().remove();
+            } else {
                 alert("Cancle delete process.");
             }
         });
-        $(button_view).click(function(){
+        $(button_view).click(function () {
             var index = map_name.indexOf($(this).parent().parent().find("td").eq(2).text());
-            var lat,lng;
+            var lat, lng;
             isLoad = true;
             clearMap();
-            for(var x=0;x<points_array[index].length;x++){
+            for (var x = 0; x < points_array[index].length; x++) {
                 points[x] = points_array[index][x];
                 lat = points_array[index][x].split(",")[0];
                 lng = points_array[index][x].split(",")[1];
-                placeMarker(new google.maps.LatLng(lat,lng),map);
+                placeMarker(new google.maps.LatLng(lat, lng), map);
                 addWaypointToList();
             }
-            if(route_type[index]===1)
-            {
+            if (route_type[index] === 1) {
                 isOptimize = true;
-                
-            }
-            else
-            {
+
+            } else {
                 isOptimize = false;
             }
             pickRouteIndex = pick_route[index];
@@ -1274,28 +1288,28 @@ function addTable() {
 
             $('#myTab1 a:first').tab('show');
             var request = {
-                location : new google.maps.LatLng(points[0].split(",")[0],points[0].split(",")[1]),
-                types : ['establishment','gas_station','car_dealer','car_rental','car_repair','car_wash','department_store','shopping_mall','storage','parking'],
-                rankBy : google.maps.places.RankBy.DISTANCE
+                location: new google.maps.LatLng(points[0].split(",")[0], points[0].split(",")[1]),
+                types: ['establishment', 'gas_station', 'car_dealer', 'car_rental', 'car_repair', 'car_wash', 'department_store', 'shopping_mall', 'storage', 'parking'],
+                rankBy: google.maps.places.RankBy.DISTANCE
             };
-            findPlace.nearbySearch(request,function(results,status){
-                if (status == google.maps.places.PlacesServiceStatus.OK){
-                    startPlace = results[0].name +" "+ results[0].vicinity;
-                    $("#list>a:nth-child(2)").text("Start : "+startPlace);
+            findPlace.nearbySearch(request, function (results, status) {
+                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                    startPlace = results[0].name + " " + results[0].vicinity;
+                    $("#list>a:nth-child(2)").text("Start : " + startPlace);
                 }
             });
-            request.location = new google.maps.LatLng(points[points.length-1].split(",")[0],points[points.length-1].split(",")[1]);
-            findPlace.nearbySearch(request,function(results,status){
-                if (status == google.maps.places.PlacesServiceStatus.OK){
-                    endPlace = results[0].name +" "+ results[0].vicinity;
-                    $("#list>a:last").text("End : "+endPlace);
+            request.location = new google.maps.LatLng(points[points.length - 1].split(",")[0], points[points.length - 1].split(",")[1]);
+            findPlace.nearbySearch(request, function (results, status) {
+                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                    endPlace = results[0].name + " " + results[0].vicinity;
+                    $("#list>a:last").text("End : " + endPlace);
                 }
             });
-            setTimeout(function(){
+            setTimeout(function () {
                 calcRoute();
-            },200); 
+            }, 200);
         });
-        
+
     }
 
     $('#searchdb').keyup(function () {
