@@ -224,12 +224,28 @@ function addEventListener_Btn_MultipleMapsTab(){
                 i = -1;
             }
         }
+        var maps_per_page = 12;
+        var total_page;
+        if(activeIndexes.length%maps_per_page===0){
+            total_page = activeIndexes.length/maps_per_page;
+        }else{
+            total_page = activeIndexes.length/maps_per_page+1;
+        }
+        if($('#maps_list>a:gt(0)').length === 0){
+            $('#maps-list-page').trigger('page',total_page-1);
+        }
+        $('#maps-list-page').bootpag({
+            total : total_page
+        });
     });
     //  เมื่อกด Reset จะทำการล้างค่าทุกค่าใน map list และบน map
     $('#btn-reset-map2').click(function(){
         $('#btn-guide-map2').addClass('disabled');
         $('#btn-delete-map2').addClass('disabled');
         $('#btn-reset-map2').addClass('disabled');
+        
+        $('#maps-list-page').hide("slow");
+        
         //  set ทุก polyline ออกจาก map
         for(var i=0;i<polylines_array.length;i++){
             polylines_array[i].setMap(null);
@@ -324,7 +340,7 @@ function addEventListener_MapList_MultipleMapsTab(list,chk,a,chk_x){
         var text = $(this).text().replace(" ","");
         text = text.replace(" Hide","");
         var id = map_name.indexOf(text);    //  ให้ id เป็นตำแหน่งของชื่อเส้นทางที่เราเลือกจากเส้นทางทั้งหมดใน database
-        var polyline_id  = $(list).find("a").index($(this))-1;  //  เป็นตำแหน่งที่อยู่บน map list ซึ่งอาจไม่ตรงกับตำแหน่งที่อยู่ใน database
+        var polyline_id  = activeIndexes.indexOf(id);  //  เก็บค่า index ของ polyline ที่สัมพันธ์กับช่องที่คลิก
         //  เก็บค่า latitude longitude ของจุด start ของเส้นทางที่เราเลือก
         var lat = points_array[id][0].split(",")[0];    
         var lng = points_array[id][0].split(",")[1];
@@ -501,9 +517,19 @@ function addEventListener_Modal_MultipleMapsTab() {
         }
         var multipleRoute = $('#md-list-maps>.active');
         var strings_array = [];
+        var maps_per_page = 12;
+        var current_number_of_maps = $('#maps_list>a:gt(0)').length;
+        var number_of_load;// ใช้กำหนดว่าจะโหลดมากี่ map ในหน้าแรก
+        if(multipleRoute.length<=maps_per_page){
+            number_of_load = multipleRoute.length;
+        }else{
+            number_of_load = maps_per_page;
+        }
+        if(number_of_load+current_number_of_maps > maps_per_page){
+            number_of_load = maps_per_page - current_number_of_maps;
+        }
         console.log("Begin load .....");
-        for (var i = 0; i < multipleRoute.length; i++) {
-            //            var index = $(multipleRoute[i]).index();
+        for(var i =0;i<multipleRoute.length;i++){
             var string_map_name = "";
             var split_size = $(multipleRoute[i]).text().split(" ").length;
             if (split_size > 3) {
@@ -518,8 +544,33 @@ function addEventListener_Modal_MultipleMapsTab() {
             strings_array.push(string_map_name);
             var index = map_name.indexOf(string_map_name);
             activeIndexes.push(index);
-            addMapToList(index);
         }
+        for (var i = current_number_of_maps; i < number_of_load+current_number_of_maps; i++) {
+            addMapToList(activeIndexes[i]);
+        }
+        var total_page;
+        if(activeIndexes.length%maps_per_page===0){
+            total_page = activeIndexes.length/maps_per_page;
+        }else{
+            total_page = activeIndexes.length/maps_per_page+1;
+        }
+        $('#maps-list-page').bootpag({
+           total : total_page,
+           maxVisible : maps_per_page
+        }).on('page',function(event,num){
+            $('#maps_list>a:gt(0)').remove();
+            var start = (num-1) * maps_per_page;
+            var end;
+            if(activeIndexes.length<num*maps_per_page){
+                end = activeIndexes.length;
+            }else{
+                end = num * maps_per_page;
+            }
+           for(var i = start;i<end;i++){
+               addMapToList(activeIndexes[i]);
+           }
+        });
+        $('#maps-list-page').show("slow");
         $.ajax({
             type: "POST",
             data: ({
@@ -544,6 +595,7 @@ function addEventListener_Modal_MultipleMapsTab() {
                     });
                     polyline.setMap(map2);
                     polylines_array.push(polyline);
+                    
                 }
                 console.log("Finished load .....");
                 var event_select_maps_list = function(event){
@@ -648,13 +700,12 @@ function setUpVarFromDatabase() {
             }
             console.log("setUpVar complete");
             addTable();
-            var number_of_pages = 0;
-            if(map_name.length%5!==0){
-                number_of_pages = map_name.length/5+1;
-            }else{
-                number_of_pages = map_name.length/5;
-            }
-            $('#page').bootpag({total: number_of_pages});
+//            if(map_name.length%5!==0){
+//                number_of_pages = map_name.length/5+1;
+//            }else{
+//                number_of_pages = map_name.length/5;
+//            }
+//            $('#page').bootpag({total: number_of_pages});
         }
     });
 }
@@ -1310,12 +1361,26 @@ function addTable() {
     }else{
         insert5Rows(0,5);
     }
-    
+    var current_page;
+    if($('#tablebody>tr').length>0){
+        var text = $('#page>.bootpag>li:gt(0):lt(2)>.disabled').text();
+        alert("if : "+text);
+        current_page = parseInt(text);
+    }else{
+        var text = $('#page>.bootpag>li:gt(0):lt('+number_of_pages+')').find('.disabled').text();
+        alert("else : "+text);
+        current_page = parseInt(text)-1;
+    }
+    if(isNaN(current_page)){
+        current_page = 1;
+    }
+    alert("current : "+current_page);
     $('#page').bootpag({
-        total : number_of_pages,
+        total : parseInt(number_of_pages),
         maxvisible : 5,
+        page : current_page,
         leaps : true
-    }).on("page",function(event,num){
+    }).unbind('page').on("page",function(event,num){
         if(map_name.length<5*num){
             insert5Rows((num-1)*5,map_name.length);
         }else{
