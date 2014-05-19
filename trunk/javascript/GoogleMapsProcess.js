@@ -1,6 +1,7 @@
 var map, map2; // เอาไว้ initilize map-canvas จาก google
 var count = "0"; // เอาไว้นับ marker เพิ่มค่าเมื่อคลิกวาง marker บน map
-var directionsDisplay; // เอาไว้setDirection ที่คำนวนได้จาก directionsService
+var directionsDisplay; // เอาไว้setDirection ที่คำนวนได้จาก directionsService ใน map หน้าแรก
+var directionsDisplay2 = new google.maps.DirectionsRenderer(); // เอาไว้แสดงข้อมูล direction ใน map2
 var directionsService = new google.maps.DirectionsService(); //เอาไว้เรียก method route เพื่อหาเส้นทาง
 var points = new Array(); // เอาไว้เก็บตำแหน่งของพิกัดในของ marker
 var waypointMarkers = []; // เอาไว้เก็บobject Marker
@@ -197,6 +198,7 @@ function setUpMultipleMapsTab() {
         zoom: 12,
         center: BTSAri
     });
+    directionsDisplay2.setMap(map2);
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         google.maps.event.trigger(map2, 'resize');
     });
@@ -300,13 +302,13 @@ function addEventListener_Btn_MultipleMapsTab() {
             } else if (route_type[id] === 0) {
                 isOptimize = false;
             }
-            directionsDisplay.setMap(null);
-            directionsDisplay.setPanel(null);
-            directionsDisplay.setPanel(document.getElementById('directions-panel'));
+            directionsDisplay2.setMap(null);
+            directionsDisplay2.setPanel(null);
+            directionsDisplay2.setPanel(document.getElementById('directions-panel'));
             directionsService.route(request, function (response, status) {
                 if (status == google.maps.DirectionsStatus.OK) {
-                    directionsDisplay.setDirections(response);
-                    directionsDisplay.setRouteIndex(parseInt(pick_route[id]));
+                    directionsDisplay2.setDirections(response);
+                    directionsDisplay2.setRouteIndex(parseInt(pick_route[id]));
                 }
             });
         }
