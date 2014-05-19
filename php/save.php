@@ -16,21 +16,12 @@
     {
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
-    //Set max_allowed_packet
-    $path_len = strlen($path);
     
     /*
      * เป็นการกำหนดค่า max_allowed_packet ในfile config mysql ซึ่งถ้าน้อยเกินไปจะไม่สามารถ save path ลง database ได้
-     * ดังนั้นจึงกำหนดค่า ไปพร้อมๆกับการ save เลย โดยดูว่า max_allowed_packet ปัจจุบันมีค่ามากกว่าขนาด path ที่จะส่งอยู่แล้วหรือเปล่า
-     * ถ้ามีค่ามากกว่าอยู่แล้วก็ใช้ขนาดเท่าเดิม แต่ถ้าน้อยกว่าก็จะ set ใหม่ตามขนาดของ path
+     * ดังนั้นจึงกำหนดค่า ไปพร้อมๆกับการ save เลย 
      */
-    $current_max_allowed_packet = mysqli_fetch_array(mysqli_query($sql,'SELECT @@global.max_allowed_packet'));
-    $i = 1;
-    while($path_len>$current_max_allowed_packet[0]*$i){
-        $i++;
-    }
-    $max_allowed_packet = $current_max_allowed_packet[0]*$i;
-    $rs = mysqli_query($sql,'SET @@global.max_allowed_packet = ' . $max_allowed_packet);
+    $rs = mysqli_query($sql,'SET @@global.max_allowed_packet = ' . 128*1024*1024);
     
     /*
      * เป็นการดูว่าชื่อไฟล์ที่ส่งมาซ้ำกับใน database หรือไม่ 

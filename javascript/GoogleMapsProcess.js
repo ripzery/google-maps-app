@@ -253,6 +253,7 @@ function addEventListener_Btn_MultipleMapsTab() {
         $('#btn-delete-map2').addClass('disabled');
         $('#btn-reset-map2').addClass('disabled');
         $('#btn-modal-maps').removeClass('disabled');
+        $('#md-btn-select-all').removeClass('disabled');
         //  set ทุก polyline ออกจาก map
         for (var i = 0; i < polylines_array.length; i++) {
             polylines_array[i].setMap(null);
@@ -589,7 +590,7 @@ function addEventListener_Modal_MultipleMapsTab() {
             strings_array.push(string_map_name);
             var index = map_name.indexOf(string_map_name);
             activeIndexes.push(index);
-            addMapToList(activeIndexes[i]);
+            addMapToList(index);
         }
         $.ajax({
             type: "POST",
@@ -601,7 +602,7 @@ function addEventListener_Modal_MultipleMapsTab() {
                 var paths_array = d.split(":");
                 for (var i = 0; i < paths_array.length - 1; i++) {
                     var path = [];
-                    var string_path = paths_array[i].split("|");
+                    var string_path = paths_array[i].split("/");
                     console.log("round " + i + " : " + string_path.length + " pts");
                     var latlng = "";
                     for (var j = 0; j < string_path.length; j++) {
@@ -734,10 +735,19 @@ function setUpVarFromDatabase() {
                 route_type[i] = field[1];
                 pick_route[i] = field[2];
                 date[i] = field[3];
-                points_array[i] = new Array(field.length - 4);
-                for (var k = 4; k < field.length; k++) {
-                    points_array[i][k - 4] = field[k];
+                
+                if(field.length<15){
+                    points_array[i] = new Array(field.length - 4);
+                    for (var k = 4; k < field.length; k++) {
+                        points_array[i][k - 4] = field[k];
+                    }
+                }else{
+                    points_array[i] = new Array(field.length - 5);
+                    for (var k = 4; k < field.length-1; k++) {
+                        points_array[i][k - 4] = field[k];
+                    }
                 }
+                
             }
             if(map_name.length===0){
                 $('#btn-modal-maps').addClass('disabled');
@@ -803,7 +813,7 @@ function pushPath() {
                             temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
                             temp = temp.replace("(", "");
                             temp = temp.replace(")", "");
-                            path = path + temp + "|";
+                            path = path + temp + "/";
                             count++;
                         }
                     }
@@ -897,8 +907,6 @@ function calcRoute() {
             alert("The webpage is not allowed to use the directions service.");
         }else if(status == google.maps.DirectionsStatus.INVALID_REQUEST){
             alert("The DirectionsRequest provided was invalid.");
-        }else if(status == google.maps.DirectionsStatus.UNKNOWN_ERROR){
-            alert("A directions request could not be processed due to a server error. The request may succeed if you try again.");
         }
     });
 }

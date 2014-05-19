@@ -14,7 +14,7 @@
         echo $row['pick_route'] . ":";
         echo $row['date']. ":";
         while($row[$i]!=""){
-            if($row[$i+1]==""){
+            if($row[$i+1]==""||$i == 15){
                 echo $row[$i]."|";
             }else{
                 echo $row[$i].":";
