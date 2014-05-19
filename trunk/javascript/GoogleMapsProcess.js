@@ -34,6 +34,9 @@ var isClearMapList = true;
  * และกำหนด eventlistener เมื่อ click บน map, check/uncheck checkbox, ค้นหา searchbox
  */
 function initialize() {
+    $('#guide').addClass('disabled');
+    $('#suggest').addClass('disabled');
+    $('#calcroute').addClass('disabled');
     directionsDisplay = new google.maps.DirectionsRenderer({
         polylineOptions: polylineOptionsActual,
         suppressMarkers: true,
@@ -197,6 +200,11 @@ function setUpMultipleMapsTab() {
     $('#btn-guide-map2').addClass('disabled');
     $('#btn-delete-map2').addClass('disabled');
     $('#btn-reset-map2').addClass('disabled');
+//    setTimeout(function(){
+//        if(map_name.length===0)
+//            $('#btn-modal-maps').addClass('disabled');
+//    },1000);
+    
     //  เรียก function เพื่อ add event ให้กับปุ่มต่างๆ
     addEventListener_Btn_MultipleMapsTab();
 }
@@ -706,6 +714,12 @@ function setUpVarFromDatabase() {
                     points_array[i][k - 4] = field[k];
                 }
             }
+            if(map_name.length===0){
+                $('#btn-modal-maps').addClass('disabled');
+            }
+            else{
+                $('#btn-modal-maps').removeClass('disabled');
+            }
             console.log("setUpVar complete");
             addTable();
         }
@@ -773,15 +787,16 @@ function pushPath() {
  * ผ่าน method DirectionsService.route และให้ directionsDisplay.setDirection(ผลลัพธ์ที่ได้จาก callback function)
  */
 function calcRoute() {
+    $('#guide').removeClass('disabled');
     isCalcRoute = true;
     //  directionsService = new google.maps.DirectionsService();
-    if (points.length === 1) {
-        alert("Please enter end points.");
-        return false;
-    } else if (points.length === 0) {
-        alert("Please enter start and end points.");
-        return false;
-    }
+//    if (points.length === 1) {
+//        alert("Please enter end points.");
+//        return false;
+//    } else if (points.length === 0) {
+//        alert("Please enter start and end points.");
+//        return false;
+//    }
     var wps = [];
     for (var i = 2; i < points.length; i++) {
         wps.push({
@@ -816,6 +831,7 @@ function calcRoute() {
                     $(a).attr('href="#"');
                     $(a).append(response.routes[i].summary + " " + response.routes[i].legs[0].distance.text + " " + response.routes[i].legs[0].duration.text);
                     $(li).append(a);
+                    $('#suggest').removeClass('disabled');
                     $('#suggestRoute').append(li);
                 }
                 directionsDisplay.setDirections(response);
@@ -835,6 +851,7 @@ function calcRoute() {
                 });
             } else {
                 directionsDisplay.setDirections(response);
+                $('#suggest').addClass('disabled')
             }
             map.fitBounds(bound);
             $('#myTab1 a:first').tab('show');
@@ -856,7 +873,9 @@ function placeMarker(position, map) {
         image = "../marker-icon-number/start.png";
     } else if (count == 1) {
         image = "../marker-icon-number/end.png";
-    } else {
+        $('#calcroute').removeClass('disabled');
+    } 
+    else {
         image = "../marker-icon-number/number_" + (parseInt(count) - 1) + ".png";
     }
     var marker = new google.maps.Marker();
@@ -980,6 +999,9 @@ function clearMap() {
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directions-panel'));
     $('#chk').iCheck('uncheck');
+    $('#guide').addClass('disabled');
+    $('#calcroute').addClass('disabled');
+    $('#suggest').addClass('disabled');
 }
 
 //เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน list ของ position
