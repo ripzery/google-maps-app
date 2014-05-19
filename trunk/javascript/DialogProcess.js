@@ -1,3 +1,12 @@
+
+/*
+ * ทำงานตอนโหลดหน้าเว็บเสร็จโดยเป็นการ add event ต่างๆดังนี้
+ *  - กดปุ่ม Guide : แสดง modal guide
+ *  - กดปุ่ม Load : แสดง modal
+ *  - กดปุ่ม Load ใน modal : เรียกฟังก์ชั่น Load()
+ *  - กดปุ่ม Close ใน modal : ปิด dialog
+ *  - add event ปุ่มซ้ายขวา : กดเปลี่ยนtabs
+ */
 $(function () {
     var direction = $("#direction");
     var load = $("#load");

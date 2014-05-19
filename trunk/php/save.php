@@ -1,4 +1,5 @@
 <?php
+    
     $filename = filter_input(INPUT_POST,'name');
     $route_type = filter_input(INPUT_POST,'route_type');
     $pick_route = filter_input(INPUT_POST,'pick_route');
@@ -29,15 +30,22 @@
 //        }
 //    }
     $sql = mysqli_connect("localhost","root","rabarip","maps");
+    
     if (mysqli_connect_errno())
     {
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
-//    
+    //Set max_allowed_packet
+    $max_allowed_packet = strlen($path)+1024; // +1024 เพราะ manual ของ mysql บอกไว้ว่า The value should be a multiple of 1024; nonmultiples are rounded down to the nearest multipl
+    echo "path size : ".$max_allowed_packet;
+    if($max_allowed_packet<1048576){
+        $max_allowed_packet = 1048576;
+    }
+    $rs = mysqli_query($sql,'SET @@global.max_allowed_packet = ' . $max_allowed_packet);
     $result = mysqli_query($sql,"SELECT `name` FROM `google-maps` WHERE `name`='". $filename ."'");
         if(mysqli_num_rows($result)>0){
             if(mysqli_query($sql, "REPLACE INTO `google-maps` (`name`,`route_type`,`pick_route`,`date`,`start`,`end`,`wp1`,`wp2`,`wp3`,`wp4`,`wp5`,`wp6`,`wp7`,`wp8`,`path`) VALUES ('$filename','$route_type','$pick_route','$date','$latlng[0]','$latlng[1]','$latlng[2]','$latlng[3]','$latlng[4]','$latlng[5]','$latlng[6]','$latlng[7]','$latlng[8]','$latlng[9]','$path');")){
-                echo "edit record successful";
+                echo "Update record successful";
                 echo $route_type;
             }
             else{
@@ -46,7 +54,7 @@
         }
         else{
             if(mysqli_query($sql, "INSERT INTO `google-maps` (`name`,`route_type`,`pick_route`,`date`,`start`,`end`,`wp1`,`wp2`,`wp3`,`wp4`,`wp5`,`wp6`,`wp7`,`wp8`,`path`) VALUES ('$filename','$route_type','$pick_route','$date','$latlng[0]','$latlng[1]','$latlng[2]','$latlng[3]','$latlng[4]','$latlng[5]','$latlng[6]','$latlng[7]','$latlng[8]','$latlng[9]','$path');"))
-                echo "insert record successful";
+                echo "Insert record successful";
             else{
                 echo mysqli_error($sql);
             }
