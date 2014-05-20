@@ -15,10 +15,10 @@
     }
     .Text{
         display : block;
-        left: 15%;
+/*        left: 15%;*/
         color:#3c3c3c;
         font-weight:500;
-	font-size: 18px;
+	font-size: 20px;
 	border-radius: 0;
 	line-height: 22px;
 	background-color: #ffffff;
@@ -91,7 +91,7 @@
 #filename{
   color: gray;
   font-style: italic;
-  font-size: 28px;
+  font-size: 30px;
   border-bottom: none;
 }
 .editable-click{
