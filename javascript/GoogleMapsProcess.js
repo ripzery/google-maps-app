@@ -102,7 +102,7 @@ function initialize() {
         }
     });
 
-    var event_arrow = function (event) {
+    event_arrow = function (event) {
         event.preventDefault();
         console.log("event_arrow");
         if(!$('#address').is(':focus') && !$('#t').is(':focus') && !$('#searchdb').is(':focus')){
@@ -129,7 +129,7 @@ function initialize() {
             }
         }
     };
-    $('body').keyup(event_arrow);
+    $('body').on("keyup",event_arrow);
     
     //  set hotkey
     var hotkey = function (event) {
@@ -166,11 +166,11 @@ function initialize() {
     });
     $('.editable').on('shown', function () {
         $('body').unbind('keypress', hotkey);
-        $('body').unbind('keyup',event_arrow);
+        $('body').off('keyup',event_arrow);
     });
     $('.editable').on('hidden', function () {
         $('body').bind('keypress', hotkey);
-        $('body').bind("keyup",event_arrow);
+        $('body').off("keyup",event_arrow);
     });
 
     google.maps.event.addListener(searchBox, 'places_changed', function () { // เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
@@ -1366,8 +1366,9 @@ function addTable() {
         //  เมื่อกดที่ชื่อจะมี textbox ขึ้นมาซึ่งสามารถแก้ไขชื่อเส้นทางและบันทึกชื่อนั้นลง database ได้ทันที
         $(td_name).editable({
             type: "text",
-            showbuttons: true,
-            mode: "popup",
+            showbuttons: false,
+            mode: "inline",
+            tpl: '<input type="text" maxlength="20" style="font-size:16px;font-weight:bold;width : 220px;height : 45px;">',
             pk: {
                 name: ""
             },
@@ -1382,10 +1383,10 @@ function addTable() {
             }
         });
         $(td_name).on('shown', function () {
-            $('body').unbind('keyup',event_arrow);
+            $('body').off('keyup',event_arrow);
         });
         $(td_name).on('hidden', function () {
-            $('body').bind("keyup",event_arrow);
+            $('body').on('keyup',event_arrow);
         });
         //  เนื่องจากการสร้างเส้นทางแบบตามลำดับ waypoint (A-Z route) หรือสร้างเส้นทางที่สั้นที่สุด (shot route) จะถูกเก็บในรูป 0 / 1 
         if (route_type[i] === 0) {    // โดย 0 จะเป็นการสร้างเส้นทางเป็นลำดับ
