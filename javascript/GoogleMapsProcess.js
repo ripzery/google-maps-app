@@ -28,7 +28,7 @@ var polylines_array = [],
     activeIndexes = [],
     keep_path = [];
 var isClearMapList = true;
-var event_arrow
+var event_arrow;
 /*
  * initialize() :
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -560,7 +560,7 @@ function setUpModalMultipleMapsTab() {
             var li = document.createElement("a");
             var route;
             $(li).append(date[i] + " ");
-            if (route_type[i] == 0) {
+            if (route_type[i] === 0) {
                 route = "A-Z"
                 $(li).append(route + " ");
             } 
@@ -754,7 +754,7 @@ function setUpVarFromDatabase() {
             for (var i = 0; i < row.length - 1; i++) {
                 field = row[i].split(":");
                 map_name.push(field[0]);
-                route_type[i] = field[1];
+                route_type[i] = parseInt(field[1]);
                 pick_route[i] = field[2];
                 date[i] = field[3];
                 if(field.length<15){
@@ -1262,11 +1262,11 @@ function initLoad() {
                 $(li).attr("href='#'");
                 var route;
                 $(li).append(date[i] + " ");
-                if (route_type[i] == 0) {
-                    route = "A-Z"
+                if (route_type[i] === 0) {
+                    route = "A-Z";
                     $(li).append(route + " ");
                 } else {
-                    route = "Fast "
+                    route = "Fast ";
                     $(li).append(route);
                 }
                 $(li).append(map_name[i]);
@@ -1299,7 +1299,7 @@ function initLoad() {
         $(filename).text(map_name[index]);
         if (route_type[index] === 1) {
             isOptimize = true;
-        } else if (route_type[index] === 0) {
+        } else if(route_type[index] === 0) {
             isOptimize = false;
         }
         pickRouteIndex = pick_route[index];
@@ -1388,7 +1388,7 @@ function addTable() {
             $('body').bind("keyup",event_arrow);
         });
         //  เนื่องจากการสร้างเส้นทางแบบตามลำดับ waypoint (A-Z route) หรือสร้างเส้นทางที่สั้นที่สุด (shot route) จะถูกเก็บในรูป 0 / 1 
-        if (route_type[i] === "0") {    // โดย 0 จะเป็นการสร้างเส้นทางเป็นลำดับ
+        if (route_type[i] === 0) {    // โดย 0 จะเป็นการสร้างเส้นทางเป็นลำดับ
             route = "A-Z";
         } 
         else {  //  และ 1 เป็นการสร้างเส้นทางที่สั้นที่สุด
@@ -1457,7 +1457,6 @@ function addTable() {
             }
             if (route_type[index] === 1) {
                 isOptimize = true;
-
             } else {
                 isOptimize = false;
             }
