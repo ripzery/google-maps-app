@@ -79,6 +79,13 @@ function initialize() {
             fileName = return_name;
         }
     });
+    
+    $('#filename').keydown(function(event){
+        if($('#filename').length>10){
+            event.preventDefault();
+        }
+    })
+    
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบ auto complete
     //  checkbox ของ hide marker
@@ -125,7 +132,7 @@ function initialize() {
     };
     $('body').keypress(hotkey); //  add event ของ hitkey ลงใน body
     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-        if ($(e.target).text() === "Database" || $(e.target).text() === "Multi-Route Display") {
+        if ($(e.target).text() === "Database" || $(e.target).text() === "Multiple Routes") {
             $('body').unbind('keypress', hotkey);
         } else {
             $('body').bind('keypress', hotkey);
@@ -545,7 +552,7 @@ function setUpModalMultipleMapsTab() {
  *  
  * @returns {undefined}
  */
-//  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Route
+//  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Routes
 function addEventListener_Modal_MultipleMapsTab() {
     $('#md-btn-load').addClass('disabled');
     //  เมื่อกดเลือกเส้นทาง จะทำการนับและแสดงผลตรงปุ่มโหลดว่าตอนนี้เลือกมากี่เส้นทางแล้ว
@@ -737,7 +744,6 @@ function setUpVarFromDatabase() {
                 route_type[i] = field[1];
                 pick_route[i] = field[2];
                 date[i] = field[3];
-                
                 if(field.length<15){
                     points_array[i] = new Array(field.length - 4);
                     for (var k = 4; k < field.length; k++) {
@@ -820,7 +826,7 @@ function pushPath() {
                         }
                     }
                 }
-                alert("Path : "+count);
+                console.log("Path : "+count);
                 path = path.substring(0, path.length - 1);
                 Save(path);
             }
@@ -1414,7 +1420,7 @@ function addTable() {
                 $(this).parent().parent().remove();
             } 
             else {  
-                alert("Cancle delete process.");
+//                alert("Cancle delete process.");
             }
         });
        //  เมื่อกดที่ปุ่ม view ให้โชว์เส้นทางที่เลือกลงบน map , add waypoint ลง list ของ position พร้อมคำนวนเส้นทางลงในหน้า maps
