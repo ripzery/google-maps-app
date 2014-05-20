@@ -5,7 +5,7 @@ var directionsDisplay2 = new google.maps.DirectionsRenderer(); // เอาไ�
 var directionsService = new google.maps.DirectionsService(); //เอาไว้เรียก method route เพื่อหาเส้นทาง
 var points = new Array(); // เอาไว้เก็บตำแหน่งของพิกัดในของ marker
 var waypointMarkers = []; // เอาไว้เก็บobject Marker
-var markers = [] // เอาไว้เก็บmarkerของสัญลักษณ์ของสถานที่ต่างๆ (ไม่ค่อยจำเป็นเท่าไร)
+var markers = []; // เอาไว้เก็บmarkerของสัญลักษณ์ของสถานที่ต่างๆ (ไม่ค่อยจำเป็นเท่าไร)
 var isOptimize = false; // เอาไว้เช็คว่าการคำนวณเส้นทางเป็นแบบไหน {true:หาเส้นที่เร็วที่สุด,false:หาตามลำดับ waypoint}
 var fileName = "UntitledMap"; // เอาไว้รีเซ็ตชื่อไฟล์กลับมาเป็นเหมือนเดิมโดยเรียก method resetFileName
 var isCalcRoute = false; // เอาไว้เช็คว่าเรียกฟังก์ชั่น calcroute หรือยัง เอาไว้แยกเวลา เพิ่ม/เลื่อน/ลบ marker แล้ว คำนวณเส้นทางอัตโนมัติ
@@ -72,19 +72,15 @@ function initialize() {
     $('#filename').editable({
         showbuttons: false,
         highlight: "#5D9CEC",
-        mode: "popup",
+        tpl: '<input type="text" maxlength="50" style="font-size:22px;font-weight:bold;width : 780px;height : 50px;">',
+        inputclass : "test",
+        mode: "inline",
         defaultValue: fileName,
         placement: "bottom",
         success: function (response, return_name) {
             fileName = return_name;
         }
     });
-    
-    $('#filename').keydown(function(event){
-        if($('#filename').length>10){
-            event.preventDefault();
-        }
-    })
     
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบ auto complete
