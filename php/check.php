@@ -8,7 +8,7 @@ if(!$test){
     mysqli_select_db($test,"maps");
     mysqli_query($test,'CREATE TABLE IF NOT EXISTS `google-maps` (
           `id` int(11) NOT NULL auto_increment,
-          `name` varchar(50) NOT NULL,
+          `name` varchar(20) NOT NULL,
           `route_type` tinyint(1) NOT NULL,
           `pick_route` int(11) NOT NULL,
           `date` date NOT NULL,
