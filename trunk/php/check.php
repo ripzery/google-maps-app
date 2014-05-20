@@ -30,6 +30,12 @@ if(!$test){
 
 $name = $_POST['name'];
 $sql = mysqli_connect("localhost","root","rabarip","maps") or die("Unable to connect to database");
+
+mysqli_query($sql,"SET NAMES utf8"); 
+mysqli_query($sql,"SET character_set_results = utf8"); 
+mysqli_query($sql,"SET character_set_connection = utf8"); 
+mysqli_query($sql,"SET character_set_client = utf8"); 
+
 $result = mysqli_query($sql, "SELECT `name` FROM `google-maps` WHERE name = '".$name."'");
 $i = 2;
 $origin_name = $name;

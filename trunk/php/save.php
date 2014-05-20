@@ -12,16 +12,18 @@
     $date = date('Y-m-d', time());
     $sql = mysqli_connect("localhost","root","rabarip","maps");
     
+    /*
+     * ให้สามารถเซฟชื่อภาษาไทยได้
+     */
+    mysqli_query($sql,"SET NAMES utf8"); 
+    mysqli_query($sql,"SET character_set_results = utf8"); 
+    mysqli_query($sql,"SET character_set_connection = utf8"); 
+    mysqli_query($sql,"SET character_set_client = utf8"); 
+    
     if (mysqli_connect_errno())
     {
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
-    
-    /*
-     * เป็นการกำหนดค่า max_allowed_packet ในfile config mysql ซึ่งถ้าน้อยเกินไปจะไม่สามารถ save path ลง database ได้
-     * ดังนั้นจึงกำหนดค่า ไปพร้อมๆกับการ save เลย 
-     */
-    $rs = mysqli_query($sql,'SET @@global.max_allowed_packet = ' . 128*1024*1024);
     
     /*
      * เป็นการดูว่าชื่อไฟล์ที่ส่งมาซ้ำกับใน database หรือไม่ 
