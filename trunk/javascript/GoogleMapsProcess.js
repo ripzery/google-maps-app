@@ -72,7 +72,7 @@ function initialize() {
     $('#filename').editable({
         showbuttons: false,
         highlight: "#5D9CEC",
-        tpl: '<input type="text" maxlength="50" style="font-size:22px;font-weight:bold;width : 780px;height : 50px;">',
+        tpl: '<input type="text" maxlength="20" style="font-size:22px;font-weight:bold;width : 310px;height : 50px;">',
         inputclass : "test",
         mode: "inline",
         defaultValue: fileName,
@@ -167,12 +167,10 @@ function initialize() {
     $('.editable').on('shown', function () {
         $('body').unbind('keypress', hotkey);
         $('body').unbind('keyup',event_arrow);
-        alert("unbind!");
     });
     $('.editable').on('hidden', function () {
         $('body').bind('keypress', hotkey);
         $('body').bind("keyup",event_arrow);
-        alert("bind!");
     });
 
     google.maps.event.addListener(searchBox, 'places_changed', function () { // เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
