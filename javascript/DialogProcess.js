@@ -52,29 +52,29 @@ $(function () {
         resetFileName();
     });
     
-    var event_arrow = function (event){
-        event.preventDefault();
-       if(event.keyCode === 37){//Arrow Left
-           var currentTab = $('#myTab1>.active');
-           var index = $('#myTab1>li').index(currentTab);
-           if(index===0){
-               $('#myTab1>li:last').find("a").trigger("click");
-           }else if(index === 1){
-               $('#myTab1>li:first').find("a").trigger("click");
-           }else{
-               $('#myTab1>li').eq(1).find("a").trigger("click");
-           }
-       }else if(event.keyCode === 39){//Arrow Right
-           var currentTab = $('#myTab1>.active');
-           var index = $('#myTab1>li').index(currentTab);
-           if(index===0){
-               $('#myTab1>li').eq(1).find("a").trigger("click");
-           }else if(index === 1){
-               $('#myTab1>li:last').find("a").trigger("click");
-           }else{
-               $('#myTab1>li:first').find("a").trigger("click");
-           }
-       } 
-    };
-    $('body').keyup(event_arrow);
+//    var event_arrow = function (event){
+//        event.preventDefault();
+//       if(event.keyCode === 37){//Arrow Left
+//           var currentTab = $('#myTab1>.active');
+//           var index = $('#myTab1>li').index(currentTab);
+//           if(index===0){
+//               $('#myTab1>li:last').find("a").trigger("click");
+//           }else if(index === 1){
+//               $('#myTab1>li:first').find("a").trigger("click");
+//           }else{
+//               $('#myTab1>li').eq(1).find("a").trigger("click");
+//           }
+//       }else if(event.keyCode === 39){//Arrow Right
+//           var currentTab = $('#myTab1>.active');
+//           var index = $('#myTab1>li').index(currentTab);
+//           if(index===0){
+//               $('#myTab1>li').eq(1).find("a").trigger("click");
+//           }else if(index === 1){
+//               $('#myTab1>li:last').find("a").trigger("click");
+//           }else{
+//               $('#myTab1>li:first').find("a").trigger("click");
+//           }
+//       } 
+//    };
+//    $('body').keyup(event_arrow);
 });
