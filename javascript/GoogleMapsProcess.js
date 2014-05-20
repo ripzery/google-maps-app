@@ -425,21 +425,22 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
             //  ถ้าเป็นเส้นทางที่ไม่ถูกเลือก
             if (i !== polyline_id) {
                 //  ถ้าเป็นเส้นทางที่ไม่ได้ถูก checkbox ให้เอาเส้นทางนั้นออกจาก map list ซึ่งเส้นนั้นจะเป็นเส้นสีแดง ให้คงเส้นทางนั้นเป็นสีดำปกติ
-                if (polylines_array[i].strokeColor != 'red')
+                if (polylines_array[i].strokeColor != 'red'){
                     polylines_array[i].setOptions({
                         strokeColor: "black",
                         strokeOpacity: 0.6,
                         strokeWeight: 2
                     });
+                }
             }
             //  ถ้าเป็นเส้นทางที่ user ต้องการโชว์ให้เด่น เส้นนั้นจะถูกเปลี่ยนเป็นสีน้ำเงิน และ clear ให้ checkbox ของการเอาเส้นทางนั้นออกจาก map list เป็น uncheck
             else {
+                $(chk_x).iCheck('uncheck');
                 polylines_array[i].setOptions({
                     strokeColor: "blue",
                     strokeOpacity: 0.6,
                     strokeWeight: 5
                 });
-                $(chk_x).iCheck('uncheck');
             }
         }
         //  นำ mapMarker ออกจาก map
