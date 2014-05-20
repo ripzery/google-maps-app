@@ -28,7 +28,7 @@ var polylines_array = [],
     activeIndexes = [],
     keep_path = [];
 var isClearMapList = true;
-
+var event_arrow
 /*
  * initialize() :
  * เอาไว้เซ็ตค่าเริ่มต้นให้ตัวแปรต่างๆก่อนนำไปใช้งานได้แก่
@@ -101,6 +101,36 @@ function initialize() {
             waypointMarkers[i].setVisible(true);
         }
     });
+
+    var event_arrow = function (event) {
+        event.preventDefault();
+        console.log("event_arrow");
+        if(!$('#address').is(':focus') && !$('#t').is(':focus') && !$('#searchdb').is(':focus')){
+            if (event.keyCode === 37) { //Arrow Left
+                var currentTab = $('#myTab1>.active');
+                var index = $('#myTab1>li').index(currentTab);
+                if (index === 0) {
+                    $('#myTab1>li:last').find("a").trigger("click");
+                } else if (index === 1) {
+                    $('#myTab1>li:first').find("a").trigger("click");
+                } else {
+                    $('#myTab1>li').eq(1).find("a").trigger("click");
+                }
+            } else if (event.keyCode === 39) { //Arrow Right
+                var currentTab = $('#myTab1>.active');
+                var index = $('#myTab1>li').index(currentTab);
+                if (index === 0) {
+                    $('#myTab1>li').eq(1).find("a").trigger("click");
+                } else if (index === 1) {
+                    $('#myTab1>li:last').find("a").trigger("click");
+                } else {
+                    $('#myTab1>li:first').find("a").trigger("click");
+                }
+            }
+        }
+    };
+    $('body').keyup(event_arrow);
+    
     //  set hotkey
     var hotkey = function (event) {
         //  โดยจะใช้ปุ่มลัดได้จะต้องไม่เป็นตอนที่ textbox อยุ่ในสถานะ focus
@@ -136,9 +166,13 @@ function initialize() {
     });
     $('.editable').on('shown', function () {
         $('body').unbind('keypress', hotkey);
+        $('body').unbind('keyup',event_arrow);
+        alert("unbind!");
     });
     $('.editable').on('hidden', function () {
         $('body').bind('keypress', hotkey);
+        $('body').bind("keyup",event_arrow);
+        alert("bind!");
     });
 
     google.maps.event.addListener(searchBox, 'places_changed', function () { // เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
@@ -602,6 +636,7 @@ function addEventListener_Modal_MultipleMapsTab() {
                 string_map_name = $(multipleRoute[i]).text().split(" ")[2];
             }
             strings_array.push(string_map_name);
+            
             var index = map_name.indexOf(string_map_name);
             activeIndexes.push(index);
             addMapToList(index);
@@ -668,31 +703,6 @@ function addEventListener_Modal_MultipleMapsTab() {
                     }
                 };
                 $('body').unbind('keyup').keyup(event_select_maps_list);
-//                var event_arrow = function (event) {
-//                    event.preventDefault();
-//                    if (event.keyCode === 37) { //Arrow Left
-//                        var currentTab = $('#myTab1>.active');
-//                        var index = $('#myTab1>li').index(currentTab);
-//                        if (index === 0) {
-//                            $('#myTab1>li:last').find("a").trigger("click");
-//                        } else if (index === 1) {
-//                            $('#myTab1>li:first').find("a").trigger("click");
-//                        } else {
-//                            $('#myTab1>li').eq(1).find("a").trigger("click");
-//                        }
-//                    } else if (event.keyCode === 39) { //Arrow Right
-//                        var currentTab = $('#myTab1>.active');
-//                        var index = $('#myTab1>li').index(currentTab);
-//                        if (index === 0) {
-//                            $('#myTab1>li').eq(1).find("a").trigger("click");
-//                        } else if (index === 1) {
-//                            $('#myTab1>li:last').find("a").trigger("click");
-//                        } else {
-//                            $('#myTab1>li:first').find("a").trigger("click");
-//                        }
-//                    }
-//                };
-//                $('body').keyup(event_arrow);
                 $('#btn-reset-map2').removeClass('disabled');
                 if($('#maps_list>a').length-1===map_name.length){
                     $('#btn-modal-maps').addClass('disabled');
@@ -1372,6 +1382,12 @@ function addTable() {
                 alert("Edit name and save successfully.");
                 setUpVarFromDatabase();
             }
+        });
+        $(td_name).on('shown', function () {
+            $('body').unbind('keyup',event_arrow);
+        });
+        $(td_name).on('hidden', function () {
+            $('body').bind("keyup",event_arrow);
         });
         //  เนื่องจากการสร้างเส้นทางแบบตามลำดับ waypoint (A-Z route) หรือสร้างเส้นทางที่สั้นที่สุด (shot route) จะถูกเก็บในรูป 0 / 1 
         if (route_type[i] === "0") {    // โดย 0 จะเป็นการสร้างเส้นทางเป็นลำดับ
