@@ -251,6 +251,14 @@ function addEventListener_Btn_MultipleMapsTab() {
                 i = -1;
             }
         }
+        if($('#maps_list>a').length-1===map_name.length){
+            $('#btn-modal-maps').addClass('disabled');
+        }
+        else 
+            $('#btn-modal-maps').removeClass('disabled');
+        if($('#maps_list>a').length-1===0){
+            $("#btn-reset-map2").addClass("disabled");
+        }
     });
     //  เมื่อกด Reset จะทำการล้างค่าทุกค่าใน map list และบน map
     $('#btn-reset-map2').click(function () {
@@ -551,6 +559,7 @@ function setUpModalMultipleMapsTab() {
 //  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Routes
 function addEventListener_Modal_MultipleMapsTab() {
     $('#md-btn-load').addClass('disabled');
+    $('#md-btn-select-all').removeClass('disabled'); 
     //  เมื่อกดเลือกเส้นทาง จะทำการนับและแสดงผลตรงปุ่มโหลดว่าตอนนี้เลือกมากี่เส้นทางแล้ว
     var event_list_maps = function () {
         var count;
@@ -571,7 +580,7 @@ function addEventListener_Modal_MultipleMapsTab() {
             $(badge_count).text(count);
             $('#md-btn-load').removeClass('disabled');
             if(count===map_name.length)
-                $('#md-btn-select-all').addClass('disabled');   
+                $('#md-btn-select-all').addClass('disabled'); 
         }
     };
     //  เมื่อกดปุ่ม load ก้โหลดเส้นทางนั้นลงบน map และแสดงชื่อเส้นทางลง map list
@@ -659,31 +668,31 @@ function addEventListener_Modal_MultipleMapsTab() {
                     }
                 };
                 $('body').unbind('keyup').keyup(event_select_maps_list);
-                var event_arrow = function (event) {
-                    event.preventDefault();
-                    if (event.keyCode === 37) { //Arrow Left
-                        var currentTab = $('#myTab1>.active');
-                        var index = $('#myTab1>li').index(currentTab);
-                        if (index === 0) {
-                            $('#myTab1>li:last').find("a").trigger("click");
-                        } else if (index === 1) {
-                            $('#myTab1>li:first').find("a").trigger("click");
-                        } else {
-                            $('#myTab1>li').eq(1).find("a").trigger("click");
-                        }
-                    } else if (event.keyCode === 39) { //Arrow Right
-                        var currentTab = $('#myTab1>.active');
-                        var index = $('#myTab1>li').index(currentTab);
-                        if (index === 0) {
-                            $('#myTab1>li').eq(1).find("a").trigger("click");
-                        } else if (index === 1) {
-                            $('#myTab1>li:last').find("a").trigger("click");
-                        } else {
-                            $('#myTab1>li:first').find("a").trigger("click");
-                        }
-                    }
-                };
-                $('body').keyup(event_arrow);
+//                var event_arrow = function (event) {
+//                    event.preventDefault();
+//                    if (event.keyCode === 37) { //Arrow Left
+//                        var currentTab = $('#myTab1>.active');
+//                        var index = $('#myTab1>li').index(currentTab);
+//                        if (index === 0) {
+//                            $('#myTab1>li:last').find("a").trigger("click");
+//                        } else if (index === 1) {
+//                            $('#myTab1>li:first').find("a").trigger("click");
+//                        } else {
+//                            $('#myTab1>li').eq(1).find("a").trigger("click");
+//                        }
+//                    } else if (event.keyCode === 39) { //Arrow Right
+//                        var currentTab = $('#myTab1>.active');
+//                        var index = $('#myTab1>li').index(currentTab);
+//                        if (index === 0) {
+//                            $('#myTab1>li').eq(1).find("a").trigger("click");
+//                        } else if (index === 1) {
+//                            $('#myTab1>li:last').find("a").trigger("click");
+//                        } else {
+//                            $('#myTab1>li:first').find("a").trigger("click");
+//                        }
+//                    }
+//                };
+//                $('body').keyup(event_arrow);
                 $('#btn-reset-map2').removeClass('disabled');
                 if($('#maps_list>a').length-1===map_name.length){
                     $('#btn-modal-maps').addClass('disabled');
