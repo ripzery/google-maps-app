@@ -104,7 +104,6 @@ function initialize() {
 
     event_arrow = function (event) {
         event.preventDefault();
-        console.log("event_arrow");
         if(!$('#address').is(':focus') && !$('#t').is(':focus') && !$('#searchdb').is(':focus')){
             if (event.keyCode === 37) { //Arrow Left
                 var currentTab = $('#myTab1>.active');
@@ -263,11 +262,10 @@ function setUpVarFromDatabase() {
                 }
                 
             }
-            if(map_name.length===0){
-                $('#btn-modal-maps').addClass('disabled');
-            }
-            else{
+            if(map_name.length>0&&$('maps_list>a').length-1<map_name.length){
                 $('#btn-modal-maps').removeClass('disabled');
+            }else{
+                $('#btn-modal-maps').addClass('disabled');
             }
             console.log("setUpVar complete");
             addTable();
@@ -366,7 +364,24 @@ function addTable() {
         //  เมื่อมีการกดปุ่ม X
         $(button_x).click(function () {
             var confirm_delete = confirm("Do you want to delete this map?");    //  confirm message เพื่อยืยยันว่าต้องการลบจริงหรือไม่
-            if (confirm_delete === true) {  //  ถ้าต้องการลบเส้นทางนี้จริง
+            if (confirm_delete) {  //  ถ้าต้องการลบเส้นทางนี้จริง
+                var mapname = $(this).parent().next().text();
+//                alert(mapname);
+                var id = map_name.indexOf(mapname);
+                var polyline_id = activeIndexes.indexOf(id);
+                if(polyline_id !== -1){
+                    polylines_array[polyline_id].setMap(null);
+                    polylines_array.splice(polyline_id, 1);
+                    activeIndexes.splice(polyline_id,1);
+                    for(var i = 0;i< mapMarkers.length; i++){
+                        mapMarkers[i].setMap(null);
+                    }
+                    $('#maps_list').find('a:contains('+ mapname +')').remove();
+                    if($('#maps_list>a').length === 1){
+                        $('#btn-delete-map2').addClass('disabled');
+                        $('#btn-reset-map2').addClass('disabled');
+                    }
+                }
                 $.ajax({
                     type: "POST",
                     async: false,
@@ -1067,7 +1082,7 @@ function addEventListener_Btn_MultipleMapsTab() {
                 i = -1;
             }
         }
-        if($('#maps_list>a').length-1===map_name.length){
+        if($('#maps_list>a').length-1>=map_name.length){
             $('#btn-modal-maps').addClass('disabled');
         }
         else 
