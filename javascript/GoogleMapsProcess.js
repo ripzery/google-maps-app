@@ -445,7 +445,6 @@ function addTable() {
     });
 }
 
-
 /*
  * placeMarker()
  * ทำงานเมื่อคลิกบนmap,โหลดข้อมูลจาก database เอาไว้วาง markerบนพิกัดที่ต้องการพร้อมกับ
@@ -738,6 +737,11 @@ function pushPath() {
     }
 }
 
+/*
+ * Save()
+ * นำค่า filename,route_type,pickRouteIndex,points เก็บลง database ผ่าน ajax called
+ * พร้อมกับ refresh ค่าในตาราง tab2
+ */
 function Save(path) {
     var confirm_save = confirm("Do you want to save this map?");
     if (confirm_save === true) {
@@ -778,9 +782,11 @@ function Save(path) {
         }
 }
 
-//ทำงานเมื่อกดปุ่ม RESET จะทำการเริ่ม reset ค่า count,array points, ใหม่
-//, ลบmarker ออกจากแผนที่ให้หมด
-//และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
+/*
+ * ทำงานเมื่อกดปุ่ม RESET จะทำการเริ่ม reset ค่า count,array points ใหม่, ลบmarker ออกจากแผนที่ให้หมด
+ *  และเคลียร์ค่า input ของ textbox พร้อมทั้งลด waypoint ที่เก็บใน listbox ทั้งหมด
+ * @returns {undefined}
+ */
 function clearMap() {
     $('#reset').addClass('disabled');
     $('#hide_marker').hide("fade");
@@ -821,12 +827,6 @@ function clearMap() {
     $('#calcroute').addClass('disabled');
     $('#suggest').addClass('disabled');
 }
-
-/*
- * Save()
- * นำค่า filename,route_type,pickRouteIndex,points เก็บลง database ผ่าน ajax called
- * พร้อมกับ refresh ค่าในตาราง tab2
- */
 
 /*
  * InitLoad() -> Load() (InitLoad จะต้องเรียกก่อน Load เสมอ)
