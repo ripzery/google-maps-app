@@ -1285,7 +1285,6 @@ function addEventListener_Modal_MultipleMapsTab() {
                 }
                 console.log("Finished load .....");
                 var event_select_maps_list = function (event) {
-                    console.log("event appear!");
                     event.preventDefault();
                     if (event.keyCode === 219) { // [
                         var currentMap = $('#maps_list>.active:gt(0)');
@@ -1319,6 +1318,13 @@ function addEventListener_Modal_MultipleMapsTab() {
                     }
                 };
                 $('body').unbind('keyup').keyup(event_select_maps_list);
+                $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                    if ($(e.target).text() === "Database" || $(e.target).text() === "Maps") {
+                        $('body').unbind('keyup', event_select_maps_list);
+                    } else {
+                        $('body').unbind('keyup').keyup(event_select_maps_list);
+                    }
+                });
                 $('#btn-reset-map2').removeClass('disabled');
                 if($('#maps_list>a').length-1===map_name.length){
                     $('#btn-modal-maps').addClass('disabled');
