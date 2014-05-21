@@ -1179,7 +1179,7 @@ function setUpModalMultipleMapsTab() {
     $('#md-list-maps').find('a').remove();
     var mapslist = $('#maps_list>a:gt(0)');
     for (var i = 0; i < map_name.length; i++) {
-        if ($("#maps_list>a:gt(0):contains("+ map_name[i] +")").length===0){
+        if ($("#maps_list>a:gt(0):contains("+ map_name[i]+" Hide" +")").length===0){
             var li = document.createElement("a");
             var route;
             $(li).append(date[i] + " ");
@@ -1235,7 +1235,7 @@ function addEventListener_Modal_MultipleMapsTab() {
         var multipleRoute = $('#md-list-maps>.active');
         var strings_array = [];
         console.log("Begin load .....");
-        for (var i = 0; i < multipleRoute.length; i++) {
+        for (var i = 0; i < multipleRoute.length; i++){
             var string_map_name = "";
             var split_size = $(multipleRoute[i]).text().split(" ").length;
             if (split_size > 3) {
