@@ -745,7 +745,6 @@ function pushPath() {
                 directionsService.route(request, function (response, status) {
                     if (status == google.maps.DirectionsStatus.OK) 
                     {
-                        var arr = new Array();
                         for (var j = 0; j < response.routes[0].legs.length; j++) {
                             for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
                                 for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
@@ -759,6 +758,7 @@ function pushPath() {
                         }
                         console.log("Path : "+count);
                         path = path.substring(0, path.length - 1);
+                        
                         Save(path);
                     }
                     else {
@@ -786,6 +786,47 @@ function Save(path) {
         route_type = 0;
     }
     fileName = $('#filename').text();
+    if($('#maps_list').find('a:contains('+ fileName +" Hide" +')').length>0){
+        var id = map_name.indexOf(fileName);
+        var polyline_id = activeIndexes.indexOf(id);
+        if(polyline_id !== -1){
+//            var polyline = polylines_array[polyline_id];
+            var update_path = [];
+            var temp_path = path.split("/");
+            for(var j = 0; j < temp_path.length ; j++){
+                var latlng = temp_path[j].split(",");
+                update_path.push(new google.maps.LatLng(latlng[0],latlng[1]));
+            }
+            var polyline;
+            if(polylines_array[polyline_id].strokeColor == "blue"){
+                polyline = new google.maps.Polyline({
+                    path : update_path,
+                    strokeColor : "blue",
+                    strokeOpacity: 0.6,
+                    strokeWeight : 5
+                });
+            }else if(polylines_array[polyline_id].strokeColor == "black"){
+                polyline = new google.maps.Polyline({
+                    path : update_path,
+                    strokeColor : "black",
+                    strokeOpacity: 0.6,
+                    strokeWeight : 2
+                });
+            }else{
+                polyline = new google.maps.Polyline({
+                    path : update_path,
+                    strokeColor : "red",
+                    strokeOpacity: 0.6,
+                    strokeWeight : 4
+                });
+            }
+            polylines_array[polyline_id].setMap(null);
+            polyline.setMap(map2);
+            polylines_array[polyline_id] = polyline;
+            alert("Update polyline multiple map complete");
+        }
+    }
+    
     $.ajax({
         type: "POST",
         url: "../php/save.php",
@@ -872,10 +913,10 @@ function initLoad() {
         var route;
         $(li).append(date[i] + " ");
         if (route_type[i] == 0) {
-            route = "A-Z"
+            route = "A-Z";
             $(li).append(route + " ");
         } else {
-            route = "Fast "
+            route = "Fast ";
             $(li).append(route);
         }
         $(li).append(map_name[i]);
