@@ -1194,6 +1194,146 @@ function setUpModalMultipleMapsTab() {
     }
 }
 
+//  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Routes
+function addEventListener_Modal_MultipleMapsTab() {
+    $('#md-btn-load').addClass('disabled');
+    $('#md-btn-select-all').removeClass('disabled'); 
+    //  เมื่อกดเลือกเส้นทาง จะทำการนับและแสดงผลตรงปุ่มโหลดว่าตอนนี้เลือกมากี่เส้นทางแล้ว
+    var event_list_maps = function () {
+        var count;
+        var badge_count = $('#badge-count');
+        if ($(this).hasClass("active")) {
+            $(this).removeClass("active");
+            count = parseInt($(badge_count).text()) - 1;
+            $(badge_count).text(count);
+            $('#md-btn-select-all').removeClass('disabled');
+            if(count===0)
+                $('#md-btn-load').addClass('disabled');
+            else
+                $('#md-btn-load').removeClass('disabled');
+        } 
+        else {
+            $(this).addClass("active");
+            count = parseInt($(badge_count).text()) + 1;
+            $(badge_count).text(count);
+            $('#md-btn-load').removeClass('disabled');
+            if(count===$('#md-list-maps').find("a").length)
+                $('#md-btn-select-all').addClass('disabled'); 
+        }
+    };
+    //  เมื่อกดปุ่ม load ก้โหลดเส้นทางนั้นลงบน map และแสดงชื่อเส้นทางลง map list
+    var event_btn_load = function () {
+        $('#badge-count').text("0");
+        var multipleRoute = $('#md-list-maps>.active');
+        var strings_array = [];
+        console.log("Begin load .....");
+        for (var i = 0; i < multipleRoute.length; i++) {
+            var string_map_name = "";
+            var split_size = $(multipleRoute[i]).text().split(" ").length;
+            if (split_size > 3) {
+                var extend = $(multipleRoute[i]).text().split(" ");
+                string_map_name = extend[2];
+                for (var k = 3; k < split_size; k++) {
+                    string_map_name = string_map_name + " " + extend[k];
+                }
+            } else {
+                string_map_name = $(multipleRoute[i]).text().split(" ")[2];
+            }
+            strings_array.push(string_map_name);
+            
+            var index = map_name.indexOf(string_map_name);
+            activeIndexes.push(index);
+            addMapToList(index);
+        }
+        $.ajax({
+            type: "POST",
+            data: ({
+                name: strings_array
+            }),
+            url: "../php/fetchPath.php",
+            success: function (d) {
+                var paths_array = d.split(":");
+                for (var i = 0; i < paths_array.length - 1; i++) {
+                    var path = [];
+                    var string_path = paths_array[i].split("/");
+                    console.log("round " + i + " : " + string_path.length + " pts");
+                    var latlng = "";
+                    for (var j = 0; j < string_path.length; j++) {
+                        latlng = string_path[j].split(",");
+                        path.push(new google.maps.LatLng(latlng[0], latlng[1]));
+                    }
+                    var polyline = new google.maps.Polyline({
+                        path: path,
+                        strokeOpacity: 0.6,
+                        strokeWeight: 2
+                    });
+                    polyline.setMap(map2);
+                    polylines_array.push(polyline);
+
+                }
+                console.log("Finished load .....");
+                var event_select_maps_list = function (event) {
+                    console.log("event appear!");
+                    event.preventDefault();
+                    if (event.keyCode === 219) { // [
+                        var currentMap = $('#maps_list>.active:gt(0)');
+                        var allMapsList = $('#maps_list>a:gt(0)');
+                        var index = $(allMapsList).index(currentMap);
+                        if (index === -1) { //Didn't select yet
+                            alert("Didn't selected");
+                        } else { //Already selected
+                            if ($(currentMap).prev() != $('#maps_list>.active:first')) {
+                                var target = $(currentMap).prev();
+                                $(target).trigger('click');
+                            }
+                        }
+                    } else if (event.keyCode === 221) { // ]
+                        var currentMap = $('#maps_list>.active:gt(0)');
+                        var allMapsList = $('#maps_list>a:gt(0)');
+                        var index = $(allMapsList).index(currentMap);
+                        if (index === -1) { //Didn't select yet
+                            alert("Didn't selected");
+                        } else { //Already selected
+                            if ($(allMapsList).index($(currentMap).next()) !== -1) {
+                                var target = $(currentMap).next();
+                                $(target).trigger('click');
+                            }
+
+                        }
+                    } else if (event.keyCode === 72) { // H
+                        var currentMap = $('#maps_list>.active:gt(0)');
+                        var targetChk = $(currentMap).find("input:last");
+                        $(targetChk).iCheck('toggle');
+                    }
+                };
+                $('body').unbind('keyup').keyup(event_select_maps_list);
+                $('#btn-reset-map2').removeClass('disabled');
+                if($('#maps_list>a').length-1===map_name.length){
+                    $('#btn-modal-maps').addClass('disabled');
+                }
+                else
+                    $('#btn-modal-maps').removeClass('disabled');
+            }
+        });
+        
+    };
+    var event_btn_all_load = function () {
+        var list_maps = $('#md-list-maps').find("a");
+        $(list_maps).addClass("active");
+        $('#badge-count').text($(list_maps).length);
+        $('#md-btn-select-all').addClass('disabled');
+        $('#md-btn-load').removeClass('disabled');
+    };
+    var event_btn_close = function () {
+        $('#badge-count').text("0");
+    };
+    $('#md-list-maps').find("a").unbind("click").click(event_list_maps);
+    $('#md-btn-load').unbind("click").click(event_btn_load);
+    $('#md-btn-select-all').unbind("click").click(event_btn_all_load);
+    $('#md-btn-close').unbind("click").click(event_btn_close);
+}
+
+
 /*
  *  - addMapToList
  *  เอาไว้ add map เข้าไปใน map_list ทีละ map    
@@ -1394,144 +1534,6 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
  *  
  * @returns {undefined}
  */
-//  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Routes
-function addEventListener_Modal_MultipleMapsTab() {
-    $('#md-btn-load').addClass('disabled');
-    $('#md-btn-select-all').removeClass('disabled'); 
-    //  เมื่อกดเลือกเส้นทาง จะทำการนับและแสดงผลตรงปุ่มโหลดว่าตอนนี้เลือกมากี่เส้นทางแล้ว
-    var event_list_maps = function () {
-        var count;
-        var badge_count = $('#badge-count');
-        if ($(this).hasClass("active")) {
-            $(this).removeClass("active");
-            count = parseInt($(badge_count).text()) - 1;
-            $(badge_count).text(count);
-            $('#md-btn-select-all').removeClass('disabled');
-            if(count===0)
-                $('#md-btn-load').addClass('disabled');
-            else
-                $('#md-btn-load').removeClass('disabled');
-        } 
-        else {
-            $(this).addClass("active");
-            count = parseInt($(badge_count).text()) + 1;
-            $(badge_count).text(count);
-            $('#md-btn-load').removeClass('disabled');
-            if(count===map_name.length)
-                $('#md-btn-select-all').addClass('disabled'); 
-        }
-    };
-    //  เมื่อกดปุ่ม load ก้โหลดเส้นทางนั้นลงบน map และแสดงชื่อเส้นทางลง map list
-    var event_btn_load = function () {
-        $('#badge-count').text("0");
-        var multipleRoute = $('#md-list-maps>.active');
-        var strings_array = [];
-        console.log("Begin load .....");
-        for (var i = 0; i < multipleRoute.length; i++) {
-            var string_map_name = "";
-            var split_size = $(multipleRoute[i]).text().split(" ").length;
-            if (split_size > 3) {
-                var extend = $(multipleRoute[i]).text().split(" ");
-                string_map_name = extend[2];
-                for (var k = 3; k < split_size; k++) {
-                    string_map_name = string_map_name + " " + extend[k];
-                }
-            } else {
-                string_map_name = $(multipleRoute[i]).text().split(" ")[2];
-            }
-            strings_array.push(string_map_name);
-            
-            var index = map_name.indexOf(string_map_name);
-            activeIndexes.push(index);
-            addMapToList(index);
-        }
-        $.ajax({
-            type: "POST",
-            data: ({
-                name: strings_array
-            }),
-            url: "../php/fetchPath.php",
-            success: function (d) {
-                var paths_array = d.split(":");
-                for (var i = 0; i < paths_array.length - 1; i++) {
-                    var path = [];
-                    var string_path = paths_array[i].split("/");
-                    console.log("round " + i + " : " + string_path.length + " pts");
-                    var latlng = "";
-                    for (var j = 0; j < string_path.length; j++) {
-                        latlng = string_path[j].split(",");
-                        path.push(new google.maps.LatLng(latlng[0], latlng[1]));
-                    }
-                    var polyline = new google.maps.Polyline({
-                        path: path,
-                        strokeOpacity: 0.6,
-                        strokeWeight: 2
-                    });
-                    polyline.setMap(map2);
-                    polylines_array.push(polyline);
-
-                }
-                console.log("Finished load .....");
-                var event_select_maps_list = function (event) {
-                    console.log("event appear!");
-                    event.preventDefault();
-                    if (event.keyCode === 219) { // [
-                        var currentMap = $('#maps_list>.active:gt(0)');
-                        var allMapsList = $('#maps_list>a:gt(0)');
-                        var index = $(allMapsList).index(currentMap);
-                        if (index === -1) { //Didn't select yet
-                            alert("Didn't selected");
-                        } else { //Already selected
-                            if ($(currentMap).prev() != $('#maps_list>.active:first')) {
-                                var target = $(currentMap).prev();
-                                $(target).trigger('click');
-                            }
-                        }
-                    } else if (event.keyCode === 221) { // ]
-                        var currentMap = $('#maps_list>.active:gt(0)');
-                        var allMapsList = $('#maps_list>a:gt(0)');
-                        var index = $(allMapsList).index(currentMap);
-                        if (index === -1) { //Didn't select yet
-                            alert("Didn't selected");
-                        } else { //Already selected
-                            if ($(allMapsList).index($(currentMap).next()) !== -1) {
-                                var target = $(currentMap).next();
-                                $(target).trigger('click');
-                            }
-
-                        }
-                    } else if (event.keyCode === 72) { // H
-                        var currentMap = $('#maps_list>.active:gt(0)');
-                        var targetChk = $(currentMap).find("input:last");
-                        $(targetChk).iCheck('toggle');
-                    }
-                };
-                $('body').unbind('keyup').keyup(event_select_maps_list);
-                $('#btn-reset-map2').removeClass('disabled');
-                if($('#maps_list>a').length-1===map_name.length){
-                    $('#btn-modal-maps').addClass('disabled');
-                }
-                else
-                    $('#btn-modal-maps').removeClass('disabled');
-            }
-        });
-        
-    };
-    var event_btn_all_load = function () {
-        var list_maps = $('#md-list-maps').find("a");
-        $(list_maps).addClass("active");
-        $('#badge-count').text($(list_maps).length);
-        $('#md-btn-select-all').addClass('disabled');
-        $('#md-btn-load').removeClass('disabled');
-    };
-    var event_btn_close = function () {
-        $('#badge-count').text("0");
-    }
-    $('#md-list-maps').find("a").unbind("click").click(event_list_maps);
-    $('#md-btn-load').unbind("click").click(event_btn_load);
-    $('#md-btn-select-all').unbind("click").click(event_btn_all_load);
-    $('#md-btn-close').unbind("click").click(event_btn_close);
-}
 
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
