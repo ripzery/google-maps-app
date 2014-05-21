@@ -262,7 +262,8 @@ function setUpVarFromDatabase() {
                 }
                 
             }
-            if(map_name.length>0&&$('maps_list>a').length-1<map_name.length){
+//            alert("maps_list : "+($('#maps_list>a').length-1)+", map_name : " +map_name.length);
+            if($('#maps_list>a').length-1<map_name.length){
                 $('#btn-modal-maps').removeClass('disabled');
             }else{
                 $('#btn-modal-maps').addClass('disabled');
@@ -372,11 +373,14 @@ function addTable() {
                 if(polyline_id !== -1){
                     polylines_array[polyline_id].setMap(null);
                     polylines_array.splice(polyline_id, 1);
+                    for(var i = polyline_id+1 ; i < activeIndexes.length;i++){
+                        activeIndexes[i] = activeIndexes[i]-1;
+                    }
                     activeIndexes.splice(polyline_id,1);
                     for(var i = 0;i< mapMarkers.length; i++){
                         mapMarkers[i].setMap(null);
                     }
-                    $('#maps_list').find('a:contains('+ mapname +')').remove();
+                    $('#maps_list').find('a:contains('+ mapname+" Hide" +')').remove();
                     if($('#maps_list>a').length === 1){
                         $('#btn-delete-map2').addClass('disabled');
                         $('#btn-reset-map2').addClass('disabled');
@@ -701,54 +705,60 @@ function calcRoute() {
 
 //  เก็บ path ทั้งหมดไว้ใน array แล้วส่งค่า array นั้นไปให้ function save เพื่อเก็บ path นั้นลง database
 function pushPath() {
-    if (points.length === 1) {
-        alert("Please enter end points.");
-        return false;
-    } else if (points.length === 0) {
-        alert("Please enter start and end points.");
-        return false;
-    }
-    else{
-        var wps = [],
-            path = "";
-        var temp = "";
-        var count = 0;
-        for (var j = 2; j < points.length; j++) {
-            wps.push({
-                location: points[j],
-                stopover: true
-            });
+    var confirm_save = confirm("Do you want to save this map?");
+    if (confirm_save === true) {
+        if (points.length === 1) {
+            alert("Please enter end points.");
+            return false;
+        } else if (points.length === 0) {
+            alert("Please enter start and end points.");
+            return false;
         }
-        var request = {
-            origin: points[0],
-            destination: points[1],
-            waypoints: wps,
-            optimizeWaypoints: isOptimize,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-        directionsService.route(request, function (response, status) {
-            if (status == google.maps.DirectionsStatus.OK) 
-            {
-                var arr = new Array();
-                for (var j = 0; j < response.routes[0].legs.length; j++) {
-                    for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
-                        for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
-                            temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
-                            temp = temp.replace("(", "");
-                            temp = temp.replace(")", "");
-                            path = path + temp + "/";
-                            count++;
+        else{
+            var wps = [],
+                path = "";
+            var temp = "";
+            $('#md-progressbar').modal({backdrop:"static"});
+            var count = 0;
+            for (var j = 2; j < points.length; j++) {
+                wps.push({
+                    location: points[j],
+                    stopover: true
+                });
+            }
+            var request = {
+                origin: points[0],
+                destination: points[1],
+                waypoints: wps,
+                optimizeWaypoints: isOptimize,
+                travelMode: google.maps.TravelMode.DRIVING
+            };
+            directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) 
+                {
+                    var arr = new Array();
+                    for (var j = 0; j < response.routes[0].legs.length; j++) {
+                        for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
+                            for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
+                                temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
+                                temp = temp.replace("(", "");
+                                temp = temp.replace(")", "");
+                                path = path + temp + "/";
+                                count++;
+                            }
                         }
                     }
+                    console.log("Path : "+count);
+                    path = path.substring(0, path.length - 1);
+                    Save(path);
                 }
-                console.log("Path : "+count);
-                path = path.substring(0, path.length - 1);
-                Save(path);
-            }
-            else {
-                alert(status);
-            }   
-        });
+                else {
+                    alert(status);
+                }   
+            });
+        }
+    }else {
+        alert("Cancle save process.");
     }
 }
 
@@ -758,43 +768,38 @@ function pushPath() {
  * พร้อมกับ refresh ค่าในตาราง tab2
  */
 function Save(path) {
-    var confirm_save = confirm("Do you want to save this map?");
-    if (confirm_save === true) {
-        var route_type;
-        pickRouteIndex = directionsDisplay.getRouteIndex();
-        if (isOptimize) {
-            route_type = 1;
-        } else {
-            route_type = 0;
+    var route_type;
+    pickRouteIndex = directionsDisplay.getRouteIndex();
+    if (isOptimize) {
+        route_type = 1;
+    } else {
+        route_type = 0;
+    }
+    if (points.length < 2) {
+        alert("Please insert start-end point.");
+        return false;
+    }
+    fileName = $('#filename').text();
+    $.ajax({
+        type: "POST",
+        url: "../php/save.php",
+        data: ({
+            name: fileName,
+            route_type: route_type,
+            pick_route: pickRouteIndex,
+            latlng: points,
+            path: path
+        }),
+        success: function (return_message) {
+            setUpVarFromDatabase();
+            $('#md-progressbar').modal('hide');
+            alert(return_message);
+        },
+        error: function (xhr, status, error) {
+            alert(xhr.responseText);
+            alert("Save file to database unsuccessfully.");
         }
-        if (points.length < 2) {
-            alert("Please insert start-end point.");
-            return false;
-        }
-        fileName = $('#filename').text();
-        $.ajax({
-            type: "POST",
-            url: "../php/save.php",
-            data: ({
-                name: fileName,
-                route_type: route_type,
-                pick_route: pickRouteIndex,
-                latlng: points,
-                path: path
-            }),
-            success: function (return_message) {
-                setUpVarFromDatabase();
-                alert(return_message);
-            },
-            error: function (xhr, status, error) {
-                alert(xhr.responseText);
-                alert("Save file to database unsuccessfully.");
-            }
-        });
-        } 
-        else {
-            alert("Cancle save process.");
-        }
+    });
 }
 
 /*
@@ -1156,6 +1161,39 @@ function addEventListener_Btn_MultipleMapsTab() {
         }
     });
 }
+
+/*
+ *  - setUpModalMultipleMapsTab ()
+ *      ใส่ชื่อmapและรายละเอียดของเส้นทางลงใน modal-dialog เพื่อโหลดเส้นทางหลายๆเส้นมาโชว์
+ * @returns {undefined}
+ */
+
+function setUpModalMultipleMapsTab() {
+    $('#md-list-maps').find('a').remove();
+    for (var i = 0; i < map_name.length; i++) {
+        if (activeIndexes.indexOf(i) == -1) {
+            var li = document.createElement("a");
+            var route;
+            $(li).append(date[i] + " ");
+            if (route_type[i] === 0) {
+                route = "A-Z"
+                $(li).append(route + " ");
+            } 
+            else {
+                route = "Fast "
+                $(li).append(route);
+            }
+            $(li).append(map_name[i]);
+            li.setAttribute("class", "list-group-item");
+            li.setAttribute("style", "text-align: left;word-spacing: 20px;");
+            $("#md-list-maps").append(li);
+        } 
+        else {
+
+        }
+    }
+}
+
 /*
  *  - addMapToList
  *  เอาไว้ add map เข้าไปใน map_list ทีละ map    
@@ -1345,38 +1383,6 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
     });
     //  add event ให้ a เมื่อมีการคลิก
     $(a).click(event_a);
-}
-
-/*
- *  - setUpModalMultipleMapsTab ()
- *      ใส่ชื่อmapและรายละเอียดของเส้นทางลงใน modal-dialog เพื่อโหลดเส้นทางหลายๆเส้นมาโชว์
- * @returns {undefined}
- */
-
-function setUpModalMultipleMapsTab() {
-    $('#md-list-maps').find('a').remove();
-    for (var i = 0; i < map_name.length; i++) {
-        if (activeIndexes.indexOf(i) == -1) {
-            var li = document.createElement("a");
-            var route;
-            $(li).append(date[i] + " ");
-            if (route_type[i] === 0) {
-                route = "A-Z"
-                $(li).append(route + " ");
-            } 
-            else {
-                route = "Fast "
-                $(li).append(route);
-            }
-            $(li).append(map_name[i]);
-            li.setAttribute("class", "list-group-item");
-            li.setAttribute("style", "text-align: left;word-spacing: 20px;");
-            $("#md-list-maps").append(li);
-        } 
-        else {
-
-        }
-    }
 }
 
 /*
