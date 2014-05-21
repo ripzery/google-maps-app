@@ -371,7 +371,6 @@ function addTable() {
                 var id = map_name.indexOf(mapname);
                 var polyline_id = activeIndexes.indexOf(id);
                 if(polyline_id !== -1){
-                    alert("Found polyline on maplist");
                     polylines_array[polyline_id].setMap(null);
                     polylines_array.splice(polyline_id, 1);
                     for(var i = polyline_id+1 ; i < activeIndexes.length;i++){
@@ -384,6 +383,7 @@ function addTable() {
                         for(var i = 0;i< mapMarkers.length; i++){
                             mapMarkers[i].setMap(null);
                         }
+                        $('#btn-guide-map2').addClass('disabled');
                     }
                     $('#maps_list').find('a:contains('+ mapname+" Hide" +')').remove();
                     if($('#maps_list>a').length === 1){
