@@ -371,6 +371,7 @@ function addTable() {
                 var id = map_name.indexOf(mapname);
                 var polyline_id = activeIndexes.indexOf(id);
                 if(polyline_id !== -1){
+                    alert("Found polyline on maplist");
                     polylines_array[polyline_id].setMap(null);
                     polylines_array.splice(polyline_id, 1);
                     for(var i = polyline_id+1 ; i < activeIndexes.length;i++){
@@ -384,6 +385,12 @@ function addTable() {
                     if($('#maps_list>a').length === 1){
                         $('#btn-delete-map2').addClass('disabled');
                         $('#btn-reset-map2').addClass('disabled');
+                    }
+                }else{
+                    for(var i = 0 ; i < activeIndexes.length; i++){
+                        if(activeIndexes[i] > id){
+                            activeIndexes[i]--;
+                        }
                     }
                 }
                 $.ajax({
@@ -1170,17 +1177,18 @@ function addEventListener_Btn_MultipleMapsTab() {
 
 function setUpModalMultipleMapsTab() {
     $('#md-list-maps').find('a').remove();
+    var mapslist = $('#maps_list>a:gt(0)');
     for (var i = 0; i < map_name.length; i++) {
-        if (activeIndexes.indexOf(i) == -1) {
+        if ($("#maps_list>a:gt(0):contains("+ map_name[i] +")").length===0){
             var li = document.createElement("a");
             var route;
             $(li).append(date[i] + " ");
             if (route_type[i] === 0) {
-                route = "A-Z"
+                route = "A-Z";
                 $(li).append(route + " ");
             } 
             else {
-                route = "Fast "
+                route = "Fast ";
                 $(li).append(route);
             }
             $(li).append(map_name[i]);
