@@ -1,7 +1,7 @@
 var map, map2; // เอาไว้ initilize map-canvas จาก google
 var count = "0"; // เอาไว้นับ marker เพิ่มค่าเมื่อคลิกวาง marker บน map
 var directionsDisplay; // เอาไว้setDirection ที่คำนวนได้จาก directionsService ใน map หน้าแรก
-var directionsDisplay2 = new google.maps.DirectionsRenderer(); // เอาไว้แสดงข้อมูล direction ใน map2
+var directionsDisplay2 = new google.maps.DirectionsRenderer({hideRouteList: true}); // เอาไว้แสดงข้อมูล direction ใน map2
 var directionsService = new google.maps.DirectionsService(); //เอาไว้เรียก method route เพื่อหาเส้นทาง
 var points = new Array(); // เอาไว้เก็บตำแหน่งของพิกัดในของ marker
 var waypointMarkers = []; // เอาไว้เก็บobject Marker
