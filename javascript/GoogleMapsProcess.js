@@ -724,10 +724,14 @@ function pushPath() {
     }else{
         var confirm_save = confirm("Do you want to save this map?");
         if (confirm_save === true) {
+                $('#md-progress').modal({backdrop:"static"});
+                $('#message-status').text("");
+                $('#update-polyline').text("");
+                $('#save-progress').text("Waiting for google generate path...");
                 var wps = [],
                     path = "";
                 var temp = "";
-                $('#md-progressbar').modal({backdrop:"static"});
+                
                 var count = 0;
                 for (var j = 2; j < points.length; j++) {
                     wps.push({
@@ -742,13 +746,16 @@ function pushPath() {
                     optimizeWaypoints: isOptimize,
                     travelMode: google.maps.TravelMode.DRIVING
                 };
+                
                 directionsService.route(request, function (response, status) {
                     if (status == google.maps.DirectionsStatus.OK) 
                     {
-                        for (var j = 0; j < response.routes[0].legs.length; j++) {
-                            for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
-                                for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
-                                    temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
+                        $('#save-progress').text("Google generate complete!");
+                        var pickRoute = directionsDisplay.getRouteIndex();
+                        for (var j = 0; j < response.routes[pickRoute].legs.length; j++) {
+                            for (var i = 0; i < response.routes[pickRoute].legs[j].steps.length; i++) {
+                                for (var k = 0; k < response.routes[pickRoute].legs[j].steps[i].path.length; k++) {
+                                    temp = response.routes[pickRoute].legs[j].steps[i].path[k].toString().replace(" ", "");
                                     temp = temp.replace("(", "");
                                     temp = temp.replace(")", "");
                                     path = path + temp + "/";
@@ -758,7 +765,6 @@ function pushPath() {
                         }
                         console.log("Path : "+count);
                         path = path.substring(0, path.length - 1);
-                        
                         Save(path);
                     }
                     else {
@@ -790,7 +796,6 @@ function Save(path) {
         var id = map_name.indexOf(fileName);
         var polyline_id = activeIndexes.indexOf(id);
         if(polyline_id !== -1){
-//            var polyline = polylines_array[polyline_id];
             var update_path = [];
             var temp_path = path.split("/");
             for(var j = 0; j < temp_path.length ; j++){
@@ -823,7 +828,8 @@ function Save(path) {
             polylines_array[polyline_id].setMap(null);
             polyline.setMap(map2);
             polylines_array[polyline_id] = polyline;
-            alert("Update polyline multiple map complete");
+//            alert("Update polyline multiple map complete");
+            $('#update-polyline').text("Update "+ fileName +"'s polyline in multiple map tab complete");
         }
     }
     
@@ -840,12 +846,14 @@ function Save(path) {
         success: function (return_message) {
             temp_map_name = map_name;
             setUpVarFromDatabase();
-            $('#md-progressbar').modal('hide');
-            alert(return_message);
+//            $('#md-progress').modal('hide');
+//            alert(return_message);
+            $("#message-status").text(return_message);
         },
         error: function (xhr, status, error) {
-            alert(xhr.responseText);
-            alert("Save file to database unsuccessfully.");
+//            alert(xhr.responseText);
+//            alert("Save file to database unsuccessfully.");
+             $('#message-status').text("Save file to database unsuccessfully.");
         }
     });
 }
@@ -1277,106 +1285,120 @@ function addEventListener_Modal_MultipleMapsTab() {
         var multipleRoute = $('#md-list-maps>.active');
         var strings_array = [];
         console.log("Begin load .....");
-        for (var i = 0; i < multipleRoute.length; i++){
-            var string_map_name = "";
-            var split_size = $(multipleRoute[i]).text().split(" ").length;
-            if (split_size > 3) {
-                var extend = $(multipleRoute[i]).text().split(" ");
-                string_map_name = extend[2];
-                for (var k = 3; k < split_size; k++) {
-                    string_map_name = string_map_name + " " + extend[k];
-                }
-            } else {
-                string_map_name = $(multipleRoute[i]).text().split(" ")[2];
-            }
-            strings_array.push(string_map_name);
-            
-            var index = map_name.indexOf(string_map_name);
-            activeIndexes.push(index);
-            addMapToList(index);
-        }
-        $.ajax({
-            type: "POST",
-            data: ({
-                name: strings_array
-            }),
-            url: "../php/fetchPath.php",
-            success: function (d) {
-                var paths_array = d.split(":");
-                for (var i = 0; i < paths_array.length - 1; i++) {
-                    var path = [];
-                    var string_path = paths_array[i].split("/");
-                    console.log("round " + i + " : " + string_path.length + " pts");
-                    var latlng = "";
-                    for (var j = 0; j < string_path.length; j++) {
-                        latlng = string_path[j].split(",");
-                        path.push(new google.maps.LatLng(latlng[0], latlng[1]));
+        $('#md-progress').modal();
+        $('#update-polyline').text("กำลังโหลดแผนที่ทั้งหมดลงในรายการ");
+        $('#message-status').text("");
+        $('#save-progress').text("");
+        setTimeout(function () {
+            for (var i = 0; i < multipleRoute.length; i++){
+                var string_map_name = "";
+                var split_size = $(multipleRoute[i]).text().split(" ").length;
+                if (split_size > 3) {
+                    var extend = $(multipleRoute[i]).text().split(" ");
+                    string_map_name = extend[2];
+                    for (var k = 3; k < split_size; k++) {
+                        string_map_name = string_map_name + " " + extend[k];
                     }
-                    var polyline = new google.maps.Polyline({
-                        path: path,
-                        strokeOpacity: 0.6,
-                        strokeWeight: 2
+                } else {
+                    string_map_name = $(multipleRoute[i]).text().split(" ")[2];
+                }
+                strings_array.push(string_map_name);
+
+                var index = map_name.indexOf(string_map_name);
+                activeIndexes.push(index);
+                addMapToList(index);
+            }
+            $('#save-progress').text("โหลดแผนที่ลงรายการเสร็จสมบูรณ์ !");
+            $('#update-polyline').text("กำลังดึงข้อมูลจากฐานข้อมูล...");
+            $.ajax({
+                type: "POST",
+                data: ({
+                    name: strings_array
+                }),
+                url: "../php/fetchPath.php",
+                success: function (d) {
+                    $('#update-polyline').text("ดึงข้อมูลสำเร็จแล้ว !");
+                    $('#message-status').text("กำลังสร้างเส้นทาง...");
+                    var paths_array = d.split(":");
+                    for (var i = 0; i < paths_array.length - 1; i++) {
+                        var path = [];
+                        var string_path = paths_array[i].split("/");
+                        console.log("round " + i + " : " + string_path.length + " pts");
+                        var latlng = "";
+                        for (var j = 0; j < string_path.length; j++) {
+                            latlng = string_path[j].split(",");
+                            path.push(new google.maps.LatLng(latlng[0], latlng[1]));
+                        }
+                        var polyline = new google.maps.Polyline({
+                            path: path,
+                            strokeOpacity: 0.6,
+                            strokeWeight: 2
+                        });
+                        polyline.setMap(map2);
+                        polylines_array.push(polyline);
+
+                    }
+                    setTimeout(function(){
+                        $('#message-status').text("สร้างเส้นทางสำเร็จแล้ว !");
+                    },300);
+                    
+                    console.log("Finished load .....");
+                    var event_select_maps_list = function (event) {
+                        event.preventDefault();
+                        if (event.keyCode === 219) { // [
+                            var currentMap = $('#maps_list>.active:gt(0)');
+                            var allMapsList = $('#maps_list>a:gt(0)');
+                            var index = $(allMapsList).index(currentMap);
+                            if (index === -1) { //Didn't select yet
+                                alert("Didn't selected");
+                            } else { //Already selected
+                                if ($(currentMap).prev() != $('#maps_list>.active:first')) {
+                                    var target = $(currentMap).prev();
+                                    $(target).trigger('click');
+                                }
+                            }
+                        } else if (event.keyCode === 221) { // ]
+                            var currentMap = $('#maps_list>.active:gt(0)');
+                            var allMapsList = $('#maps_list>a:gt(0)');
+                            var index = $(allMapsList).index(currentMap);
+                            if (index === -1) { //Didn't select yet
+                                alert("Didn't selected");
+                            } else { //Already selected
+                                if ($(allMapsList).index($(currentMap).next()) !== -1) {
+                                    var target = $(currentMap).next();
+                                    $(target).trigger('click');
+                                }
+
+                            }
+                        } else if (event.keyCode === 72) { // H
+                            var currentMap = $('#maps_list>.active:gt(0)');
+                            var targetChk = $(currentMap).find("input:last");
+                            $(targetChk).iCheck('toggle');
+                        }
+                    };
+                    $('body').unbind('keyup').keyup(event_select_maps_list);
+                    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                        if ($(e.target).text() === "Database" || $(e.target).text() === "Maps") {
+                            $('body').unbind('keyup');
+                            $('body').off("keyup",event_arrow);
+                            $('body').on("keyup",event_arrow);
+                        } else {
+                            $('body').unbind('keyup').keyup(event_select_maps_list);
+                            $('body').off("keyup",event_arrow);
+                            $('body').on("keyup",event_arrow);
+                        }
                     });
-                    polyline.setMap(map2);
-                    polylines_array.push(polyline);
-
-                }
-                console.log("Finished load .....");
-                var event_select_maps_list = function (event) {
-                    event.preventDefault();
-                    if (event.keyCode === 219) { // [
-                        var currentMap = $('#maps_list>.active:gt(0)');
-                        var allMapsList = $('#maps_list>a:gt(0)');
-                        var index = $(allMapsList).index(currentMap);
-                        if (index === -1) { //Didn't select yet
-                            alert("Didn't selected");
-                        } else { //Already selected
-                            if ($(currentMap).prev() != $('#maps_list>.active:first')) {
-                                var target = $(currentMap).prev();
-                                $(target).trigger('click');
-                            }
-                        }
-                    } else if (event.keyCode === 221) { // ]
-                        var currentMap = $('#maps_list>.active:gt(0)');
-                        var allMapsList = $('#maps_list>a:gt(0)');
-                        var index = $(allMapsList).index(currentMap);
-                        if (index === -1) { //Didn't select yet
-                            alert("Didn't selected");
-                        } else { //Already selected
-                            if ($(allMapsList).index($(currentMap).next()) !== -1) {
-                                var target = $(currentMap).next();
-                                $(target).trigger('click');
-                            }
-
-                        }
-                    } else if (event.keyCode === 72) { // H
-                        var currentMap = $('#maps_list>.active:gt(0)');
-                        var targetChk = $(currentMap).find("input:last");
-                        $(targetChk).iCheck('toggle');
+                    $('#btn-reset-map2').removeClass('disabled');
+                    if($('#maps_list>a').length-1===map_name.length){
+                        $('#btn-modal-maps').addClass('disabled');
                     }
-                };
-                $('body').unbind('keyup').keyup(event_select_maps_list);
-                $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
-                    if ($(e.target).text() === "Database" || $(e.target).text() === "Maps") {
-                        $('body').unbind('keyup');
-                        $('body').off("keyup",event_arrow);
-                        $('body').on("keyup",event_arrow);
-                    } else {
-                        $('body').unbind('keyup').keyup(event_select_maps_list);
-                        $('body').off("keyup",event_arrow);
-                        $('body').on("keyup",event_arrow);
-                    }
-                });
-                $('#btn-reset-map2').removeClass('disabled');
-                if($('#maps_list>a').length-1===map_name.length){
-                    $('#btn-modal-maps').addClass('disabled');
+                    else
+                        $('#btn-modal-maps').removeClass('disabled');
+                    $('body').off("keyup",event_arrow);
+                    $('body').on("keyup",event_arrow);
                 }
-                else
-                    $('#btn-modal-maps').removeClass('disabled');
-                $('body').off("keyup",event_arrow);
-                $('body').on("keyup",event_arrow);
-            }
-        });
+            });
+        }, 300);
         
     };
     var event_btn_all_load = function () {
