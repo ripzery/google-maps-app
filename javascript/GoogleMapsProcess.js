@@ -82,13 +82,6 @@ function initialize() {
         }
     });
     
-    $("#guide").click(function () {
-        directionsDisplay2.setPanel(null);
-        $(direction).modal({
-            keyboard: true
-        });
-    });
-    
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบ auto complete
     //  checkbox ของ hide marker
@@ -1141,9 +1134,8 @@ function addEventListener_Btn_MultipleMapsTab() {
     });
     //  เมื่อกด Guide จะเป็นการแสดงการเดินทางในเส้นที่ได้เลือกไว้
     $('#btn-guide-map2').click(function () {
-        directionsDisplay.setPanel(null);
         if ($('#maps_list>.active').length > 1) {
-            $('#direction').modal({
+            $('#direction2').modal({
                 keyboard: true
             });
             var text = $("#maps_list>a.active:gt(0)").text().replace(" Hide", "");
@@ -1171,7 +1163,7 @@ function addEventListener_Btn_MultipleMapsTab() {
             }
             directionsDisplay2.setMap(null);
             directionsDisplay2.setPanel(null);
-            directionsDisplay2.setPanel(document.getElementById('directions-panel'));
+            directionsDisplay2.setPanel(document.getElementById('directions-panel2'));
             directionsService.route(request, function (response, status) {
                 if (status == google.maps.DirectionsStatus.OK) {
                     directionsDisplay2.setDirections(response);
