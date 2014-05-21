@@ -170,7 +170,7 @@ function initialize() {
     });
     $('.editable').on('hidden', function () {
         $('body').bind('keypress', hotkey);
-        $('body').off("keyup",event_arrow);
+        $('body').on("keyup",event_arrow);
     });
 
     google.maps.event.addListener(searchBox, 'places_changed', function () { // เมื่อ search จะโชวmarker เป็นรูปชนิดของสถานที่ใกล้เคียง
