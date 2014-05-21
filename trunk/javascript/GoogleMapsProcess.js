@@ -18,7 +18,7 @@ var polylineOptionsActual = {
     strokeWeight: 5
 };
 var isLoad = false;
-var map_name = new Array();
+var map_name = new Array(),temp_map_name = new Array();
 var route_type = [],
     pick_route = [],
     date = [],
@@ -270,6 +270,11 @@ function setUpVarFromDatabase() {
             }
             console.log("setUpVar complete");
             addTable();
+            if(temp_map_name.length>0)
+                for(var i = 0;i < activeIndexes.length ;i++){
+                    var index = map_name.indexOf(temp_map_name[activeIndexes[i]]);
+                    activeIndexes[i] = index;
+                }
         }
     });
 }
@@ -368,14 +373,12 @@ function addTable() {
             if (confirm_delete) {  //  ถ้าต้องการลบเส้นทางนี้จริง
                 var mapname = $(this).parent().next().text();
 //                alert(mapname);
+                temp_map_name = map_name;
                 var id = map_name.indexOf(mapname);
                 var polyline_id = activeIndexes.indexOf(id);
                 if(polyline_id !== -1){
                     polylines_array[polyline_id].setMap(null);
                     polylines_array.splice(polyline_id, 1);
-                    for(var i = polyline_id+1 ; i < activeIndexes.length;i++){
-                        activeIndexes[i] = activeIndexes[i]-1;
-                    }
                     activeIndexes.splice(polyline_id,1);
                     
 //                    alert("maps_list index : "+$('#maps_list>a:gt(0)').index($('#maps_list>.active:last'))+" map_name index : "+id);
@@ -391,11 +394,7 @@ function addTable() {
                         $('#btn-reset-map2').addClass('disabled');
                     }
                 }else{
-                    for(var i = 0 ; i < activeIndexes.length; i++){
-                        if(activeIndexes[i] > id){
-                            activeIndexes[i]--;
-                        }
-                    }
+                    
                 }
                 $.ajax({
                     type: "POST",
@@ -798,6 +797,7 @@ function Save(path) {
             path: path
         }),
         success: function (return_message) {
+            temp_map_name = map_name;
             setUpVarFromDatabase();
             $('#md-progressbar').modal('hide');
             alert(return_message);
