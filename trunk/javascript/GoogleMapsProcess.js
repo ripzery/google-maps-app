@@ -981,6 +981,7 @@ function initLoad() {
                 isOptimize = false;
             }
             pickRouteIndex = pick_route[index];
+            directionsDisplay.setPanel(null);
             $("#doLoad").trigger('click');
             return false;
         } else if (e.keyCode === 13) {
