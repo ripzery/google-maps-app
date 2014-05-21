@@ -82,6 +82,13 @@ function initialize() {
         }
     });
     
+    $("#guide").click(function () {
+        directionsDisplay2.setPanel(null);
+        $(direction).modal({
+            keyboard: true
+        });
+    });
+    
     var input = document.getElementById('address');
     var searchBox = new google.maps.places.SearchBox(input); //เอาไว้search แบบ auto complete
     //  checkbox ของ hide marker
@@ -1134,6 +1141,7 @@ function addEventListener_Btn_MultipleMapsTab() {
     });
     //  เมื่อกด Guide จะเป็นการแสดงการเดินทางในเส้นที่ได้เลือกไว้
     $('#btn-guide-map2').click(function () {
+        directionsDisplay.setPanel(null);
         if ($('#maps_list>.active').length > 1) {
             $('#direction').modal({
                 keyboard: true

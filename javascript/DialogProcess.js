@@ -13,12 +13,6 @@ $(function () {
     var t = $('#t');
     var order = $('#order');
 
-    $("#guide").click(function () {
-        $(direction).modal({
-            keyboard: true
-        });
-    });
-
     $('body').keyup(function (event) {
         if (event.keyCode === 27) {
             $(direction).modal('hide');
