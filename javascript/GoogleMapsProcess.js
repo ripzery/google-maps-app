@@ -1317,9 +1317,13 @@ function addEventListener_Modal_MultipleMapsTab() {
                 $('body').unbind('keyup').keyup(event_select_maps_list);
                 $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
                     if ($(e.target).text() === "Database" || $(e.target).text() === "Maps") {
-                        $('body').unbind('keyup', event_select_maps_list);
+                        $('body').unbind('keyup');
+                        $('body').off("keyup",event_arrow);
+                        $('body').on("keyup",event_arrow);
                     } else {
                         $('body').unbind('keyup').keyup(event_select_maps_list);
+                        $('body').off("keyup",event_arrow);
+                        $('body').on("keyup",event_arrow);
                     }
                 });
                 $('#btn-reset-map2').removeClass('disabled');
@@ -1328,6 +1332,8 @@ function addEventListener_Modal_MultipleMapsTab() {
                 }
                 else
                     $('#btn-modal-maps').removeClass('disabled');
+                $('body').off("keyup",event_arrow);
+                $('body').on("keyup",event_arrow);
             }
         });
         
