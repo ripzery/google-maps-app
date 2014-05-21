@@ -716,60 +716,60 @@ function calcRoute() {
 
 //  เก็บ path ทั้งหมดไว้ใน array แล้วส่งค่า array นั้นไปให้ function save เพื่อเก็บ path นั้นลง database
 function pushPath() {
-    var confirm_save = confirm("Do you want to save this map?");
-    if (confirm_save === true) {
-        if (points.length === 1) {
-            alert("Please enter end points.");
-            return false;
-        } else if (points.length === 0) {
-            alert("Please enter start and end points.");
-            return false;
-        }
-        else{
-            var wps = [],
-                path = "";
-            var temp = "";
-            $('#md-progressbar').modal({backdrop:"static"});
-            var count = 0;
-            for (var j = 2; j < points.length; j++) {
-                wps.push({
-                    location: points[j],
-                    stopover: true
-                });
-            }
-            var request = {
-                origin: points[0],
-                destination: points[1],
-                waypoints: wps,
-                optimizeWaypoints: isOptimize,
-                travelMode: google.maps.TravelMode.DRIVING
-            };
-            directionsService.route(request, function (response, status) {
-                if (status == google.maps.DirectionsStatus.OK) 
-                {
-                    var arr = new Array();
-                    for (var j = 0; j < response.routes[0].legs.length; j++) {
-                        for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
-                            for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
-                                temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
-                                temp = temp.replace("(", "");
-                                temp = temp.replace(")", "");
-                                path = path + temp + "/";
-                                count++;
+    if (points.length === 1) {
+        alert("Please enter end points.");
+        return false;
+    } else if (points.length === 0) {
+        alert("Please enter start and end points.");
+        return false;
+    }else{
+        var confirm_save = confirm("Do you want to save this map?");
+        if (confirm_save === true) {
+                var wps = [],
+                    path = "";
+                var temp = "";
+                $('#md-progressbar').modal({backdrop:"static"});
+                var count = 0;
+                for (var j = 2; j < points.length; j++) {
+                    wps.push({
+                        location: points[j],
+                        stopover: true
+                    });
+                }
+                var request = {
+                    origin: points[0],
+                    destination: points[1],
+                    waypoints: wps,
+                    optimizeWaypoints: isOptimize,
+                    travelMode: google.maps.TravelMode.DRIVING
+                };
+                directionsService.route(request, function (response, status) {
+                    if (status == google.maps.DirectionsStatus.OK) 
+                    {
+                        var arr = new Array();
+                        for (var j = 0; j < response.routes[0].legs.length; j++) {
+                            for (var i = 0; i < response.routes[0].legs[j].steps.length; i++) {
+                                for (var k = 0; k < response.routes[0].legs[j].steps[i].path.length; k++) {
+                                    temp = response.routes[0].legs[j].steps[i].path[k].toString().replace(" ", "");
+                                    temp = temp.replace("(", "");
+                                    temp = temp.replace(")", "");
+                                    path = path + temp + "/";
+                                    count++;
+                                }
                             }
                         }
+                        console.log("Path : "+count);
+                        path = path.substring(0, path.length - 1);
+                        Save(path);
                     }
-                    console.log("Path : "+count);
-                    path = path.substring(0, path.length - 1);
-                    Save(path);
-                }
-                else {
-                    alert(status);
-                }   
-            });
+                    else {
+                        alert(status);
+                    }   
+                });
+            
+        }else {
+            alert("Cancle save process.");
         }
-    }else {
-        alert("Cancle save process.");
     }
 }
 
@@ -785,10 +785,6 @@ function Save(path) {
         route_type = 1;
     } else {
         route_type = 0;
-    }
-    if (points.length < 2) {
-        alert("Please insert start-end point.");
-        return false;
     }
     fileName = $('#filename').text();
     $.ajax({
