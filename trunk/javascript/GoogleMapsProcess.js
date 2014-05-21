@@ -378,8 +378,12 @@ function addTable() {
                         activeIndexes[i] = activeIndexes[i]-1;
                     }
                     activeIndexes.splice(polyline_id,1);
-                    for(var i = 0;i< mapMarkers.length; i++){
-                        mapMarkers[i].setMap(null);
+                    
+//                    alert("maps_list index : "+$('#maps_list>a:gt(0)').index($('#maps_list>.active:last'))+" map_name index : "+id);
+                    if($('#maps_list>a:gt(0)').index($('#maps_list>a.active:last'))===id){
+                        for(var i = 0;i< mapMarkers.length; i++){
+                            mapMarkers[i].setMap(null);
+                        }
                     }
                     $('#maps_list').find('a:contains('+ mapname+" Hide" +')').remove();
                     if($('#maps_list>a').length === 1){
