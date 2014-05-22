@@ -44,7 +44,10 @@ $(function () {
     $('#load').on('hidden', function () {
         $(this).data('modal', null);
     });
-
+    
+    $('#tutorial').on('click',function(){
+        $('#md-tutorial').modal();
+    });
     $("#doClose").click(function () {
         $(order).text('Ascending');
         $(t).val("");
