@@ -329,22 +329,27 @@ function addTable() {
                 params.origValue = $(this).text();
                 return params;
             },
+            validate: function(value) {
+                if(map_name.indexOf(value)!== -1) {
+                    return 'Duplicate name!';
+                }else{
+                    
+                }
+            },
             url: "../php/editname.php",
             success: function (response, newvalue) {
                 var mapname = $(this).text();
-                var index = map_name.indexOf(mapname);
-                var index_active = activeIndexes.indexOf(index);
-                if(index_active !== -1){
-                    var text = " "+ newvalue;
-//                    alert($('#maps_list>a:gt(0)').eq(index_active).contents().eq(1).text());
-                    var node = $('#maps_list>a:gt(0)').eq(index_active).contents();
-                    $(node).eq(1).remove();
-                    var textNode = document.createTextNode(" "+newvalue);
-                    $(textNode).insertAfter($(node).eq(0));
-                }
-                alert("Edit name and save successfully.");
-                
-                setUpVarFromDatabase();
+                    var index = map_name.indexOf(mapname);
+                    var index_active = activeIndexes.indexOf(index);
+                    if(index_active !== -1){
+                        var text = " "+ newvalue;
+                        var node = $('#maps_list>a:gt(0)').eq(index_active).contents();
+                        $(node).eq(1).remove();
+                        var textNode = document.createTextNode(" "+newvalue);
+                        $(textNode).insertAfter($(node).eq(0));
+                    }
+                    alert("Edit name and save successfully.");
+                    setUpVarFromDatabase(); 
             }
         });
         $(td_name).on('shown', function () {
