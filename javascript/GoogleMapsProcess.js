@@ -369,27 +369,25 @@ function addTable() {
         $(tr).append(td_end);
         //  add tr ลงใน ตารางที่มี id เป็น tablebody
         $("#tablebody").append(tr);
-        //  เมื่อมีการกดปุ่ม X
+        
         $(button_x).click(function () {
             var confirm_delete = confirm("Do you want to delete this map?"); //  confirm message เพื่อยืยยันว่าต้องการลบจริงหรือไม่
             if (confirm_delete) { //  ถ้าต้องการลบเส้นทางนี้จริง
                 var mapname = $(this).parent().next().text();
-                //                alert(mapname);
                 temp_map_name = map_name;
                 var id = map_name.indexOf(mapname);
                 var polyline_id = activeIndexes.indexOf(id);
                 if (polyline_id !== -1) {
-                    polylines_array[polyline_id].setMap(null);
-                    polylines_array.splice(polyline_id, 1);
-                    activeIndexes.splice(polyline_id, 1);
-
-                    //                    alert("maps_list index : "+$('#maps_list>a:gt(0)').index($('#maps_list>.active:last'))+" map_name index : "+id);
-                    if ($('#maps_list>a:gt(0)').index($('#maps_list>a.active:last')) === id) {
+//                    alert("click index : "+activeIndexes[$('#maps_list>a:gt(0)').index($('#maps_list>a.active:last'))]+" map_name index : "+id);
+                    if (activeIndexes[$('#maps_list>a:gt(0)').index($('#maps_list>a.active:last'))] === id) {
                         for (var i = 0; i < mapMarkers.length; i++) {
                             mapMarkers[i].setMap(null);
                         }
                         $('#btn-guide-map2').addClass('disabled');
                     }
+                    polylines_array[polyline_id].setMap(null);
+                    polylines_array.splice(polyline_id, 1);
+                    activeIndexes.splice(polyline_id, 1);
                     $('#maps_list').find('a:contains(' + mapname + " Hide" + ')').remove();
                     if ($('#maps_list>a').length === 1) {
                         $('#btn-delete-map2').addClass('disabled');
