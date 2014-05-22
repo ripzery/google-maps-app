@@ -330,8 +330,20 @@ function addTable() {
                 return params;
             },
             url: "../php/editname.php",
-            success: function () {
+            success: function (response, newvalue) {
+                var mapname = $(this).text();
+                var index = map_name.indexOf(mapname);
+                var index_active = activeIndexes.indexOf(index);
+                if(index_active !== -1){
+                    var text = " "+ newvalue;
+//                    alert($('#maps_list>a:gt(0)').eq(index_active).contents().eq(1).text());
+                    var node = $('#maps_list>a:gt(0)').eq(index_active).contents();
+                    $(node).eq(1).remove();
+                    var textNode = document.createTextNode(" "+newvalue);
+                    $(textNode).insertAfter($(node).eq(0));
+                }
                 alert("Edit name and save successfully.");
+                
                 setUpVarFromDatabase();
             }
         });
@@ -1285,7 +1297,6 @@ function addEventListener_Btn_MultipleMapsTab() {
  *      ใส่ชื่อmapและรายละเอียดของเส้นทางลงใน modal-dialog เพื่อโหลดเส้นทางหลายๆเส้นมาโชว์
  * @returns {undefined}
  */
-
 function setUpModalMultipleMapsTab() {
     $('#md-list-maps').find('a').remove();
     var mapslist = $('#maps_list>a:gt(0)');
@@ -1482,7 +1493,6 @@ function addEventListener_Modal_MultipleMapsTab() {
     $('#md-btn-select-all').unbind("click").click(event_btn_all_load);
     $('#md-btn-close').unbind("click").click(event_btn_close);
 }
-
 
 /*
  *  - addMapToList
