@@ -8,6 +8,6 @@ mysqli_query($sql,"SET NAMES utf8");
 mysqli_query($sql,"SET character_set_results = utf8"); 
 mysqli_query($sql,"SET character_set_connection = utf8"); 
 mysqli_query($sql,"SET character_set_client = utf8"); 
-mysqli_query($sql, "UPDATE `google-maps` SET `name` = '".$name."' , `date` = '".$date."' WHERE `name` = '".$origin_name."'");
+$status = mysqli_query($sql, "UPDATE `google-maps` SET `name` = '".$name."' , `date` = '".$date."' WHERE `name` = '".$origin_name."'");
 mysqli_close($sql);
 echo $name;
