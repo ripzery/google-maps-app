@@ -68,14 +68,14 @@ function initialize() {
             name: "UntitledMap"
         },
         success: function (return_value) {
-            $('#filename').text(return_value);
+            $('#filename').editable('option','value',return_value);
             fileName = return_value;
         }
     });
     $('#filename').editable({
         showbuttons: false,
         highlight: "#5D9CEC",
-        tpl: '<input type="text" maxlength="20" style="font-size:22px;font-weight:bold;width : 310px;height : 50px;">',
+        tpl: '<input type="text" id="filename-text" maxlength="20" style="font-size:22px;font-weight:bold;width : 310px;height : 50px;">',
         inputclass: "test",
         mode: "inline",
         defaultValue: fileName,
@@ -451,7 +451,8 @@ function addTable() {
                 isOptimize = false;
             }
             pickRouteIndex = pick_route[index];
-            $('#filename').text(map_name[index]);
+            $('#filename').editable('option','value',map_name[index]);
+            
 
             $('#myTab1 a:first').tab('show');
             var request = {
@@ -975,7 +976,6 @@ function initLoad() {
     $('#doLoad').addClass('disabled');
     var sort_list = $('.dropdown-menu').parent();
     var t = $('#t');
-    var filename = $('#filename');
     $('#selectable').find("a").remove();
     for (var i = 0; i < map_name.length; i++) {
         var li = document.createElement("a");
@@ -1062,7 +1062,7 @@ function initLoad() {
         for (var i = 0; i < number_of_points; i++) {
             points[i] = points_array[index][i];
         }
-        $(filename).text(map_name[index]);
+        $('#filename').editable('option','value',map_name[index]);
         if (route_type[index] === 1) {
             isOptimize = true;
         } else if (route_type[index] === 0) {
@@ -1080,7 +1080,7 @@ function initLoad() {
                 points[i] = points_array[index][i];
             }
             $(allMapsData).find('a').removeClass('active');
-            $(filename).text(map_name[index]);
+            $('#filename').editable('option','value',map_name[index]);
             if (route_type[index] === 1) {
                 isOptimize = true;
             } else if (route_type[index] === 0) {
@@ -1153,7 +1153,7 @@ function Load() {
  * เป็นการ reset ชื่อไฟล์กลับไปเป็นค่าเดิม
  */
 function resetFileName() {
-    $('#filename').text(fileName);
+    $('#filename').editable('option','value',fileName);
 }
 
 /*
