@@ -316,7 +316,11 @@ function addTable() {
         td_name.setAttribute("style", "width:150px;");
         $(td_name).append(map_name[i]);
         $(td_name).addClass('col-md-2');
-        //  เมื่อกดที่ชื่อจะมี textbox ขึ้นมาซึ่งสามารถแก้ไขชื่อเส้นทางและบันทึกชื่อนั้นลง database ได้ทันที
+        
+        /*  เมื่อกดที่ชื่อจะมี textbox ขึ้นมาซึ่งสามารถแก้ไขชื่อเส้นทางและบันทึกชื่อนั้นลง database ได้ทันที
+         *  และถ้าชื่อนั้นมีในหน้า multiple route ชื่อของแถวนั้นก็จะเปลี่ยนตามไปด้วย
+         */
+        
         $(td_name).editable({
             type: "text",
             showbuttons: false,
@@ -347,7 +351,7 @@ function addTable() {
                         var textNode = document.createTextNode(" "+newvalue);
                         $(textNode).insertAfter($(node).eq(0));
                         map_name[index] = newvalue;
-                        temp_map_name = map_name;
+                        temp_map_name = map_name; 
                     }
                     alert("Edit name and save successfully.");
                     setUpVarFromDatabase(); 
