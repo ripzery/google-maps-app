@@ -727,6 +727,7 @@ function pushPath() {
             $('#md-progress').modal({
                 backdrop: "static"
             });
+             $('#progress-close').addClass('disabled');
             $('#save-progress').text("Calculating path...");
             var wps = [],
                 path = "";
@@ -849,6 +850,7 @@ function Save(path) {
             setUpVarFromDatabase();
             //            alert(return_message);
             $("#save-progress").append("<br><br> " + return_message);
+             $('#progress-close').removeClass('disabled');
             //            $('#md-progress').modal('hide');
         },
         error: function (xhr, status, error) {
@@ -1291,6 +1293,7 @@ function addEventListener_Modal_MultipleMapsTab() {
         var strings_array = [];
         console.log("Begin load .....");
         $('#md-progress').modal();
+        $('#progress-close').addClass('disabled');
         $('#save-progress').text("กำลังโหลดแผนที่ทั้งหมดลงในรายการ...");
         setTimeout(function () {
             for (var i = 0; i < multipleRoute.length; i++) {
@@ -1318,7 +1321,7 @@ function addEventListener_Modal_MultipleMapsTab() {
                 data: ({
                     name: strings_array
                 }),
-                url: "../php/fetchPath.php",
+                url: "../php/getpath.php",
                 success: function (d) {
                     $('#save-progress').append("<br><br>ดึงข้อมูลสำเร็จแล้ว !");
                     $('#save-progress').append("<br><br>กำลังสร้างเส้นทาง...");
@@ -1343,6 +1346,7 @@ function addEventListener_Modal_MultipleMapsTab() {
                     }
                     setTimeout(function () {
                         $('#save-progress').append("<br><br>สร้างเส้นทางสำเร็จแล้ว !");
+                         $('#progress-close').removeClass('disabled');
                         //                        $('#md-progress').modal('hide');
                     }, 300);
 
