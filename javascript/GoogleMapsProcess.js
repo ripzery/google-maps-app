@@ -369,7 +369,10 @@ function addTable() {
         $(tr).append(td_end);
         //  add tr ลงใน ตารางที่มี id เป็น tablebody
         $("#tablebody").append(tr);
-        
+        /*
+         * เมื่อมีกดปุ่ม X ใน database จะทำการลบข้อมูลในแถวนั้นและลบออกจาก database, และถ้า map ที่ลบถูกโหลดมาดูเส้นทางใน tab Multiple Route ด้วย
+         * จะทำการลบ map นั้นออกไปจาก maplist ด้วยเช่นกัน
+         */
         $(button_x).click(function () {
             var confirm_delete = confirm("Do you want to delete this map?"); //  confirm message เพื่อยืยยันว่าต้องการลบจริงหรือไม่
             if (confirm_delete) { //  ถ้าต้องการลบเส้นทางนี้จริง
@@ -448,6 +451,12 @@ function addTable() {
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     startPlace = results[0].name + " " + results[0].vicinity;
                     $("#list>a:nth-child(2)").text("Start : " + startPlace);
+                }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+                    alert("No result was found for this request.");
+                }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+                    alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+                }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+                    alert("The application has gone over its request quota.");
                 }
             });
             request.location = new google.maps.LatLng(points[points.length - 1].split(",")[0], points[points.length - 1].split(",")[1]);
@@ -455,6 +464,12 @@ function addTable() {
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     endPlace = results[0].name + " " + results[0].vicinity;
                     $("#list>a:last").text("End : " + endPlace);
+                }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+                    alert("No result was found for this request.");
+                }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+                    alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+                }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+                    alert("The application has gone over its request quota.");
                 }
             });
             setTimeout(function () {
@@ -477,6 +492,8 @@ function addTable() {
  * placeMarker()
  * ทำงานเมื่อคลิกบนmap,โหลดข้อมูลจาก database เอาไว้วาง markerบนพิกัดที่ต้องการพร้อมกับ
  * เซ็ต eventlistener เมื่อ drag,right-click บนmarker (drag=edit position,right-click=remove marker)
+ * และมีการหาสถานที่ใกล้เคียงกับจุด start-end โดยใช้ nearbySearch ซึ่งรายชื่อสถานที่ที่สามารถ search ได้มีดังนี้
+ * 
  *
  */
 function placeMarker(position, map) {
@@ -512,6 +529,12 @@ function placeMarker(position, map) {
             if (status == google.maps.places.PlacesServiceStatus.OK) {
                 startPlace = results[0].name + " " + results[0].vicinity;
                 $(start).text("Start : " + startPlace);
+            }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+                alert("No result was found for this request.");
+            }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+                alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+            }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+                alert("The application has gone over its request quota.");
             }
         });
     } else if (count == 2 && !isLoad) {
@@ -519,6 +542,12 @@ function placeMarker(position, map) {
             if (status == google.maps.places.PlacesServiceStatus.OK) {
                 endPlace = results[0].name + " " + results[0].vicinity;
                 $(end).text("End : " + endPlace);
+            }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+                alert("No result was found for this request.");
+            }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+                alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+            }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+                alert("The application has gone over its request quota.");
             }
         });
     }
@@ -538,6 +567,12 @@ function placeMarker(position, map) {
             findPlace.nearbySearch(request, function (results, status) {
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     $("#list>a").eq(1).text("Start : " + results[0].name + " " + results[0].vicinity);
+                }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+                    alert("No result was found for this request.");
+                }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+                    alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+                }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+                    alert("The application has gone over its request quota.");
                 }
             });
             list.eq(index + 1).text("Start : " + startPlace);
@@ -545,6 +580,12 @@ function placeMarker(position, map) {
             findPlace.nearbySearch(request, function (results, status) {
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     $("#list>a:last").text("End : " + results[0].name + " " + results[0].vicinity);
+                }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+                    alert("No result was found for this request.");
+                }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+                    alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+                }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+                    alert("The application has gone over its request quota.");
                 }
             });
             list.eq(points.length).text("End : " + endPlace);
@@ -584,7 +625,11 @@ function placeMarker(position, map) {
     });
 }
 
-//เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน list ของ position
+/*
+ * addWaypointToList
+ * เมื่อสร้าง marker หลังจากคลิ๊กบนแผนที่แล้วก็จะบันทึกพิกัดของ waypoint ลงใน list ของ position
+
+ */
 function addWaypointToList() {
     var ul = document.getElementById("list");
     var li = document.createElement("a");
@@ -711,7 +756,11 @@ function calcRoute() {
     });
 }
 
-//  เก็บ path ทั้งหมดไว้ใน array แล้วส่งค่า array นั้นไปให้ function save เพื่อเก็บ path นั้นลง database
+/*
+ * pushPath()
+ * เก็บ path ทั้งหมดไว้ใน array แล้วส่งค่า array นั้นไปให้ function save เพื่อเก็บ path นั้นลง database
+ */
+
 function pushPath() {
     if (points.length === 1) {
         alert("Please enter end points.");
@@ -1064,6 +1113,12 @@ function Load() {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
             startPlace = results[0].name + " " + results[0].vicinity;
             $("#list>a:nth-child(2)").text("Start : " + startPlace);
+        }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+            alert("No result was found for this request.");
+        }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+            alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+        }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+            alert("The application has gone over its request quota.");
         }
     });
     request.location = new google.maps.LatLng(points[points.length - 1].split(",")[0], points[points.length - 1].split(",")[1]);
@@ -1071,6 +1126,12 @@ function Load() {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
             endPlace = results[0].name + " " + results[0].vicinity;
             $("#list>a:last").text("End : " + endPlace);
+        }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+            alert("No result was found for this request.");
+        }else if(status == google.maps.places.PlacesServiceStatus.UNKNOWN_ERROR){
+            alert("The PlacesService request could not be processed due to a server error. The request may succeed if you try again.");
+        }else if(status == google.maps.places.PlcesServiceStatus.OVER_QUERY_LIMIT){
+            alert("The application has gone over its request quota.");
         }
     });
 }
