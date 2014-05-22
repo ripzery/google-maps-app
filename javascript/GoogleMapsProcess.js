@@ -749,6 +749,9 @@ function pushPath() {
                 directionsService.route(request, function (response, status) {
                     if (status == google.maps.DirectionsStatus.OK) 
                     {
+                        if(wps.length>0){
+                            pickRouteIndex = 0;
+                        }
                         $('#save-progress').append("<br><br>Find the route successfully!");
                         for (var j = 0; j < response.routes[pickRouteIndex].legs.length; j++) {
                             for (var i = 0; i < response.routes[pickRouteIndex].legs[j].steps.length; i++) {
@@ -1079,6 +1082,7 @@ function Load() {
 function resetFileName() {
     $('#filename').text(fileName);
 }
+
 /*
  * - setUpMultisetUpMultipleMapsTab
  *  สร้าง map2 มาบน tab ใหม่และset eventlistener 
@@ -1249,7 +1253,15 @@ function setUpModalMultipleMapsTab() {
     }
 }
 
-//  ใส่ event ให้กับปุ่มต่างๆที่อยู่ใน dialog ที่มาจากการกดปุ่ม Load Multiple Routes
+/*
+ *  - addEventListener_Modal_MultipleMapsTab()
+ * เอาไว้ add event ให้กับปุ่มต่างๆในหน้า modal ที่เอาไว้โหลด maps จากใน database มาให้เลือก
+ *  - ปุ่ม Load
+ *  - ปุ่ม All load
+ *  - ปุ่ม Close
+ *  
+ * @returns {undefined}
+ */
 function addEventListener_Modal_MultipleMapsTab() {
     $('#md-btn-load').addClass('disabled');
     $('#md-btn-select-all').removeClass('disabled'); 
@@ -1604,16 +1616,6 @@ function addEventListener_MapList_MultipleMapsTab(list, chk, a, chk_x) {
     //  add event ให้ a เมื่อมีการคลิก
     $(a).click(event_a);
 }
-
-/*
- *  - addEventListener_Modal_MultipleMapsTab()
- * เอาไว้ add event ให้กับปุ่มต่างๆในหน้า modal ที่เอาไว้โหลด maps จากใน database มาโชว์
- *  - ปุ่ม Load
- *  - ปุ่ม All load
- *  - ปุ่ม Close
- *  
- * @returns {undefined}
- */
 
 // This default onbeforeunload event
 //window.onbeforeunload = function(){
