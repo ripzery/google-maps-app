@@ -725,9 +725,7 @@ function pushPath() {
         var confirm_save = confirm("Do you want to save this map?");
         if (confirm_save === true) {
                 $('#md-progress').modal({backdrop:"static"});
-                $('#message-status').text("");
-                $('#update-polyline').text("");
-                $('#save-progress').text("Waiting for google generate path...");
+                $('#save-progress').text("Calculating path...");
                 var wps = [],
                     path = "";
                 var temp = "";
@@ -744,18 +742,18 @@ function pushPath() {
                     destination: points[1],
                     waypoints: wps,
                     optimizeWaypoints: isOptimize,
+                    provideRouteAlternatives : true,
                     travelMode: google.maps.TravelMode.DRIVING
                 };
                 
                 directionsService.route(request, function (response, status) {
                     if (status == google.maps.DirectionsStatus.OK) 
                     {
-                        $('#save-progress').text("Google generate complete!");
-                        var pickRoute = directionsDisplay.getRouteIndex();
-                        for (var j = 0; j < response.routes[pickRoute].legs.length; j++) {
-                            for (var i = 0; i < response.routes[pickRoute].legs[j].steps.length; i++) {
-                                for (var k = 0; k < response.routes[pickRoute].legs[j].steps[i].path.length; k++) {
-                                    temp = response.routes[pickRoute].legs[j].steps[i].path[k].toString().replace(" ", "");
+                        $('#save-progress').append("<br><br>Find the route successfully!");
+                        for (var j = 0; j < response.routes[pickRouteIndex].legs.length; j++) {
+                            for (var i = 0; i < response.routes[pickRouteIndex].legs[j].steps.length; i++) {
+                                for (var k = 0; k < response.routes[pickRouteIndex].legs[j].steps[i].path.length; k++) {
+                                    temp = response.routes[pickRouteIndex].legs[j].steps[i].path[k].toString().replace(" ", "");
                                     temp = temp.replace("(", "");
                                     temp = temp.replace(")", "");
                                     path = path + temp + "/";
@@ -829,7 +827,7 @@ function Save(path) {
             polyline.setMap(map2);
             polylines_array[polyline_id] = polyline;
 //            alert("Update polyline multiple map complete");
-            $('#update-polyline').text("Update "+ fileName +"'s polyline in multiple map tab complete");
+            $('#save-progress').append("<br><br> Update "+ fileName +"'s polyline in Multiple-Routes tab complete");
         }
     }
     
@@ -846,14 +844,13 @@ function Save(path) {
         success: function (return_message) {
             temp_map_name = map_name;
             setUpVarFromDatabase();
-//            $('#md-progress').modal('hide');
 //            alert(return_message);
-            $("#message-status").text(return_message);
+            $("#save-progress").append("<br><br> "+return_message);
+//            $('#md-progress').modal('hide');
         },
         error: function (xhr, status, error) {
-//            alert(xhr.responseText);
 //            alert("Save file to database unsuccessfully.");
-             $('#message-status').text("Save file to database unsuccessfully.");
+             $('#save-progress').append("<br><br> Save file to database unsuccessfully.");
         }
     });
 }
@@ -1286,9 +1283,7 @@ function addEventListener_Modal_MultipleMapsTab() {
         var strings_array = [];
         console.log("Begin load .....");
         $('#md-progress').modal();
-        $('#update-polyline').text("กำลังโหลดแผนที่ทั้งหมดลงในรายการ");
-        $('#message-status').text("");
-        $('#save-progress').text("");
+        $('#save-progress').text("กำลังโหลดแผนที่ทั้งหมดลงในรายการ...");
         setTimeout(function () {
             for (var i = 0; i < multipleRoute.length; i++){
                 var string_map_name = "";
@@ -1308,8 +1303,8 @@ function addEventListener_Modal_MultipleMapsTab() {
                 activeIndexes.push(index);
                 addMapToList(index);
             }
-            $('#save-progress').text("โหลดแผนที่ลงรายการเสร็จสมบูรณ์ !");
-            $('#update-polyline').text("กำลังดึงข้อมูลจากฐานข้อมูล...");
+            $('#save-progress').append("<br><br>โหลดแผนที่ลงรายการเสร็จสมบูรณ์ !");
+            $('#save-progress').append("<br><br>กำลังดึงข้อมูลจากฐานข้อมูล...");
             $.ajax({
                 type: "POST",
                 data: ({
@@ -1317,8 +1312,8 @@ function addEventListener_Modal_MultipleMapsTab() {
                 }),
                 url: "../php/fetchPath.php",
                 success: function (d) {
-                    $('#update-polyline').text("ดึงข้อมูลสำเร็จแล้ว !");
-                    $('#message-status').text("กำลังสร้างเส้นทาง...");
+                    $('#save-progress').append("<br><br>ดึงข้อมูลสำเร็จแล้ว !");
+                    $('#save-progress').append("<br><br>กำลังสร้างเส้นทาง...");
                     var paths_array = d.split(":");
                     for (var i = 0; i < paths_array.length - 1; i++) {
                         var path = [];
@@ -1339,7 +1334,8 @@ function addEventListener_Modal_MultipleMapsTab() {
 
                     }
                     setTimeout(function(){
-                        $('#message-status').text("สร้างเส้นทางสำเร็จแล้ว !");
+                        $('#save-progress').append("<br><br>สร้างเส้นทางสำเร็จแล้ว !");
+//                        $('#md-progress').modal('hide');
                     },300);
                     
                     console.log("Finished load .....");
