@@ -342,11 +342,12 @@ function addTable() {
                     var index = map_name.indexOf(mapname);
                     var index_active = activeIndexes.indexOf(index);
                     if(index_active !== -1){
-                        var text = " "+ newvalue;
                         var node = $('#maps_list>a:gt(0)').eq(index_active).contents();
                         $(node).eq(1).remove();
                         var textNode = document.createTextNode(" "+newvalue);
                         $(textNode).insertAfter($(node).eq(0));
+                        map_name[index] = newvalue;
+                        temp_map_name = map_name;
                     }
                     alert("Edit name and save successfully.");
                     setUpVarFromDatabase(); 
@@ -915,7 +916,7 @@ function Save(path) {
             setUpVarFromDatabase();
             //            alert(return_message);
             $("#save-progress").append("<br><br> " + return_message);
-             $('#progress-close').removeClass('disabled');
+            $('#progress-close').removeClass('disabled');
             //            $('#md-progress').modal('hide');
         },
         error: function (xhr, status, error) {
